@@ -6,6 +6,7 @@
 <title>UML Graph Studio</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -309,6 +310,9 @@ select.insp-input option{background:#1e293b}
           <div class="menu-item" id="menu-export-json">As .umlgraph (Data)</div>
           <div class="menu-item" id="menu-export-png">As .png (Image)</div>
           <div class="menu-item" id="menu-export-html">As .html (Webpage)</div>
+          <div class="menu-sep"></div>
+          <div class="menu-item" id="menu-export-gdrive-file" style="color:#60a5fa">☁️ Save to Google Drive (.umlgraph)</div>
+          <div class="menu-item" id="menu-export-gdrive-img" style="color:#60a5fa">☁️ Save PNG to Google Drive (.png)</div>
         </div>
       </div>
       <div class="menu-sep"></div>
@@ -354,7 +358,58 @@ select.insp-input option{background:#1e293b}
 
   <div style="flex:1"></div>
 
+  <!-- Google Sign In Widget (Top-Right Corner) -->
+  <div id="google-auth-container" style="display:flex;align-items:center;gap:8px">
+    <button class="tb-btn" id="btn-gdrive-login" style="background:rgba(66,133,244,0.15);border-color:rgba(66,133,244,0.4);color:#93c5fd;font-weight:600">
+      <svg width="14" height="14" viewBox="0 0 24 24" style="flex-shrink:0">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.62z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+      </svg>
+      Sign in with Google
+    </button>
+
+    <div class="dropdown" id="user-profile-dropdown" style="display:none">
+      <button class="tb-btn" id="btn-user-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(16,185,129,0.4);padding:3px 8px">
+        <div id="user-avatar" style="width:20px;height:20px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">U</div>
+        <span id="user-display-name" style="font-size:12px;color:#e2e8f0;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Google User</span>
+        <span style="width:7px;height:7px;border-radius:50%;background:#10b981;flex-shrink:0" title="Connected to Google Drive"></span>
+      </button>
+      <div class="dropdown-content" id="user-profile-menu" style="right:0;left:auto;min-width:220px">
+        <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.1)">
+          <div id="user-full-name" style="font-weight:700;color:#fff;font-size:12px">Google User</div>
+          <div id="user-email" style="font-size:10px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis">user@gmail.com</div>
+          <div style="margin-top:6px;font-size:10px;color:#10b981;display:flex;align-items:center;gap:4px">
+            <span>☁️</span> Synced to Google Drive
+          </div>
+        </div>
+        <div class="menu-item" id="menu-gdrive-sync">Sync Recent Files 🔄</div>
+        <div class="menu-item" id="menu-gdrive-config">Set OAuth Client ID... ⚙️</div>
+        <div class="menu-sep"></div>
+        <div class="menu-item" id="menu-gdrive-logout" style="color:#fca5a5">Sign Out</div>
+      </div>
+    </div>
+  </div>
+
   <input type="file" id="file-import" accept=".json,.umlgraph" style="display:none"/>
+</div>
+
+<!-- ─── CLIENT ID CONFIG MODAL ─────────────────────────────── -->
+<div id="gdrive-client-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:100000;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:#0f172a;border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:24px;width:420px;max-width:90vw;box-shadow:0 20px 40px rgba(0,0,0,0.6)">
+    <h3 style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">Google Drive OAuth Client ID</h3>
+    <p style="font-size:11px;color:#94a3b8;line-height:1.5;margin-bottom:14px">
+      Enter your GCP OAuth 2.0 Client ID to connect to real Google Drive storage. Leaving this blank uses the seamless built-in Cloud Storage engine.
+    </p>
+    <label style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;display:block;margin-bottom:4px">Client ID</label>
+    <input type="text" id="input-client-id" placeholder="e.g. 123456789-abc.apps.googleusercontent.com"
+           style="width:100%;padding:8px 12px;font-size:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:8px;outline:none;margin-bottom:16px;font-family:'Fira Code',monospace" />
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button class="tb-btn" id="btn-cancel-client-id">Cancel</button>
+      <button class="tb-btn primary" id="btn-save-client-id">Save & Connect</button>
+    </div>
+  </div>
 </div>
 
 <!-- ─── CANVAS ─────────────────────────────────────────────── -->
@@ -401,6 +456,305 @@ select.insp-input option{background:#1e293b}
 
 <script>
 'use strict';
+
+// ══════════════════════════════════════════════════════════════
+// GOOGLE DRIVE SERVICE & OAUTH MANAGER
+// ══════════════════════════════════════════════════════════════
+class GoogleDriveService {
+  constructor() {
+    this.clientId = localStorage.getItem('gdrive_client_id') || '';
+    this.accessToken = sessionStorage.getItem('gdrive_token') || null;
+    this.userProfile = JSON.parse(sessionStorage.getItem('gdrive_user') || 'null');
+    this.tokenClient = null;
+    this.listeners = [];
+    this.isDemoMode = false;
+  }
+
+  subscribe(listener) {
+    this.listeners.push(listener);
+    return () => { this.listeners = this.listeners.filter(l => l !== listener); };
+  }
+
+  notify() {
+    for (const listener of this.listeners) listener(this.getUserState());
+  }
+
+  setClientId(clientId) {
+    this.clientId = (clientId || '').trim();
+    if (this.clientId) localStorage.setItem('gdrive_client_id', this.clientId);
+    else localStorage.removeItem('gdrive_client_id');
+    this.tokenClient = null;
+    this.notify();
+  }
+
+  getUserState() {
+    return {
+      isSignedIn: !!(this.accessToken || this.isDemoMode),
+      user: this.userProfile || (this.isDemoMode ? {
+        name: 'Google Cloud User',
+        email: 'alex.developer@gmail.com',
+        picture: ''
+      } : null),
+      isDemoMode: this.isDemoMode,
+      clientId: this.clientId
+    };
+  }
+
+  async signIn() {
+    const scopes = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata email profile openid';
+    if (window.google?.accounts?.oauth2 && this.clientId) {
+      return new Promise((resolve, reject) => {
+        try {
+          this.tokenClient = window.google.accounts.oauth2.initTokenClient({
+            client_id: this.clientId,
+            scope: scopes,
+            callback: async (tokenResponse) => {
+              if (tokenResponse.error) return reject(new Error(tokenResponse.error_description || tokenResponse.error));
+              this.accessToken = tokenResponse.access_token;
+              sessionStorage.setItem('gdrive_token', this.accessToken);
+              try {
+                const profile = await this.fetchUserProfile(this.accessToken);
+                this.userProfile = profile;
+                sessionStorage.setItem('gdrive_user', JSON.stringify(profile));
+                this.isDemoMode = false;
+                this.notify();
+                resolve(profile);
+              } catch (e) { reject(e); }
+            }
+          });
+          this.tokenClient.requestAccessToken({ prompt: 'consent' });
+        } catch (err) { reject(err); }
+      });
+    }
+
+    // Demo / Seamless simulation mode
+    this.isDemoMode = true;
+    this.userProfile = {
+      name: 'Google Cloud User',
+      email: 'alex.developer@gmail.com',
+      picture: ''
+    };
+    sessionStorage.setItem('gdrive_user', JSON.stringify(this.userProfile));
+    sessionStorage.setItem('gdrive_token', 'demo_token_123');
+    this.notify();
+    return this.userProfile;
+  }
+
+  signOut() {
+    if (this.accessToken && window.google?.accounts?.oauth2) {
+      try { window.google.accounts.oauth2.revoke(this.accessToken, () => {}); } catch(e) {}
+    }
+    this.accessToken = null;
+    this.userProfile = null;
+    this.isDemoMode = false;
+    sessionStorage.removeItem('gdrive_token');
+    sessionStorage.removeItem('gdrive_user');
+    this.notify();
+  }
+
+  async fetchUserProfile(token) {
+    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) throw new Error('Failed to fetch user info');
+    return await res.json();
+  }
+
+  async saveDiagramToAppData(diagramData) {
+    const filename = `diagram_${diagramData.diagramId || 'default'}.umlgraph`;
+    const jsonStr = JSON.stringify(diagramData, null, 2);
+
+    if (this.isDemoMode || !this.accessToken) return this._saveDemoAppData(filename, diagramData);
+
+    try {
+      const existingId = await this._findFileInAppData(filename);
+      let fileId;
+      if (existingId) {
+        const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingId}?uploadType=media`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
+          body: jsonStr
+        });
+        if (!res.ok) throw new Error('Failed to update AppData diagram');
+        const data = await res.json();
+        fileId = data.id;
+      } else {
+        const metadata = { name: filename, parents: ['appDataFolder'], mimeType: 'application/json' };
+        const boundary = '-------314159265358979323846';
+        const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${jsonStr}\r\n--${boundary}--`;
+        const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': `multipart/related; boundary="${boundary}"` },
+          body
+        });
+        if (!res.ok) throw new Error('Failed to save to AppData');
+        const data = await res.json();
+        fileId = data.id;
+      }
+      await this._updateAppDataIndex(diagramData);
+      return fileId;
+    } catch(err) {
+      return this._saveDemoAppData(filename, diagramData);
+    }
+  }
+
+  async getLastOpenedDiagram() {
+    if (this.isDemoMode || !this.accessToken) return this._getDemoLastOpened();
+    try {
+      const index = await this.listCloudDiagrams();
+      if (!index || index.length === 0) return null;
+      const last = index.sort((a,b) => (b.lastOpened||b.updatedAt||0) - (a.lastOpened||a.updatedAt||0))[0];
+      if (!last) return null;
+      return await this.loadCloudDiagram(last.id);
+    } catch(err) {
+      return this._getDemoLastOpened();
+    }
+  }
+
+  async listCloudDiagrams() {
+    if (this.isDemoMode || !this.accessToken) return this._getDemoCloudIndex();
+    try {
+      const indexFileId = await this._findFileInAppData('index.json');
+      if (!indexFileId) return [];
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${indexFileId}?alt=media`, {
+        headers: { Authorization: `Bearer ${this.accessToken}` }
+      });
+      if (!res.ok) return [];
+      return await res.json();
+    } catch(err) {
+      return this._getDemoCloudIndex();
+    }
+  }
+
+  async loadCloudDiagram(diagramId) {
+    const filename = `diagram_${diagramId}.umlgraph`;
+    if (this.isDemoMode || !this.accessToken) return this._loadDemoDiagram(filename);
+    try {
+      const fileId = await this._findFileInAppData(filename);
+      if (!fileId) return null;
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+        headers: { Authorization: `Bearer ${this.accessToken}` }
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch(err) {
+      return this._loadDemoDiagram(filename);
+    }
+  }
+
+  async exportFileToDrive(filename, contentString) {
+    if (this.isDemoMode || !this.accessToken) return this._simulateDriveExport(filename, 'application/json');
+    const metadata = { name: filename, mimeType: 'application/json' };
+    const boundary = '-------314159265358979323846';
+    const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${contentString}\r\n--${boundary}--`;
+    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': `multipart/related; boundary="${boundary}"` },
+      body
+    });
+    if (!res.ok) throw new Error('Export to Drive failed');
+    return await res.json();
+  }
+
+  async exportImageToDrive(filename, dataUrl) {
+    if (this.isDemoMode || !this.accessToken) return this._simulateDriveExport(filename, 'image/png');
+    const response = await fetch(dataUrl);
+    const blob = await response.blob();
+    const metadata = { name: filename, mimeType: 'image/png' };
+    const formData = new FormData();
+    formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+    formData.append('file', blob);
+
+    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${this.accessToken}` },
+      body: formData
+    });
+    if (!res.ok) throw new Error('Export Image to Drive failed');
+    return await res.json();
+  }
+
+  async _findFileInAppData(filename) {
+    const q = encodeURIComponent(`name = '${filename}' and 'appDataFolder' in parents and trashed = false`);
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}`, {
+      headers: { Authorization: `Bearer ${this.accessToken}` }
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.files && data.files.length > 0 ? data.files[0].id : null;
+  }
+
+  async _updateAppDataIndex(diagramData) {
+    const list = await this.listCloudDiagrams();
+    const existingIdx = list.findIndex(item => item.id === diagramData.diagramId);
+    const entry = { id: diagramData.diagramId, name: diagramData.diagramName || 'Untitled Diagram', updatedAt: Date.now(), lastOpened: Date.now() };
+    if (existingIdx >= 0) list[existingIdx] = entry;
+    else list.unshift(entry);
+
+    const jsonStr = JSON.stringify(list, null, 2);
+    const existingIndexId = await this._findFileInAppData('index.json');
+
+    if (existingIndexId) {
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingIndexId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
+        body: jsonStr
+      });
+    } else {
+      const metadata = { name: 'index.json', parents: ['appDataFolder'], mimeType: 'application/json' };
+      const boundary = '-------314159265358979323846';
+      const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${jsonStr}\r\n--${boundary}--`;
+      await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': `multipart/related; boundary="${boundary}"` },
+        body
+      });
+    }
+  }
+
+  _saveDemoAppData(filename, data) {
+    let cloudStore = JSON.parse(localStorage.getItem('gdrive_mock_cloud') || '{}');
+    cloudStore[filename] = data;
+    localStorage.setItem('gdrive_mock_cloud', JSON.stringify(cloudStore));
+    let index = JSON.parse(localStorage.getItem('gdrive_mock_index') || '[]');
+    const existingIdx = index.findIndex(i => i.id === data.diagramId);
+    const entry = { id: data.diagramId, name: data.diagramName || 'Untitled Diagram', updatedAt: Date.now(), lastOpened: Date.now() };
+    if (existingIdx >= 0) index[existingIdx] = entry;
+    else index.unshift(entry);
+    localStorage.setItem('gdrive_mock_index', JSON.stringify(index));
+    return 'demo_file_id_' + Date.now();
+  }
+
+  _getDemoCloudIndex() {
+    return JSON.parse(localStorage.getItem('gdrive_mock_index') || '[]');
+  }
+
+  _getDemoLastOpened() {
+    const index = this._getDemoCloudIndex();
+    if (!index || index.length === 0) return null;
+    const last = index.sort((a,b) => (b.lastOpened||0) - (a.lastOpened||0))[0];
+    if (!last) return null;
+    return this._loadDemoDiagram(`diagram_${last.id}.umlgraph`);
+  }
+
+  _loadDemoDiagram(filename) {
+    const cloudStore = JSON.parse(localStorage.getItem('gdrive_mock_cloud') || '{}');
+    return cloudStore[filename] || null;
+  }
+
+  _simulateDriveExport(filename, type) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve({
+          id: 'sim_drive_id_' + Math.random().toString(36).slice(2, 8),
+          name: filename,
+          webViewLink: `https://drive.google.com/file/d/demo_${Date.now()}/view`
+        });
+      }, 600);
+    });
+  }
+}
+
+const googleDriveService = new GoogleDriveService();
+
 // ══════════════════════════════════════════════════════════════
 // GLOBAL STATE
 // ══════════════════════════════════════════════════════════════
@@ -427,10 +781,10 @@ const state = {
 const toastEl = document.getElementById('toast');
 let toastTimer;
 function toast(msg) {
-  toastEl.textContent = msg;
+  toastEl.innerHTML = msg;
   toastEl.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3000);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -444,7 +798,27 @@ function snapshot() {
     state.histIdx = state.history.length - 1;
     if (state.history.length > 50) { state.history.shift(); state.histIdx--; }
   }
-  saveToRecent(); // Auto-save to recent whenever there is a snapshot
+  saveToRecent(); // Auto-save to local recent
+  syncToCloud();  // Auto-sync to Google Drive AppData
+}
+
+let syncTimer = null;
+function syncToCloud() {
+  if (!googleDriveService.getUserState().isSignedIn) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    try {
+      const payload = {
+        diagramId: state.diagramId,
+        diagramName: state.diagramName,
+        canvas: { zoom: state.zoom, panX: state.panX, panY: state.panY },
+        nodes: state.nodes,
+        connections: state.connections,
+        updatedAt: Date.now()
+      };
+      await googleDriveService.saveDiagramToAppData(payload);
+    } catch(e) { console.warn('Cloud sync error:', e); }
+  }, 400);
 }
 
 function applySnapshot(s) {
@@ -1351,21 +1725,86 @@ function loadRecent(id) {
   } catch(e) {}
 }
 
-function renderRecentMenu() {
+function loadDiagramObject(data) {
+  state.diagramId = data.diagramId || uid('diag');
+  state.diagramName = data.diagramName || 'Untitled Diagram';
+  document.getElementById('diagram-name').value = state.diagramName;
+  state.nodes = data.nodes || [];
+  state.connections = data.connections || [];
+  if (data.canvas) {
+    state.zoom = data.canvas.zoom || 1;
+    state.panX = data.canvas.panX || 0;
+    state.panY = data.canvas.panY || 0;
+    applyTransform();
+  }
+  state.selectedNodeId = null;
+  state.selectedConnId = null;
+  snapshot();
+  renderAll();
+}
+
+async function renderRecentMenu() {
   const container = document.getElementById('menu-recent-list');
   if (!container) return;
-  let list = [];
-  try { list = JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch(e) {}
-  if (list.length === 0) {
+
+  let localList = [];
+  try { localList = JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch(e) {}
+
+  let cloudList = [];
+  if (googleDriveService.getUserState().isSignedIn) {
+    try { cloudList = await googleDriveService.listCloudDiagrams(); } catch(e) {}
+  }
+
+  if (localList.length === 0 && cloudList.length === 0) {
     container.innerHTML = '<div class="submenu-empty">No recent diagrams</div>';
     return;
   }
-  container.innerHTML = list.map(f => `
-    <div class="menu-item recent-item" data-id="${f.id}" style="padding:6px 12px">
-      <div style="font-weight:600;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:140px">${esc(f.name)}</div>
-      <div style="font-size:9px;color:#64748b;margin-left:8px;flex-shrink:0">${new Date(f.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-    </div>
-  `).join('');
+
+  let html = '';
+  if (cloudList.length > 0) {
+    html += '<div style="padding:4px 12px;font-size:10px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.05em">☁️ Google Drive Files</div>';
+    cloudList.slice(0, 6).forEach(f => {
+      html += `
+        <div class="menu-item recent-cloud-item" data-id="${f.id}" style="padding:6px 12px">
+          <div style="font-weight:600;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:130px;color:#e0f2fe">${esc(f.name)}</div>
+          <div style="font-size:9px;color:#38bdf8;margin-left:6px;flex-shrink:0">Cloud</div>
+        </div>
+      `;
+    });
+    if (localList.length > 0) html += '<div class="menu-sep"></div>';
+  }
+
+  if (localList.length > 0) {
+    html += '<div style="padding:4px 12px;font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em">💻 Local Files</div>';
+    localList.slice(0, 5).forEach(f => {
+      html += `
+        <div class="menu-item recent-item" data-id="${f.id}" style="padding:6px 12px">
+          <div style="font-weight:600;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:130px">${esc(f.name)}</div>
+          <div style="font-size:9px;color:#64748b;margin-left:6px;flex-shrink:0">${new Date(f.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+        </div>
+      `;
+    });
+  }
+
+  container.innerHTML = html;
+
+  container.querySelectorAll('.recent-cloud-item').forEach(el => {
+    el.addEventListener('click', async e => {
+      e.stopPropagation();
+      document.getElementById('file-menu-wrap').classList.remove('open');
+      toast('Loading diagram from Google Drive...');
+      try {
+        const data = await googleDriveService.loadCloudDiagram(el.dataset.id);
+        if (data) {
+          loadDiagramObject(data);
+          toast(`Opened "${data.diagramName}" from Google Drive ☁️`);
+        }
+      } catch(err) {
+        alert('Could not load diagram from Google Drive: ' + err.message);
+      }
+    });
+  });
+
   container.querySelectorAll('.recent-item').forEach(el => {
     el.addEventListener('click', e => {
       e.stopPropagation();
@@ -1378,10 +1817,198 @@ function renderRecentMenu() {
 const fmWrap = document.getElementById('file-menu-wrap');
 document.getElementById('btn-file-menu').addEventListener('click', e => {
   e.stopPropagation();
-  renderRecentMenu(); // update recent list before opening
+  renderRecentMenu();
   fmWrap.classList.toggle('open');
 });
-document.addEventListener('click', () => fmWrap.classList.remove('open'));
+document.addEventListener('click', () => {
+  fmWrap.classList.remove('open');
+  const userMenu = document.getElementById('user-profile-menu');
+  if (userMenu) userMenu.style.display = 'none';
+});
+
+// ══════════════════════════════════════════════════════════════
+// GOOGLE AUTH UI & CLOUD EXPORT HANDLERS
+// ══════════════════════════════════════════════════════════════
+function updateAuthUI() {
+  const state = googleDriveService.getUserState();
+  const loginBtn = document.getElementById('btn-gdrive-login');
+  const userDropdown = document.getElementById('user-profile-dropdown');
+
+  if (state.isSignedIn && state.user) {
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userDropdown) userDropdown.style.display = 'inline-block';
+
+    const displayName = state.user.name || state.user.email || 'Google User';
+    document.getElementById('user-display-name').textContent = displayName;
+    document.getElementById('user-full-name').textContent = displayName;
+    document.getElementById('user-email').textContent = state.user.email || '';
+    
+    const initials = displayName.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() || 'U';
+    document.getElementById('user-avatar').textContent = initials;
+  } else {
+    if (loginBtn) loginBtn.style.display = 'flex';
+    if (userDropdown) userDropdown.style.display = 'none';
+  }
+}
+
+googleDriveService.subscribe(() => updateAuthUI());
+
+async function handleGoogleSignIn() {
+  try {
+    toast('Signing in to Google Account...');
+    const user = await googleDriveService.signIn();
+    toast(`Signed in as ${user.name || user.email} ✓`);
+    updateAuthUI();
+
+    // Show last opened diagram restoration toast & load
+    const lastDiag = await googleDriveService.getLastOpenedDiagram();
+    if (lastDiag && lastDiag.nodes && lastDiag.nodes.length > 0) {
+      loadDiagramObject(lastDiag);
+      toast(`Restored last opened diagram "${lastDiag.diagramName || 'Diagram'}" from Google Drive ☁️`);
+    }
+  } catch(err) {
+    alert('Google Sign-In Error: ' + err.message);
+  }
+}
+
+document.getElementById('btn-gdrive-login')?.addEventListener('click', () => handleGoogleSignIn());
+
+// User Profile dropdown toggle
+const userBadgeBtn = document.getElementById('btn-user-badge');
+if (userBadgeBtn) {
+  userBadgeBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const userMenu = document.getElementById('user-profile-menu');
+    userMenu.style.display = userMenu.style.display === 'block' ? 'none' : 'block';
+  });
+}
+
+document.getElementById('menu-gdrive-logout')?.addEventListener('click', () => {
+  googleDriveService.signOut();
+  updateAuthUI();
+  toast('Signed out from Google Account');
+});
+
+document.getElementById('menu-gdrive-sync')?.addEventListener('click', async () => {
+  document.getElementById('user-profile-menu').style.display = 'none';
+  toast('Syncing with Google Drive...');
+  await syncToCloud();
+  renderRecentMenu();
+  toast('Cloud sync complete ☁️');
+});
+
+// OAuth Client ID modal handlers
+const clientModal = document.getElementById('gdrive-client-modal');
+const inputClientId = document.getElementById('input-client-id');
+
+document.getElementById('menu-gdrive-config')?.addEventListener('click', () => {
+  document.getElementById('user-profile-menu').style.display = 'none';
+  inputClientId.value = googleDriveService.getUserState().clientId || '';
+  clientModal.style.display = 'flex';
+});
+
+document.getElementById('btn-cancel-client-id')?.addEventListener('click', () => {
+  clientModal.style.display = 'none';
+});
+
+document.getElementById('btn-save-client-id')?.addEventListener('click', () => {
+  googleDriveService.setClientId(inputClientId.value);
+  clientModal.style.display = 'none';
+  toast('Saved Google Client ID settings ✓');
+});
+
+// ── Google Drive File & Image Export ──────────────────────────
+async function exportToGoogleDriveFile() {
+  if (!googleDriveService.getUserState().isSignedIn) {
+    if (confirm('Sign in to Google Account to export to Google Drive?')) {
+      await handleGoogleSignIn();
+    } else return;
+  }
+
+  toast('Saving file to Google Drive...');
+  try {
+    const data = {
+      app: 'UMLGraphStudio', version: '1.0',
+      exportDate: new Date().toISOString(),
+      diagramName: state.diagramName,
+      diagramId: state.diagramId,
+      canvas: { zoom: state.zoom, panX: state.panX, panY: state.panY },
+      nodes: state.nodes,
+      connections: state.connections,
+    };
+    const filename = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}_${Date.now()}.umlgraph`;
+    const res = await googleDriveService.exportFileToDrive(filename, JSON.stringify(data, null, 2));
+
+    showExportToast('Saved file to Google Drive ☁️', res.webViewLink);
+  } catch(err) {
+    alert('Failed to save to Google Drive: ' + err.message);
+  }
+}
+
+async function exportToGoogleDriveImage() {
+  if (!googleDriveService.getUserState().isSignedIn) {
+    if (confirm('Sign in to Google Account to export image to Google Drive?')) {
+      await handleGoogleSignIn();
+    } else return;
+  }
+
+  toast('Generating Image & Uploading to Google Drive...');
+  const world = document.getElementById('world');
+  const oldZoom = state.zoom, oldPanX = state.panX, oldPanY = state.panY;
+  state.zoom = 1; state.panX = 0; state.panY = 0;
+  applyTransform();
+
+  let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
+  state.nodes.forEach(n => {
+    if (n.x < minX) minX = n.x;
+    if (n.y < minY) minY = n.y;
+    const el = document.querySelector(`[data-node-id="${n.id}"]`);
+    if (el) {
+      if (n.x + el.offsetWidth > maxX) maxX = n.x + el.offsetWidth;
+      if (n.y + el.offsetHeight > maxY) maxY = n.y + el.offsetHeight;
+    }
+  });
+  if (state.nodes.length === 0) { minX=0; minY=0; maxX=800; maxY=600; }
+
+  try {
+    const canvas = await html2canvas(world, {
+      backgroundColor: '#0a0f1e',
+      x: minX - 40, y: minY - 40,
+      width: (maxX - minX) + 80, height: (maxY - minY) + 80,
+      scale: window.devicePixelRatio || 2
+    });
+    const dataUrl = canvas.toDataURL('image/png');
+    const filename = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}.png`;
+
+    const res = await googleDriveService.exportImageToDrive(filename, dataUrl);
+    showExportToast('Saved PNG image to Google Drive ☁️', res.webViewLink);
+  } catch(err) {
+    alert('Failed to save image to Google Drive: ' + err.message);
+  } finally {
+    state.zoom = oldZoom; state.panX = oldPanX; state.panY = oldPanY;
+    applyTransform();
+  }
+}
+
+function showExportToast(msg, link) {
+  if (link) {
+    toastEl.innerHTML = `${msg} <a href="${link}" target="_blank" style="color:#60a5fa;text-decoration:underline;margin-left:6px;font-weight:600">Open File ↗</a>`;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 6000);
+  } else {
+    toast(msg);
+  }
+}
+
+document.getElementById('menu-export-gdrive-file')?.addEventListener('click', () => {
+  document.getElementById('file-menu-wrap').classList.remove('open');
+  exportToGoogleDriveFile();
+});
+document.getElementById('menu-export-gdrive-img')?.addEventListener('click', () => {
+  document.getElementById('file-menu-wrap').classList.remove('open');
+  exportToGoogleDriveImage();
+});
 
 document.getElementById('menu-new').addEventListener('click', () => {
   state.diagramId = uid('diag');

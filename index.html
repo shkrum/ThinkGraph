@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content"/>
 <title>UML Graph Studio</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -18,6 +18,9 @@ body{
   height:100vh;
   width:100vw;
   user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+  -webkit-tap-highlight-color:transparent;
 }
 
 /* ─── TOOLBAR ─────────────────────────────────────────────── */
@@ -29,6 +32,8 @@ body{
   display:flex;align-items:center;gap:8px;padding:0 14px;
   z-index:9999;
   flex-shrink:0;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
 }
 #toolbar .logo{
   font-weight:700;font-size:14px;color:#fff;
@@ -38,11 +43,12 @@ body{
 }
 .tb-sep{width:1px;height:28px;background:rgba(255,255,255,0.1);flex-shrink:0}
 .tb-btn{
-  display:flex;align-items:center;gap:5px;padding:5px 10px;
+  display:flex;align-items:center;gap:5px;padding:6px 10px;
   border-radius:7px;border:1px solid rgba(255,255,255,0.12);
   background:rgba(255,255,255,0.05);color:#cbd5e1;
   font-size:12px;font-weight:500;cursor:pointer;
   white-space:nowrap;transition:all 0.15s;flex-shrink:0;
+  touch-action:manipulation;
 }
 .tb-btn:hover{background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.2)}
 .tb-btn.active{background:rgba(99,102,241,0.25);border-color:#6366f1;color:#a5b4fc}
@@ -63,14 +69,15 @@ body{
   background-image:radial-gradient(rgba(255,255,255,0.07) 1.2px, transparent 1.2px);
   background-size:24px 24px;
   overflow:hidden;cursor:default;
+  touch-action:none;
 }
 #canvas-root.panning{cursor:grabbing}
 
-#world{position:absolute;top:0;left:0;transform-origin:0 0}
+#world{position:absolute;top:0;left:0;transform-origin:0 0;touch-action:none}
 
 /* SVG connections layer */
-#svg-layer{position:absolute;top:0;left:0;width:6000px;height:6000px;overflow:visible;pointer-events:none}
-#svg-layer path.hit{stroke:transparent;stroke-width:14;fill:none;cursor:pointer;pointer-events:stroke}
+#svg-layer{position:absolute;top:0;left:0;width:6000px;height:6000px;overflow:visible;pointer-events:none;touch-action:none}
+#svg-layer path.hit{stroke:transparent;stroke-width:24;fill:none;cursor:pointer;pointer-events:stroke;touch-action:none}
 #svg-layer path.vis{fill:none;pointer-events:none}
 #svg-layer path.vis.selected{stroke:#ec4899!important}
 #svg-layer text.conn-label{font-family:'Inter',sans-serif;font-size:10px;fill:#e2e8f0;font-weight:600;pointer-events:none}
@@ -90,18 +97,23 @@ body{
   cursor:grab;
   transition:box-shadow 0.15s, border-color 0.15s;
   overflow:visible;
+  touch-action:none;
 }
 .gnode.selected{border-color:#6366f1;box-shadow:0 0 0 2px rgba(99,102,241,0.4),0 4px 24px rgba(0,0,0,0.6)}
 .gnode:active{cursor:grabbing}
 
-/* Anchor ports */
+/* Anchor ports with enlarged touch hit area */
 .gnode .port{
   position:absolute;width:12px;height:12px;
   background:#06b6d4;border:2px solid #0a0f1e;border-radius:50%;
   cursor:crosshair;opacity:0;transition:opacity 0.15s,transform 0.15s;z-index:10;
+  touch-action:none;
 }
-.gnode:hover .port,.gnode.selected .port{opacity:1}
-.gnode .port:hover{transform:scale(1.5);background:#38bdf8;box-shadow:0 0 8px #38bdf8}
+.gnode .port::after{
+  content:'';position:absolute;inset:-14px;border-radius:50%;
+}
+.gnode:hover .port,.gnode.selected .port{opacity:1;pointer-events:auto}
+.gnode .port:hover,.gnode .port:active{transform:scale(1.5);background:#38bdf8;box-shadow:0 0 8px #38bdf8}
 .port[data-anchor="top"]   {top:-6px;left:calc(50% - 6px)}
 .port[data-anchor="right"] {right:-6px;top:calc(50% - 6px)}
 .port[data-anchor="bottom"]{bottom:-6px;left:calc(50% - 6px)}
@@ -284,6 +296,36 @@ select.insp-input option{background:#1e293b}
   box-shadow:0 4px 20px rgba(0,0,0,0.5);
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Node Edit Button & Inline Input */
+.node-edit-btn{
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  border-radius:4px;color:#cbd5e1;font-size:10px;padding:2px 5px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:3px;transition:all 0.15s;line-height:1;
+  touch-action:manipulation;
+}
+.node-edit-btn:hover,.node-edit-btn:active{background:rgba(99,102,241,0.3);color:#fff;border-color:#6366f1}
+
+.node-inline-input{
+  width:100%;background:rgba(15,23,42,0.95);border:1.5px solid #6366f1;border-radius:5px;
+  color:#f1f5f9;padding:4px 6px;font-family:inherit;font-size:13px;font-weight:600;
+  outline:none;box-shadow:0 0 0 3px rgba(99,102,241,0.25);box-sizing:border-box;
+}
+textarea.node-inline-input{
+  font-size:11px;font-weight:400;resize:vertical;min-height:54px;line-height:1.4;
+}
+
+/* Mobile & Touchscreen Adaptations */
+@media (max-width: 768px) {
+  #canvas-root{right:0}
+  #inspector{
+    width:100%;max-width:340px;
+    transform:translateX(100%);transition:transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow:-4px 0 24px rgba(0,0,0,0.6);
+  }
+  #inspector.open{transform:translateX(0)}
+  .insp-mobile-close-bar{display:flex!important}
+}
 </style>
 </head>
 <body>
@@ -355,6 +397,7 @@ select.insp-input option{background:#1e293b}
   <div class="tb-sep"></div>
 
   <button class="tb-btn" id="btn-demo" title="Load sample demo diagram">⚡ Demo</button>
+  <button class="tb-btn" id="btn-toggle-inspector" title="Toggle Inspector panel">⚙️ Inspector</button>
 
   <div style="flex:1"></div>
 
@@ -868,7 +911,7 @@ function addNode(opts = {}) {
     w: opts.w ?? 200,
     title: opts.title ?? 'New Node',
     desc:  opts.desc  ?? 'Description...',
-    priority: (opts.priority ?? 'P01').slice(0,3).toUpperCase(),
+    priority: (opts.priority ?? '').slice(0,3).toUpperCase(),
     color: opts.color ?? '#1e293b',
     borderColor: opts.borderColor ?? '#3b82f6',
     shape: opts.shape ?? 'rounded',
@@ -1064,11 +1107,12 @@ function renderConnections() {
     const hit = document.createElementNS('http://www.w3.org/2000/svg','path');
     hit.setAttribute('class','hit');
     hit.setAttribute('d',d);
-    hit.addEventListener('mousedown', e => {
+    hit.addEventListener('pointerdown', e => {
       e.stopPropagation();
       state.selectedConnId = conn.id;
       state.selectedNodeId = null;
       renderAll();
+      if (window.innerWidth <= 768) inspector.classList.add('open');
     });
     g.appendChild(hit);
 
@@ -1159,9 +1203,13 @@ function renderNodes() {
           <input class="node-prio-input" type="text" maxlength="3"
                  value="${esc(node.priority)}"
                  data-node-id="${node.id}"
+                 inputmode="text" enterkeyhint="next" autocapitalize="characters"
                  spellcheck="false" autocomplete="off"/>
         </div>
-        <span class="node-id-tag">${node.id.split('_')[1]||node.id}</span>
+        <div style="display:flex;align-items:center;gap:4px">
+          <button class="node-edit-btn" data-node-id="${node.id}" title="Edit text (calls keyboard)">✏️</button>
+          <span class="node-id-tag">${node.id.split('_')[1]||node.id}</span>
+        </div>
       </div>
 
       <div class="node-body">
@@ -1186,16 +1234,73 @@ function esc(s) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// NODE INTERACTION
+// INLINE TEXT EDITING (CALLS VIRTUAL SCREEN KEYBOARD)
+// ══════════════════════════════════════════════════════════════
+function startInlineEdit(node, fieldName, fieldEl) {
+  if (!fieldEl || fieldEl.querySelector('.node-inline-input')) return;
+  const isTitle = fieldName === 'title';
+  const originalVal = node[fieldName] || '';
+  const input = document.createElement(isTitle ? 'input' : 'textarea');
+  input.className = 'node-inline-input';
+  input.value = originalVal;
+  input.setAttribute('inputmode', 'text');
+  input.setAttribute('enterkeyhint', isTitle ? 'done' : 'enter');
+  input.setAttribute('autocapitalize', 'sentences');
+  input.setAttribute('spellcheck', 'true');
+  if (isTitle) input.type = 'text';
+  else input.rows = 3;
+
+  fieldEl.innerHTML = '';
+  fieldEl.appendChild(input);
+
+  // Prevent drag or selection from bubbling
+  input.addEventListener('pointerdown', ev => ev.stopPropagation());
+  input.addEventListener('mousedown', ev => ev.stopPropagation());
+  input.addEventListener('click', ev => ev.stopPropagation());
+
+  // Synchronous focus ensures on-screen keyboard appears on iOS & Android
+  input.focus();
+  if (isTitle) input.select();
+
+  let committed = false;
+  function commit() {
+    if (committed) return;
+    committed = true;
+    const val = input.value.trim();
+    const n = state.nodes.find(item => item.id === node.id);
+    if (n && n[fieldName] !== val) {
+      n[fieldName] = val;
+      snapshot();
+      renderInspector();
+    }
+    renderNodes();
+  }
+
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => {
+    e.stopPropagation();
+    if (e.key === 'Escape') {
+      committed = true;
+      renderNodes();
+    } else if (e.key === 'Enter' && (isTitle || (!e.shiftKey && !e.ctrlKey))) {
+      e.preventDefault();
+      commit();
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// NODE INTERACTION (POINTER EVENTS FOR TOUCH & MOUSE)
 // ══════════════════════════════════════════════════════════════
 function attachNodeEvents(el, nodeData) {
 
   // ── Priority input ───────────────────────────────────────
   const prioInput = el.querySelector('.node-prio-input');
-  prioInput.addEventListener('mousedown', e => e.stopPropagation());
-  prioInput.addEventListener('click',     e => e.stopPropagation());
-  prioInput.addEventListener('keydown',   e => e.stopPropagation());
-  prioInput.addEventListener('keyup',     e => e.stopPropagation());
+  prioInput.addEventListener('pointerdown', e => e.stopPropagation());
+  prioInput.addEventListener('mousedown',   e => e.stopPropagation());
+  prioInput.addEventListener('click',       e => e.stopPropagation());
+  prioInput.addEventListener('keydown',     e => e.stopPropagation());
+  prioInput.addEventListener('keyup',       e => e.stopPropagation());
   prioInput.addEventListener('input', e => {
     const val = e.target.value.slice(0,3).toUpperCase();
     e.target.value = val;
@@ -1204,136 +1309,149 @@ function attachNodeEvents(el, nodeData) {
   });
   prioInput.addEventListener('blur', () => snapshot());
 
-  // ── Editable title / desc – DOUBLE CLICK only ────────────
-  el.querySelectorAll('.node-title,.node-desc').forEach(field => {
-    field.addEventListener('mousedown', e => {
-      // If already editable, allow normal text cursor positioning
-      if (field.isContentEditable && field.contentEditable === 'true') {
-        e.stopPropagation(); // prevent node drag
-      }
+  // ── ✏️ Edit button – single-tap calls virtual keyboard ────
+  const editBtn = el.querySelector('.node-edit-btn');
+  if (editBtn) {
+    editBtn.addEventListener('pointerdown', e => e.stopPropagation());
+    editBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      state.selectedNodeId = nodeData.id;
+      state.selectedConnId = null;
+      world.querySelectorAll('.gnode.selected').forEach(g => g.classList.remove('selected'));
+      el.classList.add('selected');
+      renderInspector();
+      if (window.innerWidth <= 768) inspector.classList.add('open');
+      const titleEl = el.querySelector('.node-title');
+      startInlineEdit(nodeData, 'title', titleEl);
     });
+  }
 
+  // ── Editable title / desc ─────────────────────────────────
+  el.querySelectorAll('.node-title,.node-desc').forEach(field => {
+    const key = field.dataset.field;
+
+    // Desktop double-click to edit
     field.addEventListener('dblclick', e => {
       e.stopPropagation();
       e.preventDefault();
-      field.contentEditable = 'true';
-      field.style.cursor = 'text';
-      field.focus();
-      // Select all text
-      const range = document.createRange();
-      range.selectNodeContents(field);
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
+      startInlineEdit(nodeData, key, field);
     });
 
-    field.addEventListener('keydown', e => {
-      e.stopPropagation(); // CRITICAL – prevent Delete/Backspace node deletion while editing
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        field.blur();
+    // Tap to edit when node is already selected
+    field.addEventListener('click', e => {
+      if (state.selectedNodeId === nodeData.id) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        e.stopPropagation();
+        startInlineEdit(nodeData, key, field);
       }
-      // For TITLE: Enter saves. For DESC: Enter inserts newline (allow multiline)
-      if (e.key === 'Enter' && !e.shiftKey && field.dataset.field === 'title') {
-        e.preventDefault();
-        field.blur();
-      }
-    });
-
-    field.addEventListener('blur', () => {
-      field.contentEditable = 'false';
-      field.style.cursor = '';
-      const key = field.dataset.field;
-      const val = field.innerText.trim();
-      const n = state.nodes.find(n=>n.id===nodeData.id);
-      if (n && n[key] !== val) { n[key] = val; snapshot(); renderInspector(); }
     });
   });
 
-  // ── Anchor ports – start connection drag ─────────────────
+  // ── Anchor ports – start connection drag with pointer ─────
   el.querySelectorAll('.port').forEach(port => {
-    port.addEventListener('mousedown', e => {
+    port.addEventListener('pointerdown', e => {
       e.stopPropagation();
       e.preventDefault();
-      startConnectionDrag(port.dataset.nodeId, e);
+      startConnectionDrag(port.dataset.nodeId, e, port);
     });
   });
 
-  // ── Node body – drag to move ─────────────────────────────
-  el.addEventListener('mousedown', e => {
-    // Skip if clicking a port, input, or editable field
+  // ── Node body – drag to move with Pointer Events ─────────
+  el.addEventListener('pointerdown', e => {
+    // Skip if clicking a port, input, textarea, button, or inline editor
     if (e.target.classList.contains('port')) return;
-    if (e.target.tagName === 'INPUT') return;
-    if (e.target.isContentEditable || e.target.contentEditable === 'true') return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
+    if (e.target.classList.contains('node-inline-input')) return;
+    if (e.target.closest('.node-edit-btn')) return;
 
     e.stopPropagation();
 
-    // Select visually WITHOUT calling renderAll() – that would destroy el
-    // and make it a stale reference during the drag!
+    // Select visually WITHOUT destroying DOM element during drag
     state.selectedNodeId = nodeData.id;
     state.selectedConnId = null;
     world.querySelectorAll('.gnode.selected').forEach(g => g.classList.remove('selected'));
     el.classList.add('selected');
-    renderInspector(); // update inspector panel only
+    renderInspector();
+    if (window.innerWidth <= 768) inspector.classList.add('open');
 
+    try { el.setPointerCapture(e.pointerId); } catch {}
+
+    const startClientX = e.clientX;
+    const startClientY = e.clientY;
     const startWorld = screenToWorld(e.clientX, e.clientY);
-    const n = state.nodes.find(n => n.id === nodeData.id);
+    const n = state.nodes.find(item => item.id === nodeData.id);
+    if (!n) return;
     const startNX = n.x, startNY = n.y;
     let moved = false;
     let rafId = null;
 
-    function onMove(me) {
+    function onPointerMove(me) {
+      if (me.pointerId !== e.pointerId) return;
+      if (!moved && Math.hypot(me.clientX - startClientX, me.clientY - startClientY) > 3) {
+        moved = true;
+      }
+      if (!moved) return;
+
       if (rafId) cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         const cur = screenToWorld(me.clientX, me.clientY);
         let nx = startNX + (cur.x - startWorld.x);
         let ny = startNY + (cur.y - startWorld.y);
-        // Snap to 10px grid
-        nx = Math.round(nx / 10) * 10;
-        ny = Math.round(ny / 10) * 10;
-        if (nx < 0) nx = 0;
-        if (ny < 0) ny = 0;
+        nx = Math.max(0, Math.round(nx / 10) * 10);
+        ny = Math.max(0, Math.round(ny / 10) * 10);
         n.x = nx; n.y = ny;
-        // Always query fresh DOM element (renderAll may have re-created it)
         const fresh = world.querySelector('[data-node-id="' + nodeData.id + '"]');
         if (fresh) { fresh.style.left = nx + 'px'; fresh.style.top = ny + 'px'; }
         renderConnections();
-        moved = true;
       });
     }
 
-    function onUp() {
+    function onPointerUp(ue) {
+      if (ue.pointerId !== e.pointerId) return;
       if (rafId) cancelAnimationFrame(rafId);
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-      if (moved) { snapshot(); renderNodes(); } // re-render nodes once at end to sync
+      try { el.releasePointerCapture(e.pointerId); } catch {}
+      el.removeEventListener('pointermove', onPointerMove);
+      el.removeEventListener('pointerup', onPointerUp);
+      el.removeEventListener('pointercancel', onPointerUp);
+      if (moved) {
+        snapshot();
+        renderNodes();
+      }
     }
 
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
+    el.addEventListener('pointermove', onPointerMove);
+    el.addEventListener('pointerup', onPointerUp);
+    el.addEventListener('pointercancel', onPointerUp);
   });
 }
 
 // ══════════════════════════════════════════════════════════════
-// CONNECTION DRAG
+// CONNECTION DRAG (TOUCH & MOUSE POINTERS)
 // ══════════════════════════════════════════════════════════════
 let connDrag = null; // { srcNodeId }
 
-function startConnectionDrag(srcNodeId, e) {
+function startConnectionDrag(srcNodeId, e, startPortEl) {
   connDrag = { srcNodeId };
   draftLine.setAttribute('d', '');
 
   const wp = screenToWorld(e.clientX, e.clientY);
+  if (startPortEl) {
+    try { startPortEl.setPointerCapture(e.pointerId); } catch {}
+  }
 
-  function onMove(me) {
+  function onPointerMove(me) {
     if (!connDrag) return;
     const cur = screenToWorld(me.clientX, me.clientY);
     draftLine.setAttribute('d', `M${wp.x},${wp.y} L${cur.x},${cur.y}`);
   }
 
-  function onUp(me) {
-    window.removeEventListener('mousemove', onMove);
-    window.removeEventListener('mouseup', onUp);
+  function onPointerUp(me) {
+    if (startPortEl) {
+      try { startPortEl.releasePointerCapture(e.pointerId); } catch {}
+    }
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
 
     draftLine.setAttribute('d', '');
 
@@ -1341,11 +1459,11 @@ function startConnectionDrag(srcNodeId, e) {
     const src = connDrag.srcNodeId;
     connDrag = null;
 
-    // Find target node by checking what's under the mouse
+    // Find target node by checking what's under the pointer
     const els = document.elementsFromPoint(me.clientX, me.clientY);
     let tgtId = null;
-    for (const el of els) {
-      const nodeEl = el.closest?.('.gnode');
+    for (const item of els) {
+      const nodeEl = item.closest?.('.gnode');
       if (nodeEl && nodeEl.dataset.nodeId && nodeEl.dataset.nodeId !== src) {
         tgtId = nodeEl.dataset.nodeId;
         break;
@@ -1356,38 +1474,90 @@ function startConnectionDrag(srcNodeId, e) {
     }
   }
 
-  window.addEventListener('mousemove', onMove);
-  window.addEventListener('mouseup', onUp);
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerUp);
 }
 
 // ══════════════════════════════════════════════════════════════
-// CANVAS EVENTS (PAN / ZOOM / CLICK TO DESELECT)
+// CANVAS EVENTS (1-FINGER PAN, 2-FINGER PINCH-ZOOM, WHEEL)
 // ══════════════════════════════════════════════════════════════
-canvasRoot.addEventListener('mousedown', e => {
+const activeCanvasPointers = new Map();
+let pinchStartDist = 0;
+let pinchStartZoom = 1;
+let panStartX = 0;
+let panStartY = 0;
+
+canvasRoot.addEventListener('pointerdown', e => {
   if (e.target !== canvasRoot && e.target !== world && e.target !== svgLayer) return;
-  // Clicked on empty canvas – deselect
-  state.selectedNodeId = null;
-  state.selectedConnId = null;
-  renderAll();
 
-  // Pan
-  const startX = e.clientX - state.panX;
-  const startY = e.clientY - state.panY;
-  canvasRoot.classList.add('panning');
-
-  function onMove(me) {
-    state.panX = me.clientX - startX;
-    state.panY = me.clientY - startY;
-    applyTransform();
+  // Deselect on empty canvas touch/click
+  if (activeCanvasPointers.size === 0) {
+    state.selectedNodeId = null;
+    state.selectedConnId = null;
+    renderAll();
   }
-  function onUp() {
+
+  activeCanvasPointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+  try { canvasRoot.setPointerCapture(e.pointerId); } catch {}
+
+  if (activeCanvasPointers.size === 1) {
+    panStartX = e.clientX - state.panX;
+    panStartY = e.clientY - state.panY;
+    canvasRoot.classList.add('panning');
+  } else if (activeCanvasPointers.size === 2) {
     canvasRoot.classList.remove('panning');
-    window.removeEventListener('mousemove', onMove);
-    window.removeEventListener('mouseup', onUp);
+    const [p1, p2] = Array.from(activeCanvasPointers.values());
+    pinchStartDist = Math.hypot(p1.clientX - p2.clientX, p1.clientY - p2.clientY);
+    pinchStartZoom = state.zoom;
   }
-  window.addEventListener('mousemove', onMove);
-  window.addEventListener('mouseup', onUp);
 });
+
+canvasRoot.addEventListener('pointermove', e => {
+  if (!activeCanvasPointers.has(e.pointerId)) return;
+  activeCanvasPointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+
+  if (activeCanvasPointers.size === 1) {
+    // 1-finger pan
+    state.panX = e.clientX - panStartX;
+    state.panY = e.clientY - panStartY;
+    applyTransform();
+  } else if (activeCanvasPointers.size >= 2) {
+    // 2-finger pinch-to-zoom
+    const [p1, p2] = Array.from(activeCanvasPointers.values());
+    const currDist = Math.hypot(p1.clientX - p2.clientX, p1.clientY - p2.clientY);
+    if (pinchStartDist > 0 && currDist > 0) {
+      const scaleFactor = currDist / pinchStartDist;
+      const targetZoom = Math.max(0.15, Math.min(4, pinchStartZoom * scaleFactor));
+      const r = canvasRoot.getBoundingClientRect();
+      const currCenterX = (p1.clientX + p2.clientX) / 2;
+      const currCenterY = (p1.clientY + p2.clientY) / 2;
+      const mx = currCenterX - r.left;
+      const my = currCenterY - r.top;
+      state.panX = mx - (mx - state.panX) * (targetZoom / state.zoom);
+      state.panY = my - (my - state.panY) * (targetZoom / state.zoom);
+      state.zoom = targetZoom;
+      applyTransform();
+    }
+  }
+});
+
+function onCanvasPointerEnd(e) {
+  activeCanvasPointers.delete(e.pointerId);
+  try { canvasRoot.releasePointerCapture(e.pointerId); } catch {}
+
+  if (activeCanvasPointers.size === 1) {
+    const remaining = activeCanvasPointers.values().next().value;
+    panStartX = remaining.clientX - state.panX;
+    panStartY = remaining.clientY - state.panY;
+    canvasRoot.classList.add('panning');
+  } else if (activeCanvasPointers.size === 0) {
+    canvasRoot.classList.remove('panning');
+  }
+}
+
+canvasRoot.addEventListener('pointerup', onCanvasPointerEnd);
+canvasRoot.addEventListener('pointercancel', onCanvasPointerEnd);
 
 canvasRoot.addEventListener('wheel', e => {
   e.preventDefault();
@@ -1437,23 +1607,32 @@ function renderInspector() {
   } else {
     renderEmptyInspector();
   }
+
+  const closeBtn = document.getElementById('btn-close-insp-panel');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => inspector.classList.remove('open'));
+  }
 }
 
 function renderEmptyInspector() {
   inspector.innerHTML = `
+    <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;padding:8px 12px 0">
+      <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+    </div>
     <div class="insp-empty">
       <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="1.5" style="margin:0 auto 8px;display:block">
         <circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>
       </svg>
       <h3>Nothing Selected</h3>
-      <p>Click a node or connection line to inspect and edit its properties</p>
+      <p>Click or tap a node or connection line to inspect and edit its properties</p>
     </div>
     <div class="insp-hints">
-      <div class="hint-row"><div class="hint-dot" style="background:#6366f1"></div><div><strong>Drag node</strong> – click and hold body, then move</div></div>
-      <div class="hint-row"><div class="hint-dot" style="background:#06b6d4"></div><div><strong>Connect</strong> – hover node, drag from a blue dot</div></div>
-      <div class="hint-row"><div class="hint-dot" style="background:#fbbf24"></div><div><strong>Priority badge</strong> – type up to 3 chars, e.g. P01</div></div>
-      <div class="hint-row"><div class="hint-dot" style="background:#ec4899"></div><div><strong>Edit text</strong> – double-click title or description</div></div>
-      <div class="hint-row"><div class="hint-dot" style="background:#10b981"></div><div><strong>Delete</strong> – select + press Delete key</div></div>
+      <div class="hint-row"><div class="hint-dot" style="background:#6366f1"></div><div><strong>Move node</strong> – drag with finger or mouse</div></div>
+      <div class="hint-row"><div class="hint-dot" style="background:#06b6d4"></div><div><strong>Connect</strong> – drag from cyan dot to another node</div></div>
+      <div class="hint-row"><div class="hint-dot" style="background:#38bdf8"></div><div><strong>Pan & Zoom</strong> – 1 finger to pan, 2 fingers to pinch-zoom</div></div>
+      <div class="hint-row"><div class="hint-dot" style="background:#ec4899"></div><div><strong>Edit text</strong> – tap ✏️ or double-click to call keyboard</div></div>
+      <div class="hint-row"><div class="hint-dot" style="background:#fbbf24"></div><div><strong>Priority badge</strong> – tap to type up to 3 chars</div></div>
+      <div class="hint-row"><div class="hint-dot" style="background:#10b981"></div><div><strong>Delete</strong> – tap 🗑 Delete in Inspector or Delete key</div></div>
     </div>
     <div class="insp-section" style="margin-top:auto">
       <div class="insp-title"><span style="background:#94a3b8"></span>Stats</div>
@@ -1469,23 +1648,29 @@ function renderEmptyInspector() {
 function renderNodeInspector(node) {
   inspector.innerHTML = `
     <div class="insp-section">
+      <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;margin-bottom:8px">
+        <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+      </div>
       <div class="insp-title"><span></span>Node Properties</div>
 
       <div class="insp-row">
         <label class="insp-label">Priority Code (max 3 chars)</label>
         <input class="insp-input" id="ip-prio" type="text" maxlength="3"
                value="${esc(node.priority)}" style="font-family:'Fira Code',monospace;font-weight:700;color:#fbbf24;text-transform:uppercase;letter-spacing:.05em"
+               inputmode="text" enterkeyhint="next" autocapitalize="characters"
                spellcheck="false" autocomplete="off"/>
       </div>
 
       <div class="insp-row">
         <label class="insp-label">Title</label>
-        <input class="insp-input" id="ip-title" type="text" value="${esc(node.title)}"/>
+        <input class="insp-input" id="ip-title" type="text" value="${esc(node.title)}"
+               inputmode="text" enterkeyhint="done" autocapitalize="sentences" spellcheck="true"/>
       </div>
 
       <div class="insp-row">
         <label class="insp-label">Description</label>
-        <textarea class="insp-input" id="ip-desc" rows="3">${esc(node.desc)}</textarea>
+        <textarea class="insp-input" id="ip-desc" rows="3"
+                  enterkeyhint="enter" autocapitalize="sentences" spellcheck="true">${esc(node.desc)}</textarea>
       </div>
 
       <div class="insp-row">
@@ -1578,6 +1763,9 @@ function renderConnInspector(conn) {
   const tgt = state.nodes.find(n=>n.id===conn.tgt);
   inspector.innerHTML = `
     <div class="insp-section">
+      <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;margin-bottom:8px">
+        <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+      </div>
       <div class="insp-title"><span style="background:#ec4899"></span>Connection</div>
 
       <div style="font-size:11px;color:#64748b;margin-bottom:12px;background:rgba(255,255,255,0.04);border-radius:6px;padding:8px">
@@ -1606,7 +1794,8 @@ function renderConnInspector(conn) {
 
       <div class="insp-row">
         <label class="insp-label">Label</label>
-        <input class="insp-input" id="cp-label" type="text" value="${esc(conn.label)}" placeholder="e.g. calls, extends…"/>
+        <input class="insp-input" id="cp-label" type="text" value="${esc(conn.label)}" placeholder="e.g. calls, extends…"
+               inputmode="text" enterkeyhint="done" autocapitalize="sentences"/>
       </div>
 
       <div class="insp-row">
@@ -2291,32 +2480,144 @@ function fileToBase64(file) {
 // DEMO DIAGRAM
 // ══════════════════════════════════════════════════════════════
 function loadDemo() {
+  // ═══════════════════════════════════════════════════════════════
+  // 742 EVERGREEN TERRACE — Dysfunctional Systems Architecture v1.0
+  // Springfield, OR  |  Nuclear Hazard Level: MAXIMUM
+  //
+  // Layout: Wide pentagon — Homer at center, 4 characters orbiting.
+  // Zoom 0.85 — all nodes visible, comfortable breathing room.
+  // ═══════════════════════════════════════════════════════════════
+  state.diagramName = '742 Evergreen Terrace — Dysfunctional Systems Architecture';
+  document.getElementById('diagram-name').value = state.diagramName;
+
+  //  Pentagon positions (center ≈ 560, 360  |  orbit radius ≈ 330px)
+  //
+  //        [Bart]            [Marge]
+  //           \               /
+  //            \             /
+  //             ──[Homer]───
+  //            /             \
+  //           /               \
+  //       [Burns]          [Walter]
+  //
   state.nodes = [
-    { id:'n1', x:60,  y:160, w:210, title:'Auth Gateway',    desc:'OAuth2 & JWT verification', priority:'P01', color:'#1e293b', borderColor:'#3b82f6', shape:'rounded',  imageUrl:null, attributes:[], methods:[] },
-    { id:'n2', x:360, y:80,  w:220, title:'User Service',    desc:'Profile & RBAC management',  priority:'P02', color:'#0f172a', borderColor:'#6366f1', shape:'uml-class',imageUrl:null, attributes:['+ userId: UUID','+ email: String'], methods:['+ authenticate()','+ updateProfile()'] },
-    { id:'n3', x:360, y:340, w:200, title:'Database Cluster',desc:'PostgreSQL primary replica',  priority:'SYS', color:'#1e1b4b', borderColor:'#a855f7', shape:'cylinder', imageUrl:null, attributes:[], methods:[] },
-    { id:'n4', x:60,  y:380, w:200, title:'Redis Cache',     desc:'Session store & rate limit', priority:'MEM', color:'#1f2937', borderColor:'#10b981', shape:'rectangle',imageUrl:null, attributes:[], methods:[] },
-    { id:'n5', x:660, y:200, w:210, title:'API Gateway',     desc:'REST routing & auth proxy',  priority:'P01', color:'#1e293b', borderColor:'#f59e0b', shape:'rounded',  imageUrl:null, attributes:[], methods:[] },
+    {
+      id:'homer', x:460, y:320, w:260,
+      title:'Homer J. Simpson',
+      desc:'Chief Nuclear Safety Inspector. Zero safety record since 1989. World record: most "D\'oh"s per minute under reactor pressure.',
+      priority:'D\'H',
+      color:'#1a1a0a', borderColor:'#facc15',
+      shape:'rounded', imageUrl:null,
+      attributes:[], methods:[]
+    },
+    {
+      id:'marge', x:840, y:80, w:260,
+      title:'Marge Simpson',
+      desc:'Load Balancer & Sole Competent Adult. Uptime: 34 yrs. Handles 100% of household crises. No vacations. No sick days. No thanks.',
+      priority:'MVP',
+      color:'#0c1a2e', borderColor:'#38bdf8',
+      shape:'rounded', imageUrl:null,
+      attributes:[], methods:[]
+    },
+    {
+      id:'bart', x:60, y:70, w:260,
+      title:'Bart Simpson',
+      desc:'Chaos Agent & Distributed Denial-of-Service specialist. 94% of Springfield incident reports trace back to this node. SaaS = Skateboard-as-a-Service.',
+      priority:'EAT',
+      color:'#1c0f00', borderColor:'#f97316',
+      shape:'rounded', imageUrl:'/images/bart.jpg',
+      attributes:[], methods:[]
+    },
+    {
+      id:'burns', x:60, y:570, w:260,
+      title:'C. Montgomery Burns',
+      desc:'Legacy Monolith. Age: 104. Tech debt: biblical. Still on COBOL mainframe, 1963. Core villain microservice. Has blocked every PR since 1890.',
+      priority:'EXC',
+      color:'#0d0d0d', borderColor:'#dc2626',
+      shape:'cylinder', imageUrl:'/images/burns.jpg',
+      attributes:[], methods:[]
+    },
+    {
+      id:'walter', x:860, y:570, w:260,
+      title:'"Heisenberg" White',
+      desc:'Chemistry Consultant. Tried to corner Springfield\'s donut-sugar black market. Homer consumed all product in one sitting. Lesson: never ship food-adjacent blue things.',
+      priority:'CH3',
+      color:'#0a0a00', borderColor:'#84cc16',
+      shape:'rounded', imageUrl:'/images/walter.jpg',
+      attributes:[], methods:[]
+    },
   ];
+
   state.connections = [
-    { id:'c1', src:'n1', tgt:'n2', lineType:'one-way', style:'curved',   label:'Verify Token', color:'#60a5fa' },
-    { id:'c2', src:'n2', tgt:'n3', lineType:'two-way', style:'straight', label:'SQL Query',    color:'#c084fc' },
-    { id:'c3', src:'n1', tgt:'n4', lineType:'dotted',  style:'curved',   label:'Session',      color:'#34d399' },
-    { id:'c4', src:'n5', tgt:'n1', lineType:'one-way', style:'curved',   label:'Auth Check',   color:'#fbbf24' },
-    { id:'c5', src:'n5', tgt:'n2', lineType:'one-way', style:'ortho',    label:'User Info',    color:'#f472b6' },
+    // ── Core family bonds ────────────────────────────────────────
+    {
+      id:'c01', src:'homer', tgt:'marge',
+      lineType:'two-way', style:'curved',
+      label:'Married (somehow)', color:'#facc15'
+    },
+    {
+      id:'c02', src:'homer', tgt:'bart',
+      lineType:'one-way', style:'curved',
+      label:'Son (regrets daily)', color:'#f97316'
+    },
+    {
+      id:'c03', src:'burns', tgt:'homer',
+      lineType:'one-way', style:'ortho',
+      label:'Employs (loosely)', color:'#dc2626'
+    },
+
+    // ── Shocking crossover connections ───────────────────────────
+    {
+      id:'c04', src:'walter', tgt:'homer',
+      lineType:'dotted', style:'curved',
+      label:'Homer ate ALL of it', color:'#84cc16'
+    },
+    {
+      id:'c05', src:'bart', tgt:'walter',
+      lineType:'one-way', style:'curved',
+      label:'Secret apprentice 🧪', color:'#a3e635'
+    },
+    {
+      id:'c06', src:'burns', tgt:'walter',
+      lineType:'dotted', style:'curved',
+      label:'VC funding (tax shelter)', color:'#7f1d1d'
+    },
   ];
+
   state.selectedNodeId = null;
   state.selectedConnId = null;
-  state.zoom = 1; state.panX = 30; state.panY = 30;
+  state.zoom = 0.85; state.panX = 60; state.panY = 30;
   applyTransform();
   snapshot();
   renderAll();
-  toast('Demo loaded ✓');
+  toast('🍩 Springfield Systems loaded — D\'oh!');
 }
 
 // ══════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════
+// Viewport resize for screen keyboard: auto-scroll active node into view
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    const activeEl = document.querySelector('.gnode.selected') || document.querySelector('.node-inline-input');
+    if (activeEl) {
+      const rect = activeEl.getBoundingClientRect();
+      if (rect.bottom > window.visualViewport.height) {
+        state.panY -= (rect.bottom - window.visualViewport.height + 24);
+        applyTransform();
+      }
+    }
+  });
+}
+
+// Inspector toggle for mobile/responsive
+const btnToggleInsp = document.getElementById('btn-toggle-inspector');
+if (btnToggleInsp) {
+  btnToggleInsp.addEventListener('click', () => {
+    inspector.classList.toggle('open');
+  });
+}
+
 applyTransform();
 snapshot();
 loadDemo();

@@ -1214,7 +1214,7 @@ function renderNodes() {
 
       <div class="node-body">
         <div class="node-title" data-field="title" data-node-id="${node.id}">${esc(node.title)}</div>
-        ${node.imageUrl ? `<div class="node-img-wrap"><img src="${node.imageUrl}" alt=""/></div>` : ''}
+        ${node.imageUrl ? `<div class="node-img-wrap"><img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}"/></div>` : ''}
         <div class="node-desc" data-field="desc" data-node-id="${node.id}">${esc(node.desc)}</div>
         ${(node.attributes?.length || node.methods?.length) ? `
           <div class="node-uml-attrs">
@@ -1231,6 +1231,12 @@ function renderNodes() {
 
 function esc(s) {
   return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function resolveImgUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) return url;
+  return url.replace(/^[\.\/]+/, '');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1697,7 +1703,7 @@ function renderNodeInspector(node) {
         <label class="insp-label">Image</label>
         ${node.imageUrl ? `
           <div class="img-preview">
-            <img src="${node.imageUrl}" alt=""/>
+            <img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}"/>
             <button class="img-preview-del" id="ip-img-del">✕ Remove</button>
           </div>` : `
           <div class="img-upload-area" id="ip-img-upload">
@@ -2525,7 +2531,7 @@ function loadDemo() {
       desc:'Chaos Agent & Distributed Denial-of-Service specialist. 94% of Springfield incident reports trace back to this node. SaaS = Skateboard-as-a-Service.',
       priority:'EAT',
       color:'#1c0f00', borderColor:'#f97316',
-      shape:'rounded', imageUrl:'/images/bart.jpg',
+      shape:'rounded', imageUrl:'images/bart.jpg',
       attributes:[], methods:[]
     },
     {
@@ -2534,7 +2540,7 @@ function loadDemo() {
       desc:'Legacy Monolith. Age: 104. Tech debt: biblical. Still on COBOL mainframe, 1963. Core villain microservice. Has blocked every PR since 1890.',
       priority:'EXC',
       color:'#0d0d0d', borderColor:'#dc2626',
-      shape:'cylinder', imageUrl:'/images/burns.jpg',
+      shape:'cylinder', imageUrl:'images/burns.jpg',
       attributes:[], methods:[]
     },
     {
@@ -2543,7 +2549,7 @@ function loadDemo() {
       desc:'Chemistry Consultant. Tried to corner Springfield\'s donut-sugar black market. Homer consumed all product in one sitting. Lesson: never ship food-adjacent blue things.',
       priority:'CH3',
       color:'#0a0a00', borderColor:'#84cc16',
-      shape:'rounded', imageUrl:'/images/walter.jpg',
+      shape:'rounded', imageUrl:'images/walter.jpg',
       attributes:[], methods:[]
     },
   ];

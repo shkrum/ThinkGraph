@@ -1214,7 +1214,7 @@ function renderNodes() {
 
       <div class="node-body">
         <div class="node-title" data-field="title" data-node-id="${node.id}">${esc(node.title)}</div>
-        ${node.imageUrl ? `<div class="node-img-wrap"><img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}"/></div>` : ''}
+        ${node.imageUrl ? `<div class="node-img-wrap"><img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}else if(this.dataset.tried==='1'){this.dataset.tried='2';this.src='https://raw.githubusercontent.com/shkrum/ThinkGraph/main/'+this.getAttribute('src')}"/></div>` : ''}
         <div class="node-desc" data-field="desc" data-node-id="${node.id}">${esc(node.desc)}</div>
         ${(node.attributes?.length || node.methods?.length) ? `
           <div class="node-uml-attrs">
@@ -1703,7 +1703,7 @@ function renderNodeInspector(node) {
         <label class="insp-label">Image</label>
         ${node.imageUrl ? `
           <div class="img-preview">
-            <img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}"/>
+            <img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}else if(this.dataset.tried==='1'){this.dataset.tried='2';this.src='https://raw.githubusercontent.com/shkrum/ThinkGraph/main/'+this.getAttribute('src')}"/>
             <button class="img-preview-del" id="ip-img-del">✕ Remove</button>
           </div>` : `
           <div class="img-upload-area" id="ip-img-upload">

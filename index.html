@@ -29,12 +29,21 @@ body{
   background:rgba(10,15,30,0.92);
   border-bottom:1px solid rgba(255,255,255,0.08);
   backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
   display:flex;align-items:center;gap:8px;padding:0 14px;
   z-index:9999;
   flex-shrink:0;
+  overflow:visible !important;
+}
+#tb-tools-scroll{
+  display:flex;align-items:center;gap:8px;
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  min-width:0;
+  flex-shrink:1;
 }
+#tb-tools-scroll::-webkit-scrollbar{display:none}
 #toolbar .logo{
   font-weight:700;font-size:14px;color:#fff;
   background:linear-gradient(135deg,#6366f1,#06b6d4);
@@ -239,14 +248,16 @@ select.insp-input option{background:#1e293b}
 }
 
 /* ─── DROPDOWN MENU & FILE NAME ───────────────────────────── */
-.dropdown { position:relative; display:inline-block; }
+.dropdown { position:relative; display:inline-block; overflow:visible; }
 .dropdown-content {
-  display:none; position:absolute; top:100%; left:0; margin-top:4px;
-  background:rgba(15,23,42,0.95); border:1px solid rgba(255,255,255,0.1);
-  border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.5);
-  min-width:180px; z-index:10000; padding:6px 0; backdrop-filter:blur(16px);
+  display:none; position:absolute; top:calc(100% + 6px); left:0;
+  background:rgba(15,23,42,0.98); border:1px solid rgba(255,255,255,0.15);
+  border-radius:10px; box-shadow:0 16px 36px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.06);
+  min-width:190px; z-index:100000; padding:6px 0; backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
 }
-.dropdown.open .dropdown-content { display:block; }
+.dropdown.open > .dropdown-content { display:block; }
+#user-profile-menu { right:0; left:auto; min-width:240px; }
 .menu-item {
   padding:8px 16px; font-size:12px; color:#e2e8f0; cursor:pointer;
   display:flex; justify-content:space-between; align-items:center;
@@ -366,43 +377,46 @@ textarea.node-inline-input{
 
   <div class="tb-sep"></div>
 
-  <button class="tb-btn primary" id="btn-add-node" title="Add new node to canvas">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    Add Node
-  </button>
+  <!-- Middle action tools scroll container -->
+  <div id="tb-tools-scroll">
+    <button class="tb-btn primary" id="btn-add-node" title="Add new node to canvas">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Node
+    </button>
 
-  <button class="tb-btn amber" id="btn-format" title="Auto-arrange nodes to eliminate overlaps">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="5" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="8" y="16" width="8" height="5" rx="1"/><line x1="6.5" y1="8" x2="6.5" y2="14"/><line x1="17.5" y1="8" x2="17.5" y2="13"/><line x1="6.5" y1="14" x2="17.5" y2="14"/><line x1="12" y1="14" x2="12" y2="16"/></svg>
-    Format
-  </button>
+    <button class="tb-btn amber" id="btn-format" title="Auto-arrange nodes to eliminate overlaps">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="5" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="8" y="16" width="8" height="5" rx="1"/><line x1="6.5" y1="8" x2="6.5" y2="14"/><line x1="17.5" y1="8" x2="17.5" y2="13"/><line x1="6.5" y1="14" x2="17.5" y2="14"/><line x1="12" y1="14" x2="12" y2="16"/></svg>
+      Format
+    </button>
 
-  <div class="tb-sep"></div>
+    <div class="tb-sep"></div>
 
-  <!-- Line type selector -->
-  <span style="font-size:11px;color:#64748b;white-space:nowrap">Line:</span>
-  <div id="line-type-group">
-    <button class="tb-btn active" id="lt-one-way"   data-lt="one-way"  title="Directed arrow →">→ Arrow</button>
-    <button class="tb-btn"        id="lt-two-way"   data-lt="two-way"  title="Bi-directional ↔">↔ Both</button>
-    <button class="tb-btn"        id="lt-dotted"    data-lt="dotted"   title="Dotted dependency - - ->">╌ Dotted</button>
-    <button class="tb-btn"        id="lt-solid"     data-lt="solid"    title="Plain solid line ——">— Solid</button>
+    <!-- Line type selector -->
+    <span style="font-size:11px;color:#64748b;white-space:nowrap">Line:</span>
+    <div id="line-type-group">
+      <button class="tb-btn active" id="lt-one-way"   data-lt="one-way"  title="Directed arrow →">→ Arrow</button>
+      <button class="tb-btn"        id="lt-two-way"   data-lt="two-way"  title="Bi-directional ↔">↔ Both</button>
+      <button class="tb-btn"        id="lt-dotted"    data-lt="dotted"   title="Dotted dependency - - ->">╌ Dotted</button>
+      <button class="tb-btn"        id="lt-solid"     data-lt="solid"    title="Plain solid line ——">— Solid</button>
+    </div>
+
+    <div class="tb-sep"></div>
+
+    <span style="font-size:11px;color:#64748b;white-space:nowrap">Filter:</span>
+    <input id="prio-filter" type="text" maxlength="3" placeholder="P01…" autocomplete="off"
+      style="width:50px;padding:4px 7px;font-size:11px;font-family:'Fira Code',monospace;font-weight:700;color:#fbbf24;text-transform:uppercase;
+             background:rgba(0,0,0,0.4);border:1px solid rgba(251,191,36,0.3);border-radius:6px;outline:none;color:#fbbf24;text-align:center"/>
+
+    <div class="tb-sep"></div>
+
+    <button class="tb-btn" id="btn-demo" title="Load sample demo diagram">⚡ Demo</button>
+    <button class="tb-btn" id="btn-toggle-inspector" title="Toggle Inspector panel">⚙️ Inspector</button>
   </div>
-
-  <div class="tb-sep"></div>
-
-  <span style="font-size:11px;color:#64748b;white-space:nowrap">Filter:</span>
-  <input id="prio-filter" type="text" maxlength="3" placeholder="P01…" autocomplete="off"
-    style="width:50px;padding:4px 7px;font-size:11px;font-family:'Fira Code',monospace;font-weight:700;color:#fbbf24;text-transform:uppercase;
-           background:rgba(0,0,0,0.4);border:1px solid rgba(251,191,36,0.3);border-radius:6px;outline:none;color:#fbbf24;text-align:center"/>
-
-  <div class="tb-sep"></div>
-
-  <button class="tb-btn" id="btn-demo" title="Load sample demo diagram">⚡ Demo</button>
-  <button class="tb-btn" id="btn-toggle-inspector" title="Toggle Inspector panel">⚙️ Inspector</button>
 
   <div style="flex:1"></div>
 
   <!-- Google Sign In Widget (Top-Right Corner) -->
-  <div id="google-auth-container" style="display:flex;align-items:center;gap:8px">
+  <div id="google-auth-container" style="display:flex;align-items:center;gap:8px;position:relative;flex-shrink:0;overflow:visible">
     <button class="tb-btn" id="btn-gdrive-login" style="background:rgba(66,133,244,0.15);border-color:rgba(66,133,244,0.4);color:#93c5fd;font-weight:600">
       <svg width="14" height="14" viewBox="0 0 24 24" style="flex-shrink:0">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -413,22 +427,22 @@ textarea.node-inline-input{
       Sign in with Google
     </button>
 
-    <div class="dropdown" id="user-profile-dropdown" style="display:none">
+    <div class="dropdown" id="user-profile-dropdown" style="display:none;position:relative;overflow:visible">
       <button class="tb-btn" id="btn-user-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(16,185,129,0.4);padding:3px 8px">
         <div id="user-avatar" style="width:20px;height:20px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">U</div>
-        <span id="user-display-name" style="font-size:12px;color:#e2e8f0;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Google User</span>
-        <span style="width:7px;height:7px;border-radius:50%;background:#10b981;flex-shrink:0" title="Connected to Google Drive"></span>
+        <span id="user-display-name" style="font-size:12px;color:#e2e8f0;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">User</span>
+        <span id="user-sync-dot" style="width:7px;height:7px;border-radius:50%;background:#10b981;flex-shrink:0" title="Connected to Google Drive"></span>
       </button>
-      <div class="dropdown-content" id="user-profile-menu" style="right:0;left:auto;min-width:220px">
+      <div class="dropdown-content" id="user-profile-menu">
         <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.1)">
-          <div id="user-full-name" style="font-weight:700;color:#fff;font-size:12px">Google User</div>
+          <div id="user-full-name" style="font-weight:700;color:#fff;font-size:12px">User</div>
           <div id="user-email" style="font-size:10px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis">user@gmail.com</div>
-          <div style="margin-top:6px;font-size:10px;color:#10b981;display:flex;align-items:center;gap:4px">
-            <span>☁️</span> Synced to Google Drive
+          <div id="user-sync-status-badge" style="margin-top:6px;font-size:10px;color:#10b981;display:flex;align-items:center;gap:4px">
+            <span>☁️</span> Connected to Google Drive
           </div>
         </div>
         <div class="menu-item" id="menu-gdrive-sync">Sync Recent Files 🔄</div>
-        <div class="menu-item" id="menu-gdrive-config">Set OAuth Client ID... ⚙️</div>
+        <div class="menu-item" id="menu-gdrive-config">Configure Google Client ID... ⚙️</div>
         <div class="menu-sep"></div>
         <div class="menu-item" id="menu-gdrive-logout" style="color:#fca5a5">Sign Out</div>
       </div>
@@ -439,18 +453,55 @@ textarea.node-inline-input{
 </div>
 
 <!-- ─── CLIENT ID CONFIG MODAL ─────────────────────────────── -->
-<div id="gdrive-client-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:100000;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
-  <div style="background:#0f172a;border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:24px;width:420px;max-width:90vw;box-shadow:0 20px 40px rgba(0,0,0,0.6)">
-    <h3 style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px">Google Drive OAuth Client ID</h3>
-    <p style="font-size:11px;color:#94a3b8;line-height:1.5;margin-bottom:14px">
-      Enter your GCP OAuth 2.0 Client ID to connect to real Google Drive storage. Leaving this blank uses the seamless built-in Cloud Storage engine.
+<div id="gdrive-client-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:100000;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px">
+  <div style="background:#0f172a;border:1px solid rgba(255,255,255,0.18);border-radius:14px;padding:24px;width:480px;max-width:94vw;box-shadow:0 24px 48px rgba(0,0,0,0.7);position:relative">
+    <button id="btn-close-client-modal" style="position:absolute;top:14px;right:14px;background:transparent;border:none;color:#94a3b8;font-size:20px;cursor:pointer;line-height:1;padding:4px" title="Close">&times;</button>
+    
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:36px;height:36px;border-radius:10px;background:rgba(66,133,244,0.15);border:1px solid rgba(66,133,244,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+      </div>
+      <div>
+        <h3 style="font-size:16px;font-weight:700;color:#fff;margin:0">Connect Google Account</h3>
+        <p style="font-size:11px;color:#94a3b8;margin:0">Sync & save diagrams directly to your personal Google Drive</p>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:#cbd5e1;line-height:1.5;margin-bottom:12px">
+      To authenticate with your own Google account, please enter your Google OAuth 2.0 Client ID.
     </p>
-    <label style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;display:block;margin-bottom:4px">Client ID</label>
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Setup Guide</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.4">
+        1. In <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" style="color:#60a5fa;text-decoration:underline">Google Cloud Console &rarr; Credentials</a>, create an OAuth 2.0 Client ID (Web application).<br/>
+        2. Add this origin to <strong>Authorized JavaScript origins</strong>:
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:6px;background:rgba(0,0,0,0.3);padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.07)">
+        <code id="auth-origin-display" style="font-family:'Fira Code',monospace;font-size:11px;color:#38bdf8;flex:1;overflow:hidden;text-overflow:ellipsis">https://shkrum.github.io</code>
+        <button id="btn-copy-origin" class="tb-btn" style="padding:2px 6px;font-size:10px">Copy</button>
+      </div>
+    </div>
+
+    <label style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;display:block;margin-bottom:4px">Google OAuth Client ID</label>
     <input type="text" id="input-client-id" placeholder="e.g. 123456789-abc.apps.googleusercontent.com"
-           style="width:100%;padding:8px 12px;font-size:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:8px;outline:none;margin-bottom:16px;font-family:'Fira Code',monospace" />
-    <div style="display:flex;justify-content:flex-end;gap:8px">
-      <button class="tb-btn" id="btn-cancel-client-id">Cancel</button>
-      <button class="tb-btn primary" id="btn-save-client-id">Save & Connect</button>
+           style="width:100%;padding:9px 12px;font-size:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);color:#fff;border-radius:8px;outline:none;margin-bottom:16px;font-family:'Fira Code',monospace" />
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+      <button class="tb-btn" id="btn-demo-guest-login" style="background:rgba(255,255,255,0.05);color:#94a3b8;font-size:11px" title="Test diagram editing using offline browser storage without Google Cloud setup">
+        Continue as Offline Guest
+      </button>
+      <div style="display:flex;gap:8px">
+        <button class="tb-btn" id="btn-cancel-client-id">Cancel</button>
+        <button class="tb-btn primary" id="btn-save-client-id" style="background:linear-gradient(135deg,#2563eb,#3b82f6);border-color:#3b82f6">
+          Sign In with Google
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -511,6 +562,14 @@ class GoogleDriveService {
     this.tokenClient = null;
     this.listeners = [];
     this.isDemoMode = false;
+
+    // Purge any legacy simulated 'alex.developer' fake session
+    if (this.userProfile && this.userProfile.email === 'alex.developer@gmail.com') {
+      this.userProfile = null;
+      this.accessToken = null;
+      sessionStorage.removeItem('gdrive_user');
+      sessionStorage.removeItem('gdrive_token');
+    }
   }
 
   subscribe(listener) {
@@ -532,53 +591,55 @@ class GoogleDriveService {
 
   getUserState() {
     return {
-      isSignedIn: !!(this.accessToken || this.isDemoMode),
-      user: this.userProfile || (this.isDemoMode ? {
-        name: 'Google Cloud User',
-        email: 'alex.developer@gmail.com',
-        picture: ''
-      } : null),
+      isSignedIn: !!(this.accessToken || (this.isDemoMode && this.userProfile)),
+      user: this.userProfile,
       isDemoMode: this.isDemoMode,
       clientId: this.clientId
     };
   }
 
   async signIn() {
-    const scopes = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata email profile openid';
-    if (window.google?.accounts?.oauth2 && this.clientId) {
-      return new Promise((resolve, reject) => {
-        try {
-          this.tokenClient = window.google.accounts.oauth2.initTokenClient({
-            client_id: this.clientId,
-            scope: scopes,
-            callback: async (tokenResponse) => {
-              if (tokenResponse.error) return reject(new Error(tokenResponse.error_description || tokenResponse.error));
-              this.accessToken = tokenResponse.access_token;
-              sessionStorage.setItem('gdrive_token', this.accessToken);
-              try {
-                const profile = await this.fetchUserProfile(this.accessToken);
-                this.userProfile = profile;
-                sessionStorage.setItem('gdrive_user', JSON.stringify(profile));
-                this.isDemoMode = false;
-                this.notify();
-                resolve(profile);
-              } catch (e) { reject(e); }
-            }
-          });
-          this.tokenClient.requestAccessToken({ prompt: 'consent' });
-        } catch (err) { reject(err); }
-      });
+    if (!this.clientId) {
+      throw new Error('MISSING_CLIENT_ID');
+    }
+    if (!window.google?.accounts?.oauth2) {
+      throw new Error('Google Identity Services script is not loaded. Please check your internet connection or ad-blocker.');
     }
 
-    // Demo / Seamless simulation mode
+    const scopes = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata email profile openid';
+    return new Promise((resolve, reject) => {
+      try {
+        this.tokenClient = window.google.accounts.oauth2.initTokenClient({
+          client_id: this.clientId,
+          scope: scopes,
+          callback: async (tokenResponse) => {
+            if (tokenResponse.error) return reject(new Error(tokenResponse.error_description || tokenResponse.error));
+            this.accessToken = tokenResponse.access_token;
+            sessionStorage.setItem('gdrive_token', this.accessToken);
+            try {
+              const profile = await this.fetchUserProfile(this.accessToken);
+              this.userProfile = profile;
+              sessionStorage.setItem('gdrive_user', JSON.stringify(profile));
+              this.isDemoMode = false;
+              this.notify();
+              resolve(profile);
+            } catch (e) { reject(e); }
+          }
+        });
+        this.tokenClient.requestAccessToken({ prompt: 'consent' });
+      } catch (err) { reject(err); }
+    });
+  }
+
+  signInGuestDemo() {
     this.isDemoMode = true;
     this.userProfile = {
-      name: 'Google Cloud User',
-      email: 'alex.developer@gmail.com',
+      name: 'Offline Guest',
+      email: 'guest@offline.local',
       picture: ''
     };
     sessionStorage.setItem('gdrive_user', JSON.stringify(this.userProfile));
-    sessionStorage.setItem('gdrive_token', 'demo_token_123');
+    sessionStorage.setItem('gdrive_token', 'demo_offline_token');
     this.notify();
     return this.userProfile;
   }
@@ -2025,32 +2086,80 @@ document.addEventListener('click', () => {
 // GOOGLE AUTH UI & CLOUD EXPORT HANDLERS
 // ══════════════════════════════════════════════════════════════
 function updateAuthUI() {
-  const state = googleDriveService.getUserState();
+  const authState = googleDriveService.getUserState();
   const loginBtn = document.getElementById('btn-gdrive-login');
   const userDropdown = document.getElementById('user-profile-dropdown');
 
-  if (state.isSignedIn && state.user) {
+  if (authState.isSignedIn && authState.user) {
     if (loginBtn) loginBtn.style.display = 'none';
     if (userDropdown) userDropdown.style.display = 'inline-block';
 
-    const displayName = state.user.name || state.user.email || 'Google User';
-    document.getElementById('user-display-name').textContent = displayName;
-    document.getElementById('user-full-name').textContent = displayName;
-    document.getElementById('user-email').textContent = state.user.email || '';
+    const displayName = authState.user.name || authState.user.email || 'User';
+    const email = authState.user.email || '';
+
+    const nameEl = document.getElementById('user-display-name');
+    if (nameEl) nameEl.textContent = displayName;
+
+    const fullNameEl = document.getElementById('user-full-name');
+    if (fullNameEl) fullNameEl.textContent = displayName;
+
+    const emailEl = document.getElementById('user-email');
+    if (emailEl) emailEl.textContent = email;
     
     const initials = displayName.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() || 'U';
-    document.getElementById('user-avatar').textContent = initials;
+    const avatarEl = document.getElementById('user-avatar');
+    if (avatarEl) {
+      if (authState.user.picture) {
+        avatarEl.innerHTML = `<img src="${authState.user.picture}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" />`;
+      } else {
+        avatarEl.textContent = initials;
+        avatarEl.style.background = authState.isDemoMode ? '#475569' : '#4f46e5';
+      }
+    }
+
+    const syncBadge = document.getElementById('user-sync-status-badge');
+    const syncDot = document.getElementById('user-sync-dot');
+    if (syncBadge) {
+      if (authState.isDemoMode) {
+        syncBadge.innerHTML = '<span>💾</span> Local Storage Mode (Offline Guest)';
+        syncBadge.style.color = '#94a3b8';
+      } else {
+        syncBadge.innerHTML = '<span>☁️</span> Connected to Google Drive';
+        syncBadge.style.color = '#10b981';
+      }
+    }
+    if (syncDot) {
+      syncDot.style.background = authState.isDemoMode ? '#94a3b8' : '#10b981';
+      syncDot.title = authState.isDemoMode ? 'Local Storage Mode (Offline Guest)' : 'Connected to Google Drive';
+    }
   } else {
     if (loginBtn) loginBtn.style.display = 'flex';
-    if (userDropdown) userDropdown.style.display = 'none';
+    if (userDropdown) {
+      userDropdown.style.display = 'none';
+      userDropdown.classList.remove('open');
+    }
+    const userMenu = document.getElementById('user-profile-menu');
+    if (userMenu) userMenu.style.display = 'none';
   }
 }
 
 googleDriveService.subscribe(() => updateAuthUI());
+updateAuthUI();
 
-async function handleGoogleSignIn() {
+// Update origin display in modal
+const authOriginEl = document.getElementById('auth-origin-display');
+if (authOriginEl) authOriginEl.textContent = window.location.origin;
+
+async function handleGoogleSignIn(forcePromptModal = false) {
+  if (!googleDriveService.clientId || forcePromptModal) {
+    inputClientId.value = googleDriveService.getUserState().clientId || '';
+    if (authOriginEl) authOriginEl.textContent = window.location.origin;
+    clientModal.style.display = 'flex';
+    return;
+  }
+
   try {
-    toast('Signing in to Google Account...');
+    toast('Opening Google Sign-In...');
     const user = await googleDriveService.signIn();
     toast(`Signed in as ${user.name || user.email} ✓`);
     updateAuthUI();
@@ -2062,7 +2171,13 @@ async function handleGoogleSignIn() {
       toast(`Restored last opened diagram "${lastDiag.diagramName || 'Diagram'}" from Google Drive ☁️`);
     }
   } catch(err) {
-    alert('Google Sign-In Error: ' + err.message);
+    if (err.message === 'MISSING_CLIENT_ID') {
+      inputClientId.value = '';
+      if (authOriginEl) authOriginEl.textContent = window.location.origin;
+      clientModal.style.display = 'flex';
+    } else {
+      alert('Google Sign-In: ' + err.message);
+    }
   }
 }
 
@@ -2070,22 +2185,36 @@ document.getElementById('btn-gdrive-login')?.addEventListener('click', () => han
 
 // User Profile dropdown toggle
 const userBadgeBtn = document.getElementById('btn-user-badge');
+const userProfileDropdown = document.getElementById('user-profile-dropdown');
+const userProfileMenu = document.getElementById('user-profile-menu');
+
 if (userBadgeBtn) {
   userBadgeBtn.addEventListener('click', e => {
     e.stopPropagation();
-    const userMenu = document.getElementById('user-profile-menu');
-    userMenu.style.display = userMenu.style.display === 'block' ? 'none' : 'block';
+    if (fmWrap) fmWrap.classList.remove('open');
+    if (userProfileDropdown) userProfileDropdown.classList.toggle('open');
+    if (userProfileMenu) {
+      const isOpen = userProfileMenu.style.display === 'block';
+      userProfileMenu.style.display = isOpen ? 'none' : 'block';
+    }
   });
+}
+
+if (userProfileMenu) {
+  userProfileMenu.addEventListener('click', e => e.stopPropagation());
 }
 
 document.getElementById('menu-gdrive-logout')?.addEventListener('click', () => {
   googleDriveService.signOut();
   updateAuthUI();
-  toast('Signed out from Google Account');
+  if (userProfileMenu) userProfileMenu.style.display = 'none';
+  if (userProfileDropdown) userProfileDropdown.classList.remove('open');
+  toast('Signed out');
 });
 
 document.getElementById('menu-gdrive-sync')?.addEventListener('click', async () => {
-  document.getElementById('user-profile-menu').style.display = 'none';
+  if (userProfileMenu) userProfileMenu.style.display = 'none';
+  if (userProfileDropdown) userProfileDropdown.classList.remove('open');
   toast('Syncing with Google Drive...');
   await syncToCloud();
   renderRecentMenu();
@@ -2097,19 +2226,47 @@ const clientModal = document.getElementById('gdrive-client-modal');
 const inputClientId = document.getElementById('input-client-id');
 
 document.getElementById('menu-gdrive-config')?.addEventListener('click', () => {
-  document.getElementById('user-profile-menu').style.display = 'none';
+  if (userProfileMenu) userProfileMenu.style.display = 'none';
+  if (userProfileDropdown) userProfileDropdown.classList.remove('open');
   inputClientId.value = googleDriveService.getUserState().clientId || '';
+  if (authOriginEl) authOriginEl.textContent = window.location.origin;
   clientModal.style.display = 'flex';
+});
+
+document.getElementById('btn-close-client-modal')?.addEventListener('click', () => {
+  clientModal.style.display = 'none';
 });
 
 document.getElementById('btn-cancel-client-id')?.addEventListener('click', () => {
   clientModal.style.display = 'none';
 });
 
-document.getElementById('btn-save-client-id')?.addEventListener('click', () => {
-  googleDriveService.setClientId(inputClientId.value);
+document.getElementById('btn-copy-origin')?.addEventListener('click', () => {
+  const origin = window.location.origin;
+  navigator.clipboard.writeText(origin).then(() => {
+    toast('Copied origin to clipboard ✓');
+  }).catch(() => {
+    toast('Origin: ' + origin);
+  });
+});
+
+document.getElementById('btn-demo-guest-login')?.addEventListener('click', () => {
   clientModal.style.display = 'none';
-  toast('Saved Google Client ID settings ✓');
+  const user = googleDriveService.signInGuestDemo();
+  toast(`Continuing as ${user.name} ✓`);
+  updateAuthUI();
+});
+
+document.getElementById('btn-save-client-id')?.addEventListener('click', async () => {
+  const val = (inputClientId.value || '').trim();
+  if (!val) {
+    alert('Please enter your Google Cloud OAuth Client ID, or click "Continue as Offline Guest".');
+    return;
+  }
+  googleDriveService.setClientId(val);
+  clientModal.style.display = 'none';
+  toast('Client ID saved. Connecting to Google...');
+  await handleGoogleSignIn();
 });
 
 // ── Google Drive File & Image Export ──────────────────────────
@@ -2117,6 +2274,7 @@ async function exportToGoogleDriveFile() {
   if (!googleDriveService.getUserState().isSignedIn) {
     if (confirm('Sign in to Google Account to export to Google Drive?')) {
       await handleGoogleSignIn();
+      if (!googleDriveService.getUserState().isSignedIn) return;
     } else return;
   }
 
@@ -2144,6 +2302,7 @@ async function exportToGoogleDriveImage() {
   if (!googleDriveService.getUserState().isSignedIn) {
     if (confirm('Sign in to Google Account to export image to Google Drive?')) {
       await handleGoogleSignIn();
+      if (!googleDriveService.getUserState().isSignedIn) return;
     } else return;
   }
 

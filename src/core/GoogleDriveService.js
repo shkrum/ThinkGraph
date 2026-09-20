@@ -21,6 +21,14 @@ export class GoogleDriveService {
     this.listeners = [];
     this.isDemoMode = false;
 
+    // Purge any legacy simulated 'alex.developer' fake session
+    if (this.userProfile && this.userProfile.email === 'alex.developer@gmail.com') {
+      this.userProfile = null;
+      this.accessToken = null;
+      sessionStorage.removeItem('gdrive_user');
+      sessionStorage.removeItem('gdrive_token');
+    }
+
     // Load saved user state if present
     if (this.userProfile && this.accessToken) {
       console.log('Restored Google Auth session for:', this.userProfile.email);
@@ -41,7 +49,7 @@ export class GoogleDriveService {
   }
 
   setClientId(clientId) {
-    this.clientId = clientId.trim();
+    this.clientId = (clientId || '').trim();
     if (this.clientId) {
       localStorage.setItem('gdrive_client_id', this.clientId);
     } else {
@@ -53,12 +61,8 @@ export class GoogleDriveService {
 
   getUserState() {
     return {
-      isSignedIn: !!(this.accessToken || this.isDemoMode),
-      user: this.userProfile || (this.isDemoMode ? {
-        name: 'Google Cloud User',
-        email: 'alex.developer@gmail.com',
-        picture: ''
-      } : null),
+      isSignedIn: !!(this.accessToken || (this.isDemoMode && this.userProfile)),
+      user: this.userProfile,
       isDemoMode: this.isDemoMode,
       clientId: this.clientId
     };
@@ -68,51 +72,60 @@ export class GoogleDriveService {
    * Initiate Google OAuth Sign In
    */
   async signIn() {
-    // If real Google Identity Services (GIS) is available and Client ID is configured
-    if (window.google?.accounts?.oauth2 && this.clientId) {
-      return new Promise((resolve, reject) => {
-        try {
-          this.tokenClient = window.google.accounts.oauth2.initTokenClient({
-            client_id: this.clientId,
-            scope: DEFAULT_SCOPES,
-            callback: async (tokenResponse) => {
-              if (tokenResponse.error) {
-                console.error('Google Auth Error:', tokenResponse);
-                return reject(new Error(tokenResponse.error_description || tokenResponse.error));
-              }
-              this.accessToken = tokenResponse.access_token;
-              sessionStorage.setItem('gdrive_token', this.accessToken);
-
-              // Fetch User Info
-              try {
-                const profile = await this.fetchUserProfile(this.accessToken);
-                this.userProfile = profile;
-                sessionStorage.setItem('gdrive_user', JSON.stringify(profile));
-                this.isDemoMode = false;
-                this.notify();
-                resolve(profile);
-              } catch (e) {
-                console.error('Failed to fetch user profile:', e);
-                reject(e);
-              }
-            }
-          });
-          this.tokenClient.requestAccessToken({ prompt: 'consent' });
-        } catch (err) {
-          reject(err);
-        }
-      });
+    if (!this.clientId) {
+      throw new Error('MISSING_CLIENT_ID');
     }
 
-    // Demo/Simulated Sign-In Mode if no Client ID is provided
+    if (!window.google?.accounts?.oauth2) {
+      throw new Error('Google Identity Services library is not loaded. Please check your internet connection or ad-blocker.');
+    }
+
+    return new Promise((resolve, reject) => {
+      try {
+        this.tokenClient = window.google.accounts.oauth2.initTokenClient({
+          client_id: this.clientId,
+          scope: DEFAULT_SCOPES,
+          callback: async (tokenResponse) => {
+            if (tokenResponse.error) {
+              console.error('Google Auth Error:', tokenResponse);
+              return reject(new Error(tokenResponse.error_description || tokenResponse.error));
+            }
+            this.accessToken = tokenResponse.access_token;
+            sessionStorage.setItem('gdrive_token', this.accessToken);
+
+            // Fetch User Info
+            try {
+              const profile = await this.fetchUserProfile(this.accessToken);
+              this.userProfile = profile;
+              sessionStorage.setItem('gdrive_user', JSON.stringify(profile));
+              this.isDemoMode = false;
+              this.notify();
+              resolve(profile);
+            } catch (e) {
+              console.error('Failed to fetch user profile:', e);
+              reject(e);
+            }
+          }
+        });
+        this.tokenClient.requestAccessToken({ prompt: 'consent' });
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  /**
+   * Explicit Guest / Offline Mode for testing without Google Cloud credentials
+   */
+  signInGuestDemo() {
     this.isDemoMode = true;
     this.userProfile = {
-      name: 'Google Cloud User',
-      email: 'alex.developer@gmail.com',
+      name: 'Offline Guest',
+      email: 'guest@offline.local',
       picture: ''
     };
     sessionStorage.setItem('gdrive_user', JSON.stringify(this.userProfile));
-    sessionStorage.setItem('gdrive_token', 'demo_token_123');
+    sessionStorage.setItem('gdrive_token', 'demo_offline_token');
     this.notify();
     return this.userProfile;
   }

@@ -1,0 +1,2791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content"/>
+<title>UML Graph Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:#0a0f1e;
+  color:#f1f5f9;
+  overflow:hidden;
+  height:100vh;
+  width:100vw;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ─── TOOLBAR ─────────────────────────────────────────────── */
+#toolbar{
+  position:fixed;top:0;left:0;right:0;height:56px;
+  background:rgba(10,15,30,0.92);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  display:flex;align-items:center;gap:8px;padding:0 14px;
+  z-index:9999;
+  flex-shrink:0;
+  overflow:visible !important;
+}
+#tb-tools-scroll{
+  display:flex;align-items:center;gap:8px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  min-width:0;
+  flex-shrink:1;
+}
+#tb-tools-scroll::-webkit-scrollbar{display:none}
+#toolbar .logo{
+  font-weight:700;font-size:14px;color:#fff;
+  background:linear-gradient(135deg,#6366f1,#06b6d4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  white-space:nowrap;margin-right:4px;
+}
+.tb-sep{width:1px;height:28px;background:rgba(255,255,255,0.1);flex-shrink:0}
+.tb-btn{
+  display:flex;align-items:center;gap:5px;padding:6px 10px;
+  border-radius:7px;border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.05);color:#cbd5e1;
+  font-size:12px;font-weight:500;cursor:pointer;
+  white-space:nowrap;transition:all 0.15s;flex-shrink:0;
+  touch-action:manipulation;
+}
+.tb-btn:hover{background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.2)}
+.tb-btn.active{background:rgba(99,102,241,0.25);border-color:#6366f1;color:#a5b4fc}
+.tb-btn.primary{background:linear-gradient(135deg,#4f46e5,#6366f1);border-color:#6366f1;color:#fff}
+.tb-btn.primary:hover{background:linear-gradient(135deg,#6366f1,#818cf8)}
+.tb-btn.danger{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);color:#fca5a5}
+.tb-btn.danger:hover{background:rgba(239,68,68,0.3)}
+.tb-btn.green{background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.4);color:#6ee7b7}
+.tb-btn.amber{background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.4);color:#fcd34d}
+.tb-btn svg{flex-shrink:0}
+
+#line-type-group{display:flex;gap:3px;padding:3px;background:rgba(0,0,0,0.3);border-radius:8px;border:1px solid rgba(255,255,255,0.06)}
+
+/* ─── CANVAS ──────────────────────────────────────────────── */
+#canvas-root{
+  position:fixed;top:56px;left:0;right:320px;bottom:0;
+  background:#0a0f1e;
+  background-image:radial-gradient(rgba(255,255,255,0.07) 1.2px, transparent 1.2px);
+  background-size:24px 24px;
+  overflow:hidden;cursor:default;
+  touch-action:none;
+}
+#canvas-root.panning{cursor:grabbing}
+
+#world{position:absolute;top:0;left:0;transform-origin:0 0;touch-action:none}
+
+/* SVG connections layer */
+#svg-layer{position:absolute;top:0;left:0;width:6000px;height:6000px;overflow:visible;pointer-events:none;touch-action:none}
+#svg-layer path.hit{stroke:transparent;stroke-width:24;fill:none;cursor:pointer;pointer-events:stroke;touch-action:none}
+#svg-layer path.vis{fill:none;pointer-events:none}
+#svg-layer path.vis.selected{stroke:#ec4899!important}
+#svg-layer text.conn-label{font-family:'Inter',sans-serif;font-size:10px;fill:#e2e8f0;font-weight:600;pointer-events:none}
+#svg-layer rect.conn-label-bg{fill:#0f172a;pointer-events:none}
+
+/* Draft line during connection drag */
+#draft-line{pointer-events:none;fill:none;stroke:#38bdf8;stroke-width:2;stroke-dasharray:6 4}
+
+/* ─── NODES ───────────────────────────────────────────────── */
+.gnode{
+  position:absolute;
+  min-width:180px;
+  background:#1e293b;
+  border:2px solid #334155;
+  border-radius:10px;
+  box-shadow:0 4px 24px rgba(0,0,0,0.5);
+  cursor:grab;
+  transition:box-shadow 0.15s, border-color 0.15s;
+  overflow:visible;
+  touch-action:none;
+}
+.gnode.selected{border-color:#6366f1;box-shadow:0 0 0 2px rgba(99,102,241,0.4),0 4px 24px rgba(0,0,0,0.6)}
+.gnode:active{cursor:grabbing}
+
+/* Anchor ports with enlarged touch hit area */
+.gnode .port{
+  position:absolute;width:12px;height:12px;
+  background:#06b6d4;border:2px solid #0a0f1e;border-radius:50%;
+  cursor:crosshair;opacity:0;transition:opacity 0.15s,transform 0.15s;z-index:10;
+  touch-action:none;
+}
+.gnode .port::after{
+  content:'';position:absolute;inset:-14px;border-radius:50%;
+}
+.gnode:hover .port,.gnode.selected .port{opacity:1;pointer-events:auto}
+.gnode .port:hover,.gnode .port:active{transform:scale(1.5);background:#38bdf8;box-shadow:0 0 8px #38bdf8}
+.port[data-anchor="top"]   {top:-6px;left:calc(50% - 6px)}
+.port[data-anchor="right"] {right:-6px;top:calc(50% - 6px)}
+.port[data-anchor="bottom"]{bottom:-6px;left:calc(50% - 6px)}
+.port[data-anchor="left"]  {left:-6px;top:calc(50% - 6px)}
+
+/* Node header bar with priority */
+.node-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 10px 6px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  gap:8px;
+}
+.node-head .prio-wrap{display:flex;align-items:center;gap:4px}
+.node-head .prio-label{font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.node-prio-input{
+  font-family:'Fira Code',monospace;font-weight:700;font-size:11px;
+  color:#fbbf24;background:rgba(0,0,0,0.4);
+  border:1px solid rgba(251,191,36,0.35);border-radius:5px;
+  padding:2px 5px;width:38px;text-align:center;outline:none;
+  text-transform:uppercase;letter-spacing:.05em;
+  cursor:text;
+}
+.node-prio-input:focus{border-color:#fbbf24;box-shadow:0 0 0 2px rgba(251,191,36,0.2)}
+.node-id-tag{font-size:9px;color:#475569;font-family:'Fira Code',monospace}
+
+/* Node body */
+.node-body{padding:8px 10px 10px}
+
+.node-title{
+  font-weight:700;font-size:13px;color:#f1f5f9;
+  line-height:1.3;margin-bottom:4px;
+  border-radius:4px;
+  word-wrap:break-word;overflow-wrap:anywhere;
+}
+.node-desc{
+  font-size:11px;color:#94a3b8;line-height:1.45;
+  border-radius:4px;
+  word-wrap:break-word;overflow-wrap:anywhere;
+}
+
+/* Editable state for title/desc */
+.node-title[contenteditable="true"],
+.node-desc[contenteditable="true"]{
+  outline:1px solid #6366f1;background:rgba(99,102,241,0.08);
+  padding:2px 4px;cursor:text;
+  user-select:text;
+}
+
+/* Node image */
+.node-img-wrap{
+  margin:6px 0 0;border-radius:7px;overflow:hidden;
+  border:1px solid rgba(255,255,255,0.08);
+  max-height:140px;display:flex;align-items:center;justify-content:center;
+  background:#0f172a;
+}
+.node-img-wrap img{width:100%;height:100%;object-fit:contain;max-height:136px;display:block}
+
+/* UML class section */
+.node-uml-attrs{
+  margin-top:6px;padding-top:6px;
+  border-top:1px solid rgba(255,255,255,0.07);
+  font-family:'Fira Code',monospace;font-size:10px;
+  color:#a5b4fc;line-height:1.6;
+}
+.node-uml-methods{color:#6ee7b7}
+
+/* ─── INSPECTOR ───────────────────────────────────────────── */
+#inspector{
+  position:fixed;top:56px;right:0;bottom:0;width:320px;
+  background:rgba(10,15,30,0.94);
+  border-left:1px solid rgba(255,255,255,0.07);
+  backdrop-filter:blur(16px);
+  display:flex;flex-direction:column;
+  overflow-y:auto;z-index:100;
+}
+.insp-section{padding:14px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.insp-title{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.insp-title span{width:6px;height:6px;border-radius:50%;background:#6366f1;display:inline-block}
+.insp-row{margin-bottom:10px}
+.insp-label{font-size:10px;color:#64748b;font-weight:600;margin-bottom:4px;display:block;text-transform:uppercase;letter-spacing:.04em}
+.insp-input{
+  width:100%;padding:6px 9px;font-size:12px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+  color:#e2e8f0;border-radius:7px;outline:none;font-family:inherit;
+  transition:border-color 0.15s;
+}
+.insp-input:focus{border-color:#6366f1;background:rgba(99,102,241,0.08)}
+textarea.insp-input{resize:vertical;min-height:60px}
+select.insp-input option{background:#1e293b}
+.insp-input[type="color"]{height:32px;padding:2px 4px;cursor:pointer}
+.insp-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+.insp-del-btn{
+  width:100%;padding:7px;font-size:12px;font-weight:600;
+  background:rgba(239,68,68,0.1);color:#fca5a5;
+  border:1px solid rgba(239,68,68,0.3);border-radius:7px;
+  cursor:pointer;transition:all 0.15s;margin-top:4px;
+}
+.insp-del-btn:hover{background:rgba(239,68,68,0.25);border-color:rgba(239,68,68,0.6)}
+
+.insp-empty{
+  padding:40px 20px;text-align:center;color:#475569;
+}
+.insp-empty h3{font-size:13px;color:#64748b;margin:8px 0 4px;font-weight:600}
+.insp-empty p{font-size:11px;line-height:1.5}
+
+.insp-hints{padding:14px}
+.hint-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:11px;color:#64748b}
+.hint-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:4px}
+
+.img-upload-area{
+  border:2px dashed rgba(255,255,255,0.1);border-radius:8px;
+  padding:14px;text-align:center;cursor:pointer;
+  transition:border-color 0.15s;color:#64748b;font-size:11px;
+}
+.img-upload-area:hover{border-color:#6366f1;color:#a5b4fc}
+.img-preview{position:relative;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);margin-top:6px}
+.img-preview img{width:100%;display:block;max-height:120px;object-fit:contain;background:#0f172a}
+.img-preview-del{
+  position:absolute;top:4px;right:4px;padding:2px 6px;font-size:10px;
+  background:rgba(239,68,68,0.8);color:#fff;border-radius:4px;cursor:pointer;
+  border:none;
+}
+
+/* ─── DROPDOWN MENU & FILE NAME ───────────────────────────── */
+.dropdown { position:relative; display:inline-block; overflow:visible; }
+.dropdown-content {
+  display:none; position:absolute; top:calc(100% + 6px); left:0;
+  background:rgba(15,23,42,0.98); border:1px solid rgba(255,255,255,0.15);
+  border-radius:10px; box-shadow:0 16px 36px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.06);
+  min-width:190px; z-index:100000; padding:6px 0; backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+.dropdown.open > .dropdown-content { display:block; }
+#user-profile-menu { right:0; left:auto; min-width:240px; }
+.menu-item {
+  padding:8px 16px; font-size:12px; color:#e2e8f0; cursor:pointer;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.menu-item:hover { background:rgba(99,102,241,0.2); color:#fff; }
+.menu-sep { height:1px; background:rgba(255,255,255,0.1); margin:4px 0; }
+.menu-item.has-sub { position:relative; }
+.submenu {
+  display:none; position:absolute; top:-6px; left:100%; margin-left:4px;
+  background:rgba(15,23,42,0.95); border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px; min-width:200px; padding:6px 0; max-height:300px; overflow-y:auto;
+  box-shadow:0 10px 25px rgba(0,0,0,0.5);
+}
+.menu-item.has-sub:hover .submenu { display:block; }
+.submenu-empty { padding:8px 16px; font-size:11px; color:#64748b; font-style:italic; }
+
+#diagram-name {
+  background:transparent; border:none; border-bottom:1px solid transparent;
+  color:#f1f5f9; font-size:13px; font-weight:600; font-family:'Inter',sans-serif;
+  outline:none; width:160px; padding:4px 8px; border-radius:4px;
+  transition:all 0.2s;
+}
+#diagram-name:hover, #diagram-name:focus { background:rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.2); }
+
+/* ─── ZOOM CONTROLS ───────────────────────────────────────── */
+#zoom-controls{
+  position:fixed;bottom:16px;left:16px;
+  display:flex;align-items:center;gap:4px;
+  background:rgba(10,15,30,0.9);border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;padding:5px 8px;backdrop-filter:blur(10px);z-index:200;
+}
+.zc-btn{
+  width:26px;height:26px;display:flex;align-items:center;justify-content:center;
+  background:transparent;border:none;color:#94a3b8;cursor:pointer;border-radius:5px;
+  font-size:16px;font-weight:700;transition:all 0.15s;
+}
+.zc-btn:hover{background:rgba(255,255,255,0.1);color:#fff}
+#zoom-label{font-size:11px;color:#64748b;font-family:'Fira Code',monospace;min-width:38px;text-align:center}
+.zc-sep{width:1px;height:16px;background:rgba(255,255,255,0.1)}
+
+/* ─── TOAST ───────────────────────────────────────────────── */
+#toast{
+  position:fixed;bottom:60px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:#1e293b;border:1px solid rgba(255,255,255,0.12);
+  color:#e2e8f0;padding:8px 16px;border-radius:8px;font-size:12px;
+  opacity:0;transition:opacity 0.2s,transform 0.2s;pointer-events:none;z-index:9999;
+  box-shadow:0 4px 20px rgba(0,0,0,0.5);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Node Edit Button & Inline Input */
+.node-edit-btn{
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  border-radius:4px;color:#cbd5e1;font-size:10px;padding:2px 5px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:3px;transition:all 0.15s;line-height:1;
+  touch-action:manipulation;
+}
+.node-edit-btn:hover,.node-edit-btn:active{background:rgba(99,102,241,0.3);color:#fff;border-color:#6366f1}
+
+.node-inline-input{
+  width:100%;background:rgba(15,23,42,0.95);border:1.5px solid #6366f1;border-radius:5px;
+  color:#f1f5f9;padding:4px 6px;font-family:inherit;font-size:13px;font-weight:600;
+  outline:none;box-shadow:0 0 0 3px rgba(99,102,241,0.25);box-sizing:border-box;
+}
+textarea.node-inline-input{
+  font-size:11px;font-weight:400;resize:vertical;min-height:54px;line-height:1.4;
+}
+
+/* Mobile & Touchscreen Adaptations */
+@media (max-width: 768px) {
+  #canvas-root{right:0}
+  #inspector{
+    width:100%;max-width:340px;
+    transform:translateX(100%);transition:transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow:-4px 0 24px rgba(0,0,0,0.6);
+  }
+  #inspector.open{transform:translateX(0)}
+  .insp-mobile-close-bar{display:flex!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ─── TOOLBAR ─────────────────────────────────────────── -->
+<div id="toolbar">
+  <div class="logo">⬡ UML Graph Studio</div>
+
+  <div class="dropdown" id="file-menu-wrap">
+    <button class="tb-btn" id="btn-file-menu" style="border:none;background:transparent;font-size:13px">File ▾</button>
+    <div class="dropdown-content" id="file-menu-dropdown">
+      <div class="menu-item" id="menu-new">New Diagram</div>
+      <div class="menu-item" id="menu-open">Open Locally...</div>
+      <div class="menu-item has-sub">
+        Recent Diagrams ▸
+        <div class="submenu" id="menu-recent-list">
+          <div class="submenu-empty">No recent diagrams</div>
+        </div>
+      </div>
+      <div class="menu-sep"></div>
+      <div class="menu-item has-sub">
+        Export Diagram ▸
+        <div class="submenu">
+          <div class="menu-item" id="menu-export-json">As .umlgraph (Data)</div>
+          <div class="menu-item" id="menu-export-png">As .png (Image)</div>
+          <div class="menu-item" id="menu-export-html">As .html (Webpage)</div>
+          <div class="menu-sep"></div>
+          <div class="menu-item" id="menu-export-gdrive-file" style="color:#60a5fa">☁️ Save to Google Drive (.umlgraph)</div>
+          <div class="menu-item" id="menu-export-gdrive-img" style="color:#60a5fa">☁️ Save PNG to Google Drive (.png)</div>
+        </div>
+      </div>
+      <div class="menu-sep"></div>
+      <div class="menu-item" id="menu-close" style="color:#fca5a5">Close Canvas</div>
+    </div>
+  </div>
+
+  <input type="text" id="diagram-name" value="Untitled Diagram" autocomplete="off" spellcheck="false" />
+
+  <div class="tb-sep"></div>
+
+  <!-- Middle action tools scroll container -->
+  <div id="tb-tools-scroll">
+    <button class="tb-btn primary" id="btn-add-node" title="Add new node to canvas">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Node
+    </button>
+
+    <button class="tb-btn amber" id="btn-format" title="Auto-arrange nodes to eliminate overlaps">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="5" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="8" y="16" width="8" height="5" rx="1"/><line x1="6.5" y1="8" x2="6.5" y2="14"/><line x1="17.5" y1="8" x2="17.5" y2="13"/><line x1="6.5" y1="14" x2="17.5" y2="14"/><line x1="12" y1="14" x2="12" y2="16"/></svg>
+      Format
+    </button>
+
+    <div class="tb-sep"></div>
+
+    <!-- Line type selector -->
+    <span style="font-size:11px;color:#64748b;white-space:nowrap">Line:</span>
+    <div id="line-type-group">
+      <button class="tb-btn active" id="lt-one-way"   data-lt="one-way"  title="Directed arrow →">→ Arrow</button>
+      <button class="tb-btn"        id="lt-two-way"   data-lt="two-way"  title="Bi-directional ↔">↔ Both</button>
+      <button class="tb-btn"        id="lt-dotted"    data-lt="dotted"   title="Dotted dependency - - ->">╌ Dotted</button>
+      <button class="tb-btn"        id="lt-solid"     data-lt="solid"    title="Plain solid line ——">— Solid</button>
+    </div>
+
+    <div class="tb-sep"></div>
+
+    <span style="font-size:11px;color:#64748b;white-space:nowrap">Filter:</span>
+    <input id="prio-filter" type="text" maxlength="3" placeholder="P01…" autocomplete="off"
+      style="width:50px;padding:4px 7px;font-size:11px;font-family:'Fira Code',monospace;font-weight:700;color:#fbbf24;text-transform:uppercase;
+             background:rgba(0,0,0,0.4);border:1px solid rgba(251,191,36,0.3);border-radius:6px;outline:none;color:#fbbf24;text-align:center"/>
+
+    <div class="tb-sep"></div>
+
+    <button class="tb-btn" id="btn-demo" title="Load sample demo diagram">⚡ Demo</button>
+    <button class="tb-btn" id="btn-toggle-inspector" title="Toggle Inspector panel">⚙️ Inspector</button>
+  </div>
+
+  <div style="flex:1"></div>
+
+  <!-- Google Sign In Widget (Top-Right Corner) -->
+  <div id="google-auth-container" style="display:flex;align-items:center;gap:8px;position:relative;flex-shrink:0;overflow:visible">
+    <button class="tb-btn" id="btn-gdrive-login" style="background:rgba(66,133,244,0.15);border-color:rgba(66,133,244,0.4);color:#93c5fd;font-weight:600">
+      <svg width="14" height="14" viewBox="0 0 24 24" style="flex-shrink:0">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.62z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+      </svg>
+      Sign in with Google
+    </button>
+
+    <div class="dropdown" id="user-profile-dropdown" style="display:none;position:relative;overflow:visible">
+      <button class="tb-btn" id="btn-user-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(16,185,129,0.4);padding:3px 8px">
+        <div id="user-avatar" style="width:20px;height:20px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">U</div>
+        <span id="user-display-name" style="font-size:12px;color:#e2e8f0;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">User</span>
+        <span id="user-sync-dot" style="width:7px;height:7px;border-radius:50%;background:#10b981;flex-shrink:0" title="Connected to Google Drive"></span>
+      </button>
+      <div class="dropdown-content" id="user-profile-menu">
+        <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.1)">
+          <div id="user-full-name" style="font-weight:700;color:#fff;font-size:12px">User</div>
+          <div id="user-email" style="font-size:10px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis">user@gmail.com</div>
+          <div id="user-sync-status-badge" style="margin-top:6px;font-size:10px;color:#10b981;display:flex;align-items:center;gap:4px">
+            <span>☁️</span> Connected to Google Drive
+          </div>
+        </div>
+        <div class="menu-item" id="menu-gdrive-sync">Sync Recent Files 🔄</div>
+        <div class="menu-item" id="menu-gdrive-config">Configure Google Client ID... ⚙️</div>
+        <div class="menu-sep"></div>
+        <div class="menu-item" id="menu-gdrive-logout" style="color:#fca5a5">Sign Out</div>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="file-import" accept=".json,.umlgraph" style="display:none"/>
+</div>
+
+<!-- ─── CLIENT ID CONFIG MODAL ─────────────────────────────── -->
+<div id="gdrive-client-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:100000;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px">
+  <div style="background:#0f172a;border:1px solid rgba(255,255,255,0.18);border-radius:14px;padding:24px;width:480px;max-width:94vw;box-shadow:0 24px 48px rgba(0,0,0,0.7);position:relative">
+    <button id="btn-close-client-modal" style="position:absolute;top:14px;right:14px;background:transparent;border:none;color:#94a3b8;font-size:20px;cursor:pointer;line-height:1;padding:4px" title="Close">&times;</button>
+    
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:36px;height:36px;border-radius:10px;background:rgba(66,133,244,0.15);border:1px solid rgba(66,133,244,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+      </div>
+      <div>
+        <h3 style="font-size:16px;font-weight:700;color:#fff;margin:0">Connect Google Account</h3>
+        <p style="font-size:11px;color:#94a3b8;margin:0">Sync & save diagrams directly to your personal Google Drive</p>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:#cbd5e1;line-height:1.5;margin-bottom:12px">
+      To authenticate with your own Google account, please enter your Google OAuth 2.0 Client ID.
+    </p>
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Setup Guide</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.4">
+        1. In <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" style="color:#60a5fa;text-decoration:underline">Google Cloud Console &rarr; Credentials</a>, create an OAuth 2.0 Client ID (Web application).<br/>
+        2. Add this origin to <strong>Authorized JavaScript origins</strong>:
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:6px;background:rgba(0,0,0,0.3);padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.07)">
+        <code id="auth-origin-display" style="font-family:'Fira Code',monospace;font-size:11px;color:#38bdf8;flex:1;overflow:hidden;text-overflow:ellipsis">https://shkrum.github.io</code>
+        <button id="btn-copy-origin" class="tb-btn" style="padding:2px 6px;font-size:10px">Copy</button>
+      </div>
+    </div>
+
+    <label style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;display:block;margin-bottom:4px">Google OAuth Client ID</label>
+    <input type="text" id="input-client-id" placeholder="e.g. 123456789-abc.apps.googleusercontent.com"
+           style="width:100%;padding:9px 12px;font-size:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);color:#fff;border-radius:8px;outline:none;margin-bottom:16px;font-family:'Fira Code',monospace" />
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+      <button class="tb-btn" id="btn-demo-guest-login" style="background:rgba(255,255,255,0.05);color:#94a3b8;font-size:11px" title="Test diagram editing using offline browser storage without Google Cloud setup">
+        Continue as Offline Guest
+      </button>
+      <div style="display:flex;gap:8px">
+        <button class="tb-btn" id="btn-cancel-client-id">Cancel</button>
+        <button class="tb-btn primary" id="btn-save-client-id" style="background:linear-gradient(135deg,#2563eb,#3b82f6);border-color:#3b82f6">
+          Sign In with Google
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CANVAS ─────────────────────────────────────────────── -->
+<div id="canvas-root">
+  <div id="world">
+    <svg id="svg-layer">
+      <defs>
+        <marker id="arr-end" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0,1 L10,5 L0,9 Z"/>
+        </marker>
+        <marker id="arr-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+          <path d="M10,1 L0,5 L10,9 Z"/>
+        </marker>
+        <marker id="arr-end-sel" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0,1 L10,5 L0,9 Z" fill="#ec4899"/>
+        </marker>
+        <marker id="arr-start-sel" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+          <path d="M10,1 L0,5 L10,9 Z" fill="#ec4899"/>
+        </marker>
+      </defs>
+      <g id="conn-group"></g>
+      <path id="draft-line" d=""/>
+    </svg>
+  </div>
+</div>
+
+<!-- ─── INSPECTOR ──────────────────────────────────────────── -->
+<div id="inspector"></div>
+
+<!-- ─── ZOOM CONTROLS ─────────────────────────────────────── -->
+<div id="zoom-controls">
+  <button class="zc-btn" id="zc-in">+</button>
+  <span id="zoom-label">100%</span>
+  <button class="zc-btn" id="zc-out">−</button>
+  <div class="zc-sep"></div>
+  <button class="zc-btn" id="zc-reset" style="font-size:11px;width:auto;padding:0 6px">Reset</button>
+</div>
+
+<!-- ─── TOAST ──────────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<!-- ─── HIDDEN FILE INPUT FOR IMG ─────────────────────────── -->
+<input type="file" id="img-file-input" accept="image/*" style="display:none"/>
+
+<script>
+'use strict';
+
+// ══════════════════════════════════════════════════════════════
+// GOOGLE DRIVE SERVICE & OAUTH MANAGER
+// ══════════════════════════════════════════════════════════════
+class GoogleDriveService {
+  constructor() {
+    this.clientId = localStorage.getItem('gdrive_client_id') || '';
+    this.accessToken = sessionStorage.getItem('gdrive_token') || null;
+    this.userProfile = JSON.parse(sessionStorage.getItem('gdrive_user') || 'null');
+    this.tokenClient = null;
+    this.listeners = [];
+    this.isDemoMode = false;
+
+    // Purge any legacy simulated 'alex.developer' fake session
+    if (this.userProfile && this.userProfile.email === 'alex.developer@gmail.com') {
+      this.userProfile = null;
+      this.accessToken = null;
+      sessionStorage.removeItem('gdrive_user');
+      sessionStorage.removeItem('gdrive_token');
+    }
+  }
+
+  subscribe(listener) {
+    this.listeners.push(listener);
+    return () => { this.listeners = this.listeners.filter(l => l !== listener); };
+  }
+
+  notify() {
+    for (const listener of this.listeners) listener(this.getUserState());
+  }
+
+  setClientId(clientId) {
+    this.clientId = (clientId || '').trim();
+    if (this.clientId) localStorage.setItem('gdrive_client_id', this.clientId);
+    else localStorage.removeItem('gdrive_client_id');
+    this.tokenClient = null;
+    this.notify();
+  }
+
+  getUserState() {
+    return {
+      isSignedIn: !!(this.accessToken || (this.isDemoMode && this.userProfile)),
+      user: this.userProfile,
+      isDemoMode: this.isDemoMode,
+      clientId: this.clientId
+    };
+  }
+
+  async signIn() {
+    if (!this.clientId) {
+      throw new Error('MISSING_CLIENT_ID');
+    }
+    if (!window.google?.accounts?.oauth2) {
+      throw new Error('Google Identity Services script is not loaded. Please check your internet connection or ad-blocker.');
+    }
+
+    const scopes = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.appdata email profile openid';
+    return new Promise((resolve, reject) => {
+      try {
+        this.tokenClient = window.google.accounts.oauth2.initTokenClient({
+          client_id: this.clientId,
+          scope: scopes,
+          callback: async (tokenResponse) => {
+            if (tokenResponse.error) return reject(new Error(tokenResponse.error_description || tokenResponse.error));
+            this.accessToken = tokenResponse.access_token;
+            sessionStorage.setItem('gdrive_token', this.accessToken);
+            try {
+              const profile = await this.fetchUserProfile(this.accessToken);
+              this.userProfile = profile;
+              sessionStorage.setItem('gdrive_user', JSON.stringify(profile));
+              this.isDemoMode = false;
+              this.notify();
+              resolve(profile);
+            } catch (e) { reject(e); }
+          }
+        });
+        this.tokenClient.requestAccessToken({ prompt: 'consent' });
+      } catch (err) { reject(err); }
+    });
+  }
+
+  signInGuestDemo() {
+    this.isDemoMode = true;
+    this.userProfile = {
+      name: 'Offline Guest',
+      email: 'guest@offline.local',
+      picture: ''
+    };
+    sessionStorage.setItem('gdrive_user', JSON.stringify(this.userProfile));
+    sessionStorage.setItem('gdrive_token', 'demo_offline_token');
+    this.notify();
+    return this.userProfile;
+  }
+
+  signOut() {
+    if (this.accessToken && window.google?.accounts?.oauth2) {
+      try { window.google.accounts.oauth2.revoke(this.accessToken, () => {}); } catch(e) {}
+    }
+    this.accessToken = null;
+    this.userProfile = null;
+    this.isDemoMode = false;
+    sessionStorage.removeItem('gdrive_token');
+    sessionStorage.removeItem('gdrive_user');
+    this.notify();
+  }
+
+  async fetchUserProfile(token) {
+    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) throw new Error('Failed to fetch user info');
+    return await res.json();
+  }
+
+  async saveDiagramToAppData(diagramData) {
+    const filename = `diagram_${diagramData.diagramId || 'default'}.umlgraph`;
+    const jsonStr = JSON.stringify(diagramData, null, 2);
+
+    if (this.isDemoMode || !this.accessToken) return this._saveDemoAppData(filename, diagramData);
+
+    try {
+      const existingId = await this._findFileInAppData(filename);
+      let fileId;
+      if (existingId) {
+        const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingId}?uploadType=media`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
+          body: jsonStr
+        });
+        if (!res.ok) throw new Error('Failed to update AppData diagram');
+        const data = await res.json();
+        fileId = data.id;
+      } else {
+        const metadata = { name: filename, parents: ['appDataFolder'], mimeType: 'application/json' };
+        const boundary = '-------314159265358979323846';
+        const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${jsonStr}\r\n--${boundary}--`;
+        const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': `multipart/related; boundary="${boundary}"` },
+          body
+        });
+        if (!res.ok) throw new Error('Failed to save to AppData');
+        const data = await res.json();
+        fileId = data.id;
+      }
+      await this._updateAppDataIndex(diagramData);
+      return fileId;
+    } catch(err) {
+      return this._saveDemoAppData(filename, diagramData);
+    }
+  }
+
+  async getLastOpenedDiagram() {
+    if (this.isDemoMode || !this.accessToken) return this._getDemoLastOpened();
+    try {
+      const index = await this.listCloudDiagrams();
+      if (!index || index.length === 0) return null;
+      const last = index.sort((a,b) => (b.lastOpened||b.updatedAt||0) - (a.lastOpened||a.updatedAt||0))[0];
+      if (!last) return null;
+      return await this.loadCloudDiagram(last.id);
+    } catch(err) {
+      return this._getDemoLastOpened();
+    }
+  }
+
+  async listCloudDiagrams() {
+    if (this.isDemoMode || !this.accessToken) return this._getDemoCloudIndex();
+    try {
+      const indexFileId = await this._findFileInAppData('index.json');
+      if (!indexFileId) return [];
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${indexFileId}?alt=media`, {
+        headers: { Authorization: `Bearer ${this.accessToken}` }
+      });
+      if (!res.ok) return [];
+      return await res.json();
+    } catch(err) {
+      return this._getDemoCloudIndex();
+    }
+  }
+
+  async loadCloudDiagram(diagramId) {
+    const filename = `diagram_${diagramId}.umlgraph`;
+    if (this.isDemoMode || !this.accessToken) return this._loadDemoDiagram(filename);
+    try {
+      const fileId = await this._findFileInAppData(filename);
+      if (!fileId) return null;
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+        headers: { Authorization: `Bearer ${this.accessToken}` }
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch(err) {
+      return this._loadDemoDiagram(filename);
+    }
+  }
+
+  async exportFileToDrive(filename, contentString) {
+    if (this.isDemoMode || !this.accessToken) return this._simulateDriveExport(filename, 'application/json');
+    const metadata = { name: filename, mimeType: 'application/json' };
+    const boundary = '-------314159265358979323846';
+    const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${contentString}\r\n--${boundary}--`;
+    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': `multipart/related; boundary="${boundary}"` },
+      body
+    });
+    if (!res.ok) throw new Error('Export to Drive failed');
+    return await res.json();
+  }
+
+  async exportImageToDrive(filename, dataUrl) {
+    if (this.isDemoMode || !this.accessToken) return this._simulateDriveExport(filename, 'image/png');
+    const response = await fetch(dataUrl);
+    const blob = await response.blob();
+    const metadata = { name: filename, mimeType: 'image/png' };
+    const formData = new FormData();
+    formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+    formData.append('file', blob);
+
+    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${this.accessToken}` },
+      body: formData
+    });
+    if (!res.ok) throw new Error('Export Image to Drive failed');
+    return await res.json();
+  }
+
+  async _findFileInAppData(filename) {
+    const q = encodeURIComponent(`name = '${filename}' and 'appDataFolder' in parents and trashed = false`);
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}`, {
+      headers: { Authorization: `Bearer ${this.accessToken}` }
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.files && data.files.length > 0 ? data.files[0].id : null;
+  }
+
+  async _updateAppDataIndex(diagramData) {
+    const list = await this.listCloudDiagrams();
+    const existingIdx = list.findIndex(item => item.id === diagramData.diagramId);
+    const entry = { id: diagramData.diagramId, name: diagramData.diagramName || 'Untitled Diagram', updatedAt: Date.now(), lastOpened: Date.now() };
+    if (existingIdx >= 0) list[existingIdx] = entry;
+    else list.unshift(entry);
+
+    const jsonStr = JSON.stringify(list, null, 2);
+    const existingIndexId = await this._findFileInAppData('index.json');
+
+    if (existingIndexId) {
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingIndexId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
+        body: jsonStr
+      });
+    } else {
+      const metadata = { name: 'index.json', parents: ['appDataFolder'], mimeType: 'application/json' };
+      const boundary = '-------314159265358979323846';
+      const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${jsonStr}\r\n--${boundary}--`;
+      await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': `multipart/related; boundary="${boundary}"` },
+        body
+      });
+    }
+  }
+
+  _saveDemoAppData(filename, data) {
+    let cloudStore = JSON.parse(localStorage.getItem('gdrive_mock_cloud') || '{}');
+    cloudStore[filename] = data;
+    localStorage.setItem('gdrive_mock_cloud', JSON.stringify(cloudStore));
+    let index = JSON.parse(localStorage.getItem('gdrive_mock_index') || '[]');
+    const existingIdx = index.findIndex(i => i.id === data.diagramId);
+    const entry = { id: data.diagramId, name: data.diagramName || 'Untitled Diagram', updatedAt: Date.now(), lastOpened: Date.now() };
+    if (existingIdx >= 0) index[existingIdx] = entry;
+    else index.unshift(entry);
+    localStorage.setItem('gdrive_mock_index', JSON.stringify(index));
+    return 'demo_file_id_' + Date.now();
+  }
+
+  _getDemoCloudIndex() {
+    return JSON.parse(localStorage.getItem('gdrive_mock_index') || '[]');
+  }
+
+  _getDemoLastOpened() {
+    const index = this._getDemoCloudIndex();
+    if (!index || index.length === 0) return null;
+    const last = index.sort((a,b) => (b.lastOpened||0) - (a.lastOpened||0))[0];
+    if (!last) return null;
+    return this._loadDemoDiagram(`diagram_${last.id}.umlgraph`);
+  }
+
+  _loadDemoDiagram(filename) {
+    const cloudStore = JSON.parse(localStorage.getItem('gdrive_mock_cloud') || '{}');
+    return cloudStore[filename] || null;
+  }
+
+  _simulateDriveExport(filename, type) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve({
+          id: 'sim_drive_id_' + Math.random().toString(36).slice(2, 8),
+          name: filename,
+          webViewLink: `https://drive.google.com/file/d/demo_${Date.now()}/view`
+        });
+      }, 600);
+    });
+  }
+}
+
+const googleDriveService = new GoogleDriveService();
+
+// ══════════════════════════════════════════════════════════════
+// GLOBAL STATE
+// ══════════════════════════════════════════════════════════════
+let _uid = 1;
+const uid = (prefix='id') => prefix + '_' + (_uid++) + '_' + Math.random().toString(36).slice(2,6);
+
+const state = {
+  diagramId: uid('diag'),
+  diagramName: 'Untitled Diagram',
+  nodes: [],
+  connections: [],
+  selectedNodeId: null,
+  selectedConnId: null,
+  zoom: 1,
+  panX: 0,
+  panY: 0,
+  lineType: 'one-way',   // one-way | two-way | dotted | solid
+  priorityFilter: '',
+  history: [],
+  histIdx: -1,
+};
+
+// ── Toast ─────────────────────────────────────────────────────
+const toastEl = document.getElementById('toast');
+let toastTimer;
+function toast(msg) {
+  toastEl.innerHTML = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// HISTORY (UNDO/REDO)
+// ══════════════════════════════════════════════════════════════
+function snapshot() {
+  const s = JSON.stringify({ nodes: state.nodes, connections: state.connections });
+  if (state.history[state.histIdx] !== s) {
+    state.history = state.history.slice(0, state.histIdx + 1);
+    state.history.push(s);
+    state.histIdx = state.history.length - 1;
+    if (state.history.length > 50) { state.history.shift(); state.histIdx--; }
+  }
+  saveToRecent(); // Auto-save to local recent
+  syncToCloud();  // Auto-sync to Google Drive AppData
+}
+
+let syncTimer = null;
+function syncToCloud() {
+  if (!googleDriveService.getUserState().isSignedIn) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    try {
+      const payload = {
+        diagramId: state.diagramId,
+        diagramName: state.diagramName,
+        canvas: { zoom: state.zoom, panX: state.panX, panY: state.panY },
+        nodes: state.nodes,
+        connections: state.connections,
+        updatedAt: Date.now()
+      };
+      await googleDriveService.saveDiagramToAppData(payload);
+    } catch(e) { console.warn('Cloud sync error:', e); }
+  }, 400);
+}
+
+function applySnapshot(s) {
+  const d = JSON.parse(s);
+  state.nodes = d.nodes;
+  state.connections = d.connections;
+  state.selectedNodeId = null;
+  state.selectedConnId = null;
+  renderAll();
+}
+
+function undo() { if (state.histIdx > 0) { state.histIdx--; applySnapshot(state.history[state.histIdx]); } }
+function redo() { if (state.histIdx < state.history.length-1) { state.histIdx++; applySnapshot(state.history[state.histIdx]); } }
+
+// ══════════════════════════════════════════════════════════════
+// CANVAS / WORLD TRANSFORM
+// ══════════════════════════════════════════════════════════════
+const canvasRoot = document.getElementById('canvas-root');
+const world = document.getElementById('world');
+const svgLayer = document.getElementById('svg-layer');
+const connGroup = document.getElementById('conn-group');
+const draftLine = document.getElementById('draft-line');
+
+function applyTransform() {
+  world.style.transform = `translate(${state.panX}px,${state.panY}px) scale(${state.zoom})`;
+  document.getElementById('zoom-label').textContent = Math.round(state.zoom * 100) + '%';
+}
+
+function screenToWorld(sx, sy) {
+  const r = canvasRoot.getBoundingClientRect();
+  return {
+    x: (sx - r.left - state.panX) / state.zoom,
+    y: (sy - r.top - state.panY) / state.zoom,
+  };
+}
+
+// ══════════════════════════════════════════════════════════════
+// NODE DATA OPS
+// ══════════════════════════════════════════════════════════════
+function addNode(opts = {}) {
+  const cx = (-state.panX + (canvasRoot.clientWidth / 2)) / state.zoom;
+  const cy = (-state.panY + (canvasRoot.clientHeight / 2)) / state.zoom;
+  const node = {
+    id: uid('node'),
+    x: opts.x ?? cx - 100,
+    y: opts.y ?? cy - 70,
+    w: opts.w ?? 200,
+    title: opts.title ?? 'New Node',
+    desc:  opts.desc  ?? 'Description...',
+    priority: (opts.priority ?? '').slice(0,3).toUpperCase(),
+    color: opts.color ?? '#1e293b',
+    borderColor: opts.borderColor ?? '#3b82f6',
+    shape: opts.shape ?? 'rounded',
+    imageUrl: opts.imageUrl ?? null,
+    attributes: opts.attributes ?? [],
+    methods: opts.methods ?? [],
+  };
+  state.nodes.push(node);
+  state.selectedNodeId = node.id;
+  state.selectedConnId = null;
+  snapshot();
+  renderAll();
+  return node;
+}
+
+function updateNode(id, patch, hist = true) {
+  const n = state.nodes.find(n => n.id === id);
+  if (!n) return;
+  if (patch.priority !== undefined) patch.priority = String(patch.priority).slice(0,3).toUpperCase();
+  Object.assign(n, patch);
+  if (hist) snapshot();
+  renderAll();
+}
+
+// Live update from inspector inputs: update state & canvas but DO NOT re-render inspector
+// (re-rendering inspector destroys the focused input element, causing lost focus & char limits)
+function liveUpdateNode(id, patch) {
+  const n = state.nodes.find(n => n.id === id);
+  if (!n) return;
+  if (patch.priority !== undefined) patch.priority = String(patch.priority).slice(0,3).toUpperCase();
+  Object.assign(n, patch);
+  renderConnections(); // only update SVG lines (positions may have changed for cylinder/class)
+  // update the node card visuals without full re-render
+  const nodeEl = world.querySelector('[data-node-id="' + id + '"]');
+  if (nodeEl) {
+    if (patch.color)       nodeEl.style.background   = patch.color;
+    if (patch.borderColor) nodeEl.style.borderColor   = patch.borderColor;
+    if (patch.shape) {
+      const shapeRadius = { rectangle:'6px', rounded:'12px', cylinder:'10px/5px', diamond:'8px', 'uml-class':'4px' };
+      nodeEl.style.borderRadius = shapeRadius[patch.shape] || '10px';
+    }
+    if (patch.priority !== undefined) {
+      const p = nodeEl.querySelector('.node-prio-input');
+      if (p) {
+        p.value = patch.priority;
+        nodeEl.style.filter = state.priorityFilter && !patch.priority.includes(state.priorityFilter) ? 'grayscale(80%)' : '';
+        nodeEl.style.opacity = state.priorityFilter && !patch.priority.includes(state.priorityFilter) ? '0.25' : '1';
+      }
+    }
+    if (patch.title !== undefined) {
+      const t = nodeEl.querySelector('.node-title');
+      if (t && t.contentEditable !== 'true') t.textContent = patch.title;
+    }
+    if (patch.desc !== undefined) {
+      const d = nodeEl.querySelector('.node-desc');
+      if (d && d.contentEditable !== 'true') d.textContent = patch.desc;
+    }
+  }
+}
+
+function deleteNode(id) {
+  state.nodes = state.nodes.filter(n => n.id !== id);
+  state.connections = state.connections.filter(c => c.src !== id && c.tgt !== id);
+  if (state.selectedNodeId === id) state.selectedNodeId = null;
+  snapshot();
+  renderAll();
+}
+
+// ══════════════════════════════════════════════════════════════
+// CONNECTION DATA OPS
+// ══════════════════════════════════════════════════════════════
+function addConnection(src, tgt) {
+  if (src === tgt) return null;
+  if (state.connections.some(c => c.src === src && c.tgt === tgt)) return null;
+  const conn = {
+    id: uid('conn'),
+    src, tgt,
+    lineType: state.lineType,
+    label: '',
+    color: '#64748b',
+    style: 'curved',  // curved | straight | ortho
+  };
+  state.connections.push(conn);
+  state.selectedConnId = conn.id;
+  state.selectedNodeId = null;
+  snapshot();
+  renderAll();
+  return conn;
+}
+
+function updateConn(id, patch) {
+  const c = state.connections.find(c => c.id === id);
+  if (!c) return;
+  Object.assign(c, patch);
+  snapshot();
+  renderAll();
+}
+
+function deleteConn(id) {
+  state.connections = state.connections.filter(c => c.id !== id);
+  if (state.selectedConnId === id) state.selectedConnId = null;
+  snapshot();
+  renderAll();
+}
+
+// ══════════════════════════════════════════════════════════════
+// PATH CALCULATION
+// ══════════════════════════════════════════════════════════════
+function nodeCenter(n) { return { x: n.x + n.w/2, y: n.y + nodeHeight(n)/2 }; }
+
+function nodeHeight(n) {
+  let h = 90;
+  if (n.imageUrl) h += 148;
+  if (n.attributes?.length || n.methods?.length) h += (n.attributes.length + n.methods.length) * 18 + 14;
+  return h;
+}
+
+function anchorPoint(n, side) {
+  const h = nodeHeight(n);
+  switch(side) {
+    case 'top':    return { x: n.x + n.w/2, y: n.y,     dx: 0,  dy:-1 };
+    case 'bottom': return { x: n.x + n.w/2, y: n.y + h, dx: 0,  dy: 1 };
+    case 'left':   return { x: n.x,         y: n.y+h/2, dx:-1,  dy: 0 };
+    case 'right':  return { x: n.x + n.w,   y: n.y+h/2, dx: 1,  dy: 0 };
+  }
+}
+
+function bestAnchors(src, tgt) {
+  const sides = ['right','left','bottom','top'];
+  let best = null, bestDist = Infinity;
+  for (const s of sides) {
+    for (const t of sides) {
+      const sp = anchorPoint(src, s);
+      const tp = anchorPoint(tgt, t);
+      const d = Math.hypot(tp.x - sp.x, tp.y - sp.y);
+      if (d < bestDist) { bestDist = d; best = { sp, tp }; }
+    }
+  }
+  return best;
+}
+
+function buildPath(sp, tp, style) {
+  const x1=sp.x, y1=sp.y, x2=tp.x, y2=tp.y;
+  if (style === 'straight') return `M${x1},${y1} L${x2},${y2}`;
+  if (style === 'ortho') {
+    const mx = (x1+x2)/2;
+    return `M${x1},${y1} L${mx},${y1} L${mx},${y2} L${x2},${y2}`;
+  }
+  // Curved bezier
+  const ddx = sp.dx||0, ddy = sp.dy||0;
+  const edx = tp.dx||0, edy = tp.dy||0;
+  const len = Math.max(60, Math.hypot(x2-x1, y2-y1)*0.45);
+  const cp1x = x1 + ddx*len, cp1y = y1 + ddy*len;
+  const cp2x = x2 + edx*len, cp2y = y2 + edy*len;
+  return `M${x1},${y1} C${cp1x},${cp1y} ${cp2x},${cp2y} ${x2},${y2}`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDERING
+// ══════════════════════════════════════════════════════════════
+function renderAll() {
+  renderConnections();
+  renderNodes();
+  renderInspector();
+}
+
+// ── Connections ───────────────────────────────────────────────
+function renderConnections() {
+  connGroup.innerHTML = '';
+  const filter = state.priorityFilter.toUpperCase();
+
+  state.connections.forEach(conn => {
+    const src = state.nodes.find(n => n.id === conn.src);
+    const tgt = state.nodes.find(n => n.id === conn.tgt);
+    if (!src || !tgt) return;
+
+    // Dim if priority filter active and neither node matches
+    const dimmed = filter && !src.priority.includes(filter) && !tgt.priority.includes(filter);
+
+    const {sp, tp} = bestAnchors(src, tgt);
+    const d = buildPath(sp, tp, conn.style || 'curved');
+    const mid = { x:(sp.x+tp.x)/2, y:(sp.y+tp.y)/2 };
+    const isSel = state.selectedConnId === conn.id;
+    const stroke = isSel ? '#ec4899' : conn.color;
+    const sw = isSel ? 3 : 2;
+    const isDotted = conn.lineType === 'dotted';
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('data-conn-id', conn.id);
+    if (dimmed) g.setAttribute('opacity','0.2');
+
+    // Hit area (wide transparent path)
+    const hit = document.createElementNS('http://www.w3.org/2000/svg','path');
+    hit.setAttribute('class','hit');
+    hit.setAttribute('d',d);
+    hit.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      state.selectedConnId = conn.id;
+      state.selectedNodeId = null;
+      renderAll();
+      if (window.innerWidth <= 768) inspector.classList.add('open');
+    });
+    g.appendChild(hit);
+
+    // Visible path
+    const vis = document.createElementNS('http://www.w3.org/2000/svg','path');
+    vis.setAttribute('class', isSel ? 'vis selected' : 'vis');
+    vis.setAttribute('d', d);
+    vis.setAttribute('stroke', stroke);
+    vis.setAttribute('stroke-width', sw);
+
+    if (isDotted) vis.setAttribute('stroke-dasharray','7,5');
+
+    // Markers
+    if (conn.lineType === 'one-way') {
+      vis.setAttribute('marker-end', isSel ? 'url(#arr-end-sel)' : 'url(#arr-end)');
+    } else if (conn.lineType === 'two-way') {
+      vis.setAttribute('marker-end',   isSel ? 'url(#arr-end-sel)'   : 'url(#arr-end)');
+      vis.setAttribute('marker-start', isSel ? 'url(#arr-start-sel)' : 'url(#arr-start)');
+    }
+    g.appendChild(vis);
+
+    // Label
+    if (conn.label) {
+      const bg = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      bg.setAttribute('class','conn-label-bg');
+      bg.setAttribute('x', mid.x-36); bg.setAttribute('y', mid.y-10);
+      bg.setAttribute('width',72); bg.setAttribute('height',20);
+      bg.setAttribute('rx',5);
+      bg.setAttribute('stroke', stroke); bg.setAttribute('stroke-width','1');
+      g.appendChild(bg);
+
+      const lbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+      lbl.setAttribute('class','conn-label');
+      lbl.setAttribute('x', mid.x); lbl.setAttribute('y', mid.y+4);
+      lbl.setAttribute('text-anchor','middle');
+      lbl.textContent = conn.label.length > 10 ? conn.label.slice(0,10)+'…' : conn.label;
+      g.appendChild(lbl);
+    }
+
+    connGroup.appendChild(g);
+  });
+}
+
+// ── SVG Marker fill defaults ──────────────────────────────────
+// Set default fill on marker paths (called once)
+(function fixMarkers(){
+  ['arr-end','arr-start'].forEach(id => {
+    const m = document.getElementById(id);
+    if (m) { const p = m.querySelector('path'); if(p) p.setAttribute('fill','#64748b'); }
+  });
+})();
+
+// ── Nodes ─────────────────────────────────────────────────────
+function renderNodes() {
+  // Remove old node elements
+  world.querySelectorAll('.gnode').forEach(el => el.remove());
+
+  const filter = state.priorityFilter.toUpperCase();
+
+  state.nodes.forEach(node => {
+    const isSel = state.selectedNodeId === node.id;
+    const dimmed = filter && !node.priority.includes(filter);
+
+    const el = document.createElement('div');
+    el.className = 'gnode' + (isSel ? ' selected' : '');
+    el.dataset.nodeId = node.id;
+    el.style.left = node.x + 'px';
+    el.style.top  = node.y + 'px';
+    el.style.width = node.w + 'px';
+    el.style.background = node.color;
+    el.style.borderColor = node.borderColor;
+    el.style.opacity = dimmed ? '0.25' : '1';
+    el.style.filter = dimmed ? 'grayscale(80%)' : '';
+
+    // Border radius per shape
+    const shapeRadius = { rectangle:'6px', rounded:'12px', cylinder:'10px/5px', diamond:'8px', 'uml-class':'4px' };
+    el.style.borderRadius = shapeRadius[node.shape] || '10px';
+
+    el.innerHTML = `
+      <div class="port" data-anchor="top"    data-node-id="${node.id}"></div>
+      <div class="port" data-anchor="right"  data-node-id="${node.id}"></div>
+      <div class="port" data-anchor="bottom" data-node-id="${node.id}"></div>
+      <div class="port" data-anchor="left"   data-node-id="${node.id}"></div>
+
+      <div class="node-head">
+        <div class="prio-wrap">
+          <span class="prio-label">Prio</span>
+          <input class="node-prio-input" type="text" maxlength="3"
+                 value="${esc(node.priority)}"
+                 data-node-id="${node.id}"
+                 inputmode="text" enterkeyhint="next" autocapitalize="characters"
+                 spellcheck="false" autocomplete="off"/>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <button class="node-edit-btn" data-node-id="${node.id}" title="Edit text (calls keyboard)">✏️</button>
+          <span class="node-id-tag">${node.id.split('_')[1]||node.id}</span>
+        </div>
+      </div>
+
+      <div class="node-body">
+        <div class="node-title" data-field="title" data-node-id="${node.id}">${esc(node.title)}</div>
+        ${node.imageUrl ? `<div class="node-img-wrap"><img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}else if(this.dataset.tried==='1'){this.dataset.tried='2';this.src='https://raw.githubusercontent.com/shkrum/ThinkGraph/main/'+this.getAttribute('src')}"/></div>` : ''}
+        <div class="node-desc" data-field="desc" data-node-id="${node.id}">${esc(node.desc)}</div>
+        ${(node.attributes?.length || node.methods?.length) ? `
+          <div class="node-uml-attrs">
+            ${node.attributes.map(a=>`<div>${esc(a)}</div>`).join('')}
+            ${node.methods.map(m=>`<div class="node-uml-methods">${esc(m)}</div>`).join('')}
+          </div>` : ''}
+      </div>
+    `;
+
+    attachNodeEvents(el, node);
+    world.appendChild(el);
+  });
+}
+
+function esc(s) {
+  return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function resolveImgUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) return url;
+  return url.replace(/^[\.\/]+/, '');
+}
+
+// ══════════════════════════════════════════════════════════════
+// INLINE TEXT EDITING (CALLS VIRTUAL SCREEN KEYBOARD)
+// ══════════════════════════════════════════════════════════════
+function startInlineEdit(node, fieldName, fieldEl) {
+  if (!fieldEl || fieldEl.querySelector('.node-inline-input')) return;
+  const isTitle = fieldName === 'title';
+  const originalVal = node[fieldName] || '';
+  const input = document.createElement(isTitle ? 'input' : 'textarea');
+  input.className = 'node-inline-input';
+  input.value = originalVal;
+  input.setAttribute('inputmode', 'text');
+  input.setAttribute('enterkeyhint', isTitle ? 'done' : 'enter');
+  input.setAttribute('autocapitalize', 'sentences');
+  input.setAttribute('spellcheck', 'true');
+  if (isTitle) input.type = 'text';
+  else input.rows = 3;
+
+  fieldEl.innerHTML = '';
+  fieldEl.appendChild(input);
+
+  // Prevent drag or selection from bubbling
+  input.addEventListener('pointerdown', ev => ev.stopPropagation());
+  input.addEventListener('mousedown', ev => ev.stopPropagation());
+  input.addEventListener('click', ev => ev.stopPropagation());
+
+  // Synchronous focus ensures on-screen keyboard appears on iOS & Android
+  input.focus();
+  if (isTitle) input.select();
+
+  let committed = false;
+  function commit() {
+    if (committed) return;
+    committed = true;
+    const val = input.value.trim();
+    const n = state.nodes.find(item => item.id === node.id);
+    if (n && n[fieldName] !== val) {
+      n[fieldName] = val;
+      snapshot();
+      renderInspector();
+    }
+    renderNodes();
+  }
+
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => {
+    e.stopPropagation();
+    if (e.key === 'Escape') {
+      committed = true;
+      renderNodes();
+    } else if (e.key === 'Enter' && (isTitle || (!e.shiftKey && !e.ctrlKey))) {
+      e.preventDefault();
+      commit();
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// NODE INTERACTION (POINTER EVENTS FOR TOUCH & MOUSE)
+// ══════════════════════════════════════════════════════════════
+function attachNodeEvents(el, nodeData) {
+
+  // ── Priority input ───────────────────────────────────────
+  const prioInput = el.querySelector('.node-prio-input');
+  prioInput.addEventListener('pointerdown', e => e.stopPropagation());
+  prioInput.addEventListener('mousedown',   e => e.stopPropagation());
+  prioInput.addEventListener('click',       e => e.stopPropagation());
+  prioInput.addEventListener('keydown',     e => e.stopPropagation());
+  prioInput.addEventListener('keyup',       e => e.stopPropagation());
+  prioInput.addEventListener('input', e => {
+    const val = e.target.value.slice(0,3).toUpperCase();
+    e.target.value = val;
+    const n = state.nodes.find(n=>n.id===nodeData.id);
+    if (n) { n.priority = val; renderConnections(); renderInspector(); }
+  });
+  prioInput.addEventListener('blur', () => snapshot());
+
+  // ── ✏️ Edit button – single-tap calls virtual keyboard ────
+  const editBtn = el.querySelector('.node-edit-btn');
+  if (editBtn) {
+    editBtn.addEventListener('pointerdown', e => e.stopPropagation());
+    editBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      state.selectedNodeId = nodeData.id;
+      state.selectedConnId = null;
+      world.querySelectorAll('.gnode.selected').forEach(g => g.classList.remove('selected'));
+      el.classList.add('selected');
+      renderInspector();
+      if (window.innerWidth <= 768) inspector.classList.add('open');
+      const titleEl = el.querySelector('.node-title');
+      startInlineEdit(nodeData, 'title', titleEl);
+    });
+  }
+
+  // ── Editable title / desc ─────────────────────────────────
+  el.querySelectorAll('.node-title,.node-desc').forEach(field => {
+    const key = field.dataset.field;
+
+    // Desktop double-click to edit
+    field.addEventListener('dblclick', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      startInlineEdit(nodeData, key, field);
+    });
+
+    // Tap to edit when node is already selected
+    field.addEventListener('click', e => {
+      if (state.selectedNodeId === nodeData.id) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        e.stopPropagation();
+        startInlineEdit(nodeData, key, field);
+      }
+    });
+  });
+
+  // ── Anchor ports – start connection drag with pointer ─────
+  el.querySelectorAll('.port').forEach(port => {
+    port.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      startConnectionDrag(port.dataset.nodeId, e, port);
+    });
+  });
+
+  // ── Node body – drag to move with Pointer Events ─────────
+  el.addEventListener('pointerdown', e => {
+    // Skip if clicking a port, input, textarea, button, or inline editor
+    if (e.target.classList.contains('port')) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
+    if (e.target.classList.contains('node-inline-input')) return;
+    if (e.target.closest('.node-edit-btn')) return;
+
+    e.stopPropagation();
+
+    // Select visually WITHOUT destroying DOM element during drag
+    state.selectedNodeId = nodeData.id;
+    state.selectedConnId = null;
+    world.querySelectorAll('.gnode.selected').forEach(g => g.classList.remove('selected'));
+    el.classList.add('selected');
+    renderInspector();
+    if (window.innerWidth <= 768) inspector.classList.add('open');
+
+    try { el.setPointerCapture(e.pointerId); } catch {}
+
+    const startClientX = e.clientX;
+    const startClientY = e.clientY;
+    const startWorld = screenToWorld(e.clientX, e.clientY);
+    const n = state.nodes.find(item => item.id === nodeData.id);
+    if (!n) return;
+    const startNX = n.x, startNY = n.y;
+    let moved = false;
+    let rafId = null;
+
+    function onPointerMove(me) {
+      if (me.pointerId !== e.pointerId) return;
+      if (!moved && Math.hypot(me.clientX - startClientX, me.clientY - startClientY) > 3) {
+        moved = true;
+      }
+      if (!moved) return;
+
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const cur = screenToWorld(me.clientX, me.clientY);
+        let nx = startNX + (cur.x - startWorld.x);
+        let ny = startNY + (cur.y - startWorld.y);
+        nx = Math.max(0, Math.round(nx / 10) * 10);
+        ny = Math.max(0, Math.round(ny / 10) * 10);
+        n.x = nx; n.y = ny;
+        const fresh = world.querySelector('[data-node-id="' + nodeData.id + '"]');
+        if (fresh) { fresh.style.left = nx + 'px'; fresh.style.top = ny + 'px'; }
+        renderConnections();
+      });
+    }
+
+    function onPointerUp(ue) {
+      if (ue.pointerId !== e.pointerId) return;
+      if (rafId) cancelAnimationFrame(rafId);
+      try { el.releasePointerCapture(e.pointerId); } catch {}
+      el.removeEventListener('pointermove', onPointerMove);
+      el.removeEventListener('pointerup', onPointerUp);
+      el.removeEventListener('pointercancel', onPointerUp);
+      if (moved) {
+        snapshot();
+        renderNodes();
+      }
+    }
+
+    el.addEventListener('pointermove', onPointerMove);
+    el.addEventListener('pointerup', onPointerUp);
+    el.addEventListener('pointercancel', onPointerUp);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// CONNECTION DRAG (TOUCH & MOUSE POINTERS)
+// ══════════════════════════════════════════════════════════════
+let connDrag = null; // { srcNodeId }
+
+function startConnectionDrag(srcNodeId, e, startPortEl) {
+  connDrag = { srcNodeId };
+  draftLine.setAttribute('d', '');
+
+  const wp = screenToWorld(e.clientX, e.clientY);
+  if (startPortEl) {
+    try { startPortEl.setPointerCapture(e.pointerId); } catch {}
+  }
+
+  function onPointerMove(me) {
+    if (!connDrag) return;
+    const cur = screenToWorld(me.clientX, me.clientY);
+    draftLine.setAttribute('d', `M${wp.x},${wp.y} L${cur.x},${cur.y}`);
+  }
+
+  function onPointerUp(me) {
+    if (startPortEl) {
+      try { startPortEl.releasePointerCapture(e.pointerId); } catch {}
+    }
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+
+    draftLine.setAttribute('d', '');
+
+    if (!connDrag) return;
+    const src = connDrag.srcNodeId;
+    connDrag = null;
+
+    // Find target node by checking what's under the pointer
+    const els = document.elementsFromPoint(me.clientX, me.clientY);
+    let tgtId = null;
+    for (const item of els) {
+      const nodeEl = item.closest?.('.gnode');
+      if (nodeEl && nodeEl.dataset.nodeId && nodeEl.dataset.nodeId !== src) {
+        tgtId = nodeEl.dataset.nodeId;
+        break;
+      }
+    }
+    if (tgtId) {
+      addConnection(src, tgtId);
+    }
+  }
+
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerUp);
+}
+
+// ══════════════════════════════════════════════════════════════
+// CANVAS EVENTS (1-FINGER PAN, 2-FINGER PINCH-ZOOM, WHEEL)
+// ══════════════════════════════════════════════════════════════
+const activeCanvasPointers = new Map();
+let pinchStartDist = 0;
+let pinchStartZoom = 1;
+let panStartX = 0;
+let panStartY = 0;
+
+canvasRoot.addEventListener('pointerdown', e => {
+  if (e.target !== canvasRoot && e.target !== world && e.target !== svgLayer) return;
+
+  // Deselect on empty canvas touch/click
+  if (activeCanvasPointers.size === 0) {
+    state.selectedNodeId = null;
+    state.selectedConnId = null;
+    renderAll();
+  }
+
+  activeCanvasPointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+  try { canvasRoot.setPointerCapture(e.pointerId); } catch {}
+
+  if (activeCanvasPointers.size === 1) {
+    panStartX = e.clientX - state.panX;
+    panStartY = e.clientY - state.panY;
+    canvasRoot.classList.add('panning');
+  } else if (activeCanvasPointers.size === 2) {
+    canvasRoot.classList.remove('panning');
+    const [p1, p2] = Array.from(activeCanvasPointers.values());
+    pinchStartDist = Math.hypot(p1.clientX - p2.clientX, p1.clientY - p2.clientY);
+    pinchStartZoom = state.zoom;
+  }
+});
+
+canvasRoot.addEventListener('pointermove', e => {
+  if (!activeCanvasPointers.has(e.pointerId)) return;
+  activeCanvasPointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+
+  if (activeCanvasPointers.size === 1) {
+    // 1-finger pan
+    state.panX = e.clientX - panStartX;
+    state.panY = e.clientY - panStartY;
+    applyTransform();
+  } else if (activeCanvasPointers.size >= 2) {
+    // 2-finger pinch-to-zoom
+    const [p1, p2] = Array.from(activeCanvasPointers.values());
+    const currDist = Math.hypot(p1.clientX - p2.clientX, p1.clientY - p2.clientY);
+    if (pinchStartDist > 0 && currDist > 0) {
+      const scaleFactor = currDist / pinchStartDist;
+      const targetZoom = Math.max(0.15, Math.min(4, pinchStartZoom * scaleFactor));
+      const r = canvasRoot.getBoundingClientRect();
+      const currCenterX = (p1.clientX + p2.clientX) / 2;
+      const currCenterY = (p1.clientY + p2.clientY) / 2;
+      const mx = currCenterX - r.left;
+      const my = currCenterY - r.top;
+      state.panX = mx - (mx - state.panX) * (targetZoom / state.zoom);
+      state.panY = my - (my - state.panY) * (targetZoom / state.zoom);
+      state.zoom = targetZoom;
+      applyTransform();
+    }
+  }
+});
+
+function onCanvasPointerEnd(e) {
+  activeCanvasPointers.delete(e.pointerId);
+  try { canvasRoot.releasePointerCapture(e.pointerId); } catch {}
+
+  if (activeCanvasPointers.size === 1) {
+    const remaining = activeCanvasPointers.values().next().value;
+    panStartX = remaining.clientX - state.panX;
+    panStartY = remaining.clientY - state.panY;
+    canvasRoot.classList.add('panning');
+  } else if (activeCanvasPointers.size === 0) {
+    canvasRoot.classList.remove('panning');
+  }
+}
+
+canvasRoot.addEventListener('pointerup', onCanvasPointerEnd);
+canvasRoot.addEventListener('pointercancel', onCanvasPointerEnd);
+
+canvasRoot.addEventListener('wheel', e => {
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.1 : 0.9;
+  const newZoom = Math.max(0.15, Math.min(4, state.zoom * factor));
+  const r = canvasRoot.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  state.panX = mx - (mx - state.panX) * (newZoom / state.zoom);
+  state.panY = my - (my - state.panY) * (newZoom / state.zoom);
+  state.zoom = newZoom;
+  applyTransform();
+}, { passive: false });
+
+// Keyboard shortcuts
+window.addEventListener('keydown', e => {
+  const active = document.activeElement;
+  const isTyping = active && (
+    active.tagName === 'INPUT' ||
+    active.tagName === 'TEXTAREA' ||
+    active.tagName === 'SELECT' ||
+    active.contentEditable === 'true'
+  );
+  if (isTyping) return;
+
+  if ((e.key === 'Delete' || e.key === 'Backspace') && !e.ctrlKey && !e.metaKey) {
+    if (state.selectedNodeId) { deleteNode(state.selectedNodeId); return; }
+    if (state.selectedConnId) { deleteConn(state.selectedConnId); return; }
+  }
+  if ((e.ctrlKey||e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+  if ((e.ctrlKey||e.metaKey) &&  e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); redo(); }
+  if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); }
+});
+
+// ══════════════════════════════════════════════════════════════
+// INSPECTOR
+// ══════════════════════════════════════════════════════════════
+const inspector = document.getElementById('inspector');
+
+function renderInspector() {
+  const node = state.nodes.find(n => n.id === state.selectedNodeId);
+  const conn = state.connections.find(c => c.id === state.selectedConnId);
+
+  if (node) {
+    renderNodeInspector(node);
+  } else if (conn) {
+    renderConnInspector(conn);
+  } else {
+    renderEmptyInspector();
+  }
+
+  const closeBtn = document.getElementById('btn-close-insp-panel');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => inspector.classList.remove('open'));
+  }
+}
+
+function renderEmptyInspector() {
+  inspector.innerHTML = `
+    <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;padding:8px 12px 0">
+      <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+    </div>
+    <div class="insp-empty">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="1.5" style="margin:0 auto 8px;display:block">
+        <circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>
+      </svg>
+      <h3>Nothing Selected</h3>
+      <p>Click or tap a node or connection line to inspect and edit its properties</p>
+    </div>
+    <div class="insp-hints">
+      <div class="hint-row"><div class="hint-dot" style="background:#6366f1"></div><div><strong>Move node</strong> – drag with finger or mouse</div></div>
+      <div class="hint-row"><div class="hint-dot" style="background:#06b6d4"></div><div><strong>Connect</strong> – drag from cyan dot to another node</div></div>
+      <div class="hint-row"><div class="hint-dot" style="background:#38bdf8"></div><div><strong>Pan & Zoom</strong> – 1 finger to pan, 2 fingers to pinch-zoom</div></div>
+      <div class="hint-row"><div class="hint-dot" style="background:#ec4899"></div><div><strong>Edit text</strong> – tap ✏️ or double-click to call keyboard</div></div>
+      <div class="hint-row"><div class="hint-dot" style="background:#fbbf24"></div><div><strong>Priority badge</strong> – tap to type up to 3 chars</div></div>
+      <div class="hint-row"><div class="hint-dot" style="background:#10b981"></div><div><strong>Delete</strong> – tap 🗑 Delete in Inspector or Delete key</div></div>
+    </div>
+    <div class="insp-section" style="margin-top:auto">
+      <div class="insp-title"><span style="background:#94a3b8"></span>Stats</div>
+      <div style="font-size:11px;color:#64748b;display:flex;gap:16px">
+        <span>Nodes: <strong style="color:#e2e8f0">${state.nodes.length}</strong></span>
+        <span>Lines: <strong style="color:#e2e8f0">${state.connections.length}</strong></span>
+        <span>Zoom: <strong style="color:#e2e8f0">${Math.round(state.zoom*100)}%</strong></span>
+      </div>
+    </div>
+  `;
+}
+
+function renderNodeInspector(node) {
+  inspector.innerHTML = `
+    <div class="insp-section">
+      <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;margin-bottom:8px">
+        <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+      </div>
+      <div class="insp-title"><span></span>Node Properties</div>
+
+      <div class="insp-row">
+        <label class="insp-label">Priority Code (max 3 chars)</label>
+        <input class="insp-input" id="ip-prio" type="text" maxlength="3"
+               value="${esc(node.priority)}" style="font-family:'Fira Code',monospace;font-weight:700;color:#fbbf24;text-transform:uppercase;letter-spacing:.05em"
+               inputmode="text" enterkeyhint="next" autocapitalize="characters"
+               spellcheck="false" autocomplete="off"/>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Title</label>
+        <input class="insp-input" id="ip-title" type="text" value="${esc(node.title)}"
+               inputmode="text" enterkeyhint="done" autocapitalize="sentences" spellcheck="true"/>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Description</label>
+        <textarea class="insp-input" id="ip-desc" rows="3"
+                  enterkeyhint="enter" autocapitalize="sentences" spellcheck="true">${esc(node.desc)}</textarea>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Shape</label>
+        <select class="insp-input" id="ip-shape">
+          ${['rounded','rectangle','cylinder','diamond','uml-class'].map(s=>
+            `<option value="${s}" ${node.shape===s?'selected':''}>${s}</option>`
+          ).join('')}
+        </select>
+      </div>
+
+      <div class="insp-row insp-row-2">
+        <div>
+          <label class="insp-label">Fill Color</label>
+          <input class="insp-input" id="ip-color" type="color" value="${node.color}"/>
+        </div>
+        <div>
+          <label class="insp-label">Border Color</label>
+          <input class="insp-input" id="ip-border" type="color" value="${node.borderColor}"/>
+        </div>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Image</label>
+        ${node.imageUrl ? `
+          <div class="img-preview">
+            <img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}else if(this.dataset.tried==='1'){this.dataset.tried='2';this.src='https://raw.githubusercontent.com/shkrum/ThinkGraph/main/'+this.getAttribute('src')}"/>
+            <button class="img-preview-del" id="ip-img-del">✕ Remove</button>
+          </div>` : `
+          <div class="img-upload-area" id="ip-img-upload">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 4px;display:block"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Click to upload image
+            <input type="file" id="ip-img-file" accept="image/*" style="display:none"/>
+          </div>`}
+      </div>
+
+      <button class="insp-del-btn" id="ip-delete">🗑 Delete Node</button>
+    </div>
+  `;
+
+  // Wire up events
+  const iprio = document.getElementById('ip-prio');
+  iprio.addEventListener('keydown', e => e.stopPropagation());
+  iprio.addEventListener('input', e => {
+    const v = e.target.value.slice(0,3).toUpperCase();
+    e.target.value = v;
+    liveUpdateNode(node.id, { priority: v });
+  });
+  iprio.addEventListener('blur', () => snapshot());
+
+  const ititle = document.getElementById('ip-title');
+  ititle.addEventListener('keydown', e => e.stopPropagation());
+  ititle.addEventListener('input', e => liveUpdateNode(node.id, { title: e.target.value }));
+  ititle.addEventListener('blur', () => snapshot());
+
+  const idesc = document.getElementById('ip-desc');
+  idesc.addEventListener('keydown', e => e.stopPropagation());
+  idesc.addEventListener('input', e => liveUpdateNode(node.id, { desc: e.target.value }));
+  idesc.addEventListener('blur', () => snapshot());
+
+  document.getElementById('ip-shape').addEventListener('change', e => {
+    liveUpdateNode(node.id, { shape: e.target.value });
+    snapshot();
+  });
+  document.getElementById('ip-color').addEventListener('input', e => liveUpdateNode(node.id, { color: e.target.value }));
+  document.getElementById('ip-color').addEventListener('change', () => snapshot());
+  document.getElementById('ip-border').addEventListener('input', e => liveUpdateNode(node.id, { borderColor: e.target.value }));
+  document.getElementById('ip-border').addEventListener('change', () => snapshot());
+
+  document.getElementById('ip-delete').addEventListener('click', () => deleteNode(node.id));
+
+  // Image upload
+  const uploadArea = document.getElementById('ip-img-upload');
+  if (uploadArea) {
+    const fileIn = document.getElementById('ip-img-file');
+    uploadArea.addEventListener('click', () => fileIn.click());
+    fileIn.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const b64 = await fileToBase64(file);
+      updateNode(node.id, { imageUrl: b64 });
+    });
+  }
+  const delImg = document.getElementById('ip-img-del');
+  if (delImg) delImg.addEventListener('click', () => updateNode(node.id, { imageUrl: null }));
+}
+
+function renderConnInspector(conn) {
+  const src = state.nodes.find(n=>n.id===conn.src);
+  const tgt = state.nodes.find(n=>n.id===conn.tgt);
+  inspector.innerHTML = `
+    <div class="insp-section">
+      <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;margin-bottom:8px">
+        <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+      </div>
+      <div class="insp-title"><span style="background:#ec4899"></span>Connection</div>
+
+      <div style="font-size:11px;color:#64748b;margin-bottom:12px;background:rgba(255,255,255,0.04);border-radius:6px;padding:8px">
+        <div style="margin-bottom:4px">From: <strong style="color:#e2e8f0">${esc(src?.title||conn.src)}</strong></div>
+        <div>To: <strong style="color:#e2e8f0">${esc(tgt?.title||conn.tgt)}</strong></div>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Arrow Type</label>
+        <select class="insp-input" id="cp-type">
+          <option value="one-way" ${conn.lineType==='one-way'?'selected':''}>Directed →</option>
+          <option value="two-way" ${conn.lineType==='two-way'?'selected':''}>Bi-directional ↔</option>
+          <option value="dotted"  ${conn.lineType==='dotted' ?'selected':''}>Dotted ╌</option>
+          <option value="solid"   ${conn.lineType==='solid'  ?'selected':''}>Solid ——</option>
+        </select>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Routing Style</label>
+        <select class="insp-input" id="cp-style">
+          <option value="curved"   ${conn.style==='curved'  ?'selected':''}>Smooth Curve</option>
+          <option value="straight" ${conn.style==='straight'?'selected':''}>Straight</option>
+          <option value="ortho"    ${conn.style==='ortho'   ?'selected':''}>Orthogonal</option>
+        </select>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Label</label>
+        <input class="insp-input" id="cp-label" type="text" value="${esc(conn.label)}" placeholder="e.g. calls, extends…"
+               inputmode="text" enterkeyhint="done" autocapitalize="sentences"/>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Color</label>
+        <input class="insp-input" id="cp-color" type="color" value="${conn.color}"/>
+      </div>
+
+      <button class="insp-del-btn" id="cp-delete">🗑 Delete Connection</button>
+    </div>
+  `;
+
+  document.getElementById('cp-type').addEventListener('change',  e => updateConn(conn.id, { lineType: e.target.value }));
+  document.getElementById('cp-style').addEventListener('change', e => updateConn(conn.id, { style:    e.target.value }));
+
+  const lbl = document.getElementById('cp-label');
+  lbl.addEventListener('keydown', e => e.stopPropagation());
+  lbl.addEventListener('input', e => updateConn(conn.id, { label: e.target.value }));
+
+  document.getElementById('cp-color').addEventListener('input', e => updateConn(conn.id, { color: e.target.value }));
+  document.getElementById('cp-delete').addEventListener('click', () => deleteConn(conn.id));
+}
+
+// ══════════════════════════════════════════════════════════════
+// TOOLBAR EVENTS
+// ══════════════════════════════════════════════════════════════
+document.getElementById('btn-add-node').addEventListener('click', () => addNode());
+
+// Line type buttons
+document.querySelectorAll('#line-type-group .tb-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    state.lineType = btn.dataset.lt;
+    document.querySelectorAll('#line-type-group .tb-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// Priority filter
+const prioFilterInput = document.getElementById('prio-filter');
+prioFilterInput.addEventListener('keydown', e => e.stopPropagation());
+prioFilterInput.addEventListener('input', e => {
+  state.priorityFilter = e.target.value.slice(0,3).toUpperCase();
+  e.target.value = state.priorityFilter;
+  renderAll();
+});
+
+// Demo
+document.getElementById('btn-demo').addEventListener('click', () => {
+  if (state.nodes.length > 0 && !confirm('Replace current diagram with demo?')) return;
+  loadDemo();
+});
+
+// ══════════════════════════════════════════════════════════════
+// FILE MENU & RECENT DIAGRAMS
+// ══════════════════════════════════════════════════════════════
+const RECENT_KEY = 'umlgraph_recent';
+
+function saveToRecent() {
+  if (!state.nodes.length && !state.connections.length) return; // Don't save empty
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch(e) {}
+  
+  const existingIdx = list.findIndex(f => f.id === state.diagramId);
+  const entry = {
+    id: state.diagramId,
+    name: state.diagramName || 'Untitled Diagram',
+    time: Date.now(),
+    data: JSON.stringify({
+      nodes: state.nodes, connections: state.connections,
+      canvas: { zoom: state.zoom, panX: state.panX, panY: state.panY }
+    })
+  };
+  
+  if (existingIdx >= 0) list[existingIdx] = entry;
+  else list.unshift(entry);
+  
+  list.sort((a,b) => b.time - a.time);
+  if (list.length > 10) list = list.slice(0, 10);
+  
+  while (list.length > 0) {
+    try {
+      localStorage.setItem(RECENT_KEY, JSON.stringify(list));
+      break;
+    } catch (e) {
+      if (list.length > 1) {
+        list.pop(); // remove oldest item and try again
+      } else {
+        console.warn("Current diagram is too large for localStorage quota. Skipping recent history.");
+        break; // give up
+      }
+    }
+  }
+}
+
+function loadRecent(id) {
+  try {
+    const list = JSON.parse(localStorage.getItem(RECENT_KEY)) || [];
+    const entry = list.find(f => f.id === id);
+    if (!entry) return;
+    const d = JSON.parse(entry.data);
+    state.diagramId = entry.id;
+    state.diagramName = entry.name;
+    document.getElementById('diagram-name').value = state.diagramName;
+    state.nodes = d.nodes || [];
+    state.connections = d.connections || [];
+    if (d.canvas) {
+      state.zoom = d.canvas.zoom || 1;
+      state.panX = d.canvas.panX || 0;
+      state.panY = d.canvas.panY || 0;
+    }
+    state.selectedNodeId = null;
+    state.selectedConnId = null;
+    applyTransform();
+    snapshot();
+    renderAll();
+    toast('Opened ' + entry.name);
+  } catch(e) {}
+}
+
+function loadDiagramObject(data) {
+  state.diagramId = data.diagramId || uid('diag');
+  state.diagramName = data.diagramName || 'Untitled Diagram';
+  document.getElementById('diagram-name').value = state.diagramName;
+  state.nodes = data.nodes || [];
+  state.connections = data.connections || [];
+  if (data.canvas) {
+    state.zoom = data.canvas.zoom || 1;
+    state.panX = data.canvas.panX || 0;
+    state.panY = data.canvas.panY || 0;
+    applyTransform();
+  }
+  state.selectedNodeId = null;
+  state.selectedConnId = null;
+  snapshot();
+  renderAll();
+}
+
+async function renderRecentMenu() {
+  const container = document.getElementById('menu-recent-list');
+  if (!container) return;
+
+  let localList = [];
+  try { localList = JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch(e) {}
+
+  let cloudList = [];
+  if (googleDriveService.getUserState().isSignedIn) {
+    try { cloudList = await googleDriveService.listCloudDiagrams(); } catch(e) {}
+  }
+
+  if (localList.length === 0 && cloudList.length === 0) {
+    container.innerHTML = '<div class="submenu-empty">No recent diagrams</div>';
+    return;
+  }
+
+  let html = '';
+  if (cloudList.length > 0) {
+    html += '<div style="padding:4px 12px;font-size:10px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.05em">☁️ Google Drive Files</div>';
+    cloudList.slice(0, 6).forEach(f => {
+      html += `
+        <div class="menu-item recent-cloud-item" data-id="${f.id}" style="padding:6px 12px">
+          <div style="font-weight:600;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:130px;color:#e0f2fe">${esc(f.name)}</div>
+          <div style="font-size:9px;color:#38bdf8;margin-left:6px;flex-shrink:0">Cloud</div>
+        </div>
+      `;
+    });
+    if (localList.length > 0) html += '<div class="menu-sep"></div>';
+  }
+
+  if (localList.length > 0) {
+    html += '<div style="padding:4px 12px;font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em">💻 Local Files</div>';
+    localList.slice(0, 5).forEach(f => {
+      html += `
+        <div class="menu-item recent-item" data-id="${f.id}" style="padding:6px 12px">
+          <div style="font-weight:600;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:130px">${esc(f.name)}</div>
+          <div style="font-size:9px;color:#64748b;margin-left:6px;flex-shrink:0">${new Date(f.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+        </div>
+      `;
+    });
+  }
+
+  container.innerHTML = html;
+
+  container.querySelectorAll('.recent-cloud-item').forEach(el => {
+    el.addEventListener('click', async e => {
+      e.stopPropagation();
+      document.getElementById('file-menu-wrap').classList.remove('open');
+      toast('Loading diagram from Google Drive...');
+      try {
+        const data = await googleDriveService.loadCloudDiagram(el.dataset.id);
+        if (data) {
+          loadDiagramObject(data);
+          toast(`Opened "${data.diagramName}" from Google Drive ☁️`);
+        }
+      } catch(err) {
+        alert('Could not load diagram from Google Drive: ' + err.message);
+      }
+    });
+  });
+
+  container.querySelectorAll('.recent-item').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      document.getElementById('file-menu-wrap').classList.remove('open');
+      loadRecent(el.dataset.id);
+    });
+  });
+}
+
+const fmWrap = document.getElementById('file-menu-wrap');
+document.getElementById('btn-file-menu').addEventListener('click', e => {
+  e.stopPropagation();
+  renderRecentMenu();
+  fmWrap.classList.toggle('open');
+});
+document.addEventListener('click', () => {
+  fmWrap.classList.remove('open');
+  const userMenu = document.getElementById('user-profile-menu');
+  if (userMenu) userMenu.style.display = 'none';
+});
+
+// ══════════════════════════════════════════════════════════════
+// GOOGLE AUTH UI & CLOUD EXPORT HANDLERS
+// ══════════════════════════════════════════════════════════════
+function updateAuthUI() {
+  const authState = googleDriveService.getUserState();
+  const loginBtn = document.getElementById('btn-gdrive-login');
+  const userDropdown = document.getElementById('user-profile-dropdown');
+
+  if (authState.isSignedIn && authState.user) {
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userDropdown) userDropdown.style.display = 'inline-block';
+
+    const displayName = authState.user.name || authState.user.email || 'User';
+    const email = authState.user.email || '';
+
+    const nameEl = document.getElementById('user-display-name');
+    if (nameEl) nameEl.textContent = displayName;
+
+    const fullNameEl = document.getElementById('user-full-name');
+    if (fullNameEl) fullNameEl.textContent = displayName;
+
+    const emailEl = document.getElementById('user-email');
+    if (emailEl) emailEl.textContent = email;
+    
+    const initials = displayName.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() || 'U';
+    const avatarEl = document.getElementById('user-avatar');
+    if (avatarEl) {
+      if (authState.user.picture) {
+        avatarEl.innerHTML = `<img src="${authState.user.picture}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" />`;
+      } else {
+        avatarEl.textContent = initials;
+        avatarEl.style.background = authState.isDemoMode ? '#475569' : '#4f46e5';
+      }
+    }
+
+    const syncBadge = document.getElementById('user-sync-status-badge');
+    const syncDot = document.getElementById('user-sync-dot');
+    if (syncBadge) {
+      if (authState.isDemoMode) {
+        syncBadge.innerHTML = '<span>💾</span> Local Storage Mode (Offline Guest)';
+        syncBadge.style.color = '#94a3b8';
+      } else {
+        syncBadge.innerHTML = '<span>☁️</span> Connected to Google Drive';
+        syncBadge.style.color = '#10b981';
+      }
+    }
+    if (syncDot) {
+      syncDot.style.background = authState.isDemoMode ? '#94a3b8' : '#10b981';
+      syncDot.title = authState.isDemoMode ? 'Local Storage Mode (Offline Guest)' : 'Connected to Google Drive';
+    }
+  } else {
+    if (loginBtn) loginBtn.style.display = 'flex';
+    if (userDropdown) {
+      userDropdown.style.display = 'none';
+      userDropdown.classList.remove('open');
+    }
+    const userMenu = document.getElementById('user-profile-menu');
+    if (userMenu) userMenu.style.display = 'none';
+  }
+}
+
+googleDriveService.subscribe(() => updateAuthUI());
+updateAuthUI();
+
+// Update origin display in modal
+const authOriginEl = document.getElementById('auth-origin-display');
+if (authOriginEl) authOriginEl.textContent = window.location.origin;
+
+async function handleGoogleSignIn(forcePromptModal = false) {
+  if (!googleDriveService.clientId || forcePromptModal) {
+    inputClientId.value = googleDriveService.getUserState().clientId || '';
+    if (authOriginEl) authOriginEl.textContent = window.location.origin;
+    clientModal.style.display = 'flex';
+    return;
+  }
+
+  try {
+    toast('Opening Google Sign-In...');
+    const user = await googleDriveService.signIn();
+    toast(`Signed in as ${user.name || user.email} ✓`);
+    updateAuthUI();
+
+    // Show last opened diagram restoration toast & load
+    const lastDiag = await googleDriveService.getLastOpenedDiagram();
+    if (lastDiag && lastDiag.nodes && lastDiag.nodes.length > 0) {
+      loadDiagramObject(lastDiag);
+      toast(`Restored last opened diagram "${lastDiag.diagramName || 'Diagram'}" from Google Drive ☁️`);
+    }
+  } catch(err) {
+    if (err.message === 'MISSING_CLIENT_ID') {
+      inputClientId.value = '';
+      if (authOriginEl) authOriginEl.textContent = window.location.origin;
+      clientModal.style.display = 'flex';
+    } else {
+      alert('Google Sign-In: ' + err.message);
+    }
+  }
+}
+
+document.getElementById('btn-gdrive-login')?.addEventListener('click', () => handleGoogleSignIn());
+
+// User Profile dropdown toggle
+const userBadgeBtn = document.getElementById('btn-user-badge');
+const userProfileDropdown = document.getElementById('user-profile-dropdown');
+const userProfileMenu = document.getElementById('user-profile-menu');
+
+if (userBadgeBtn) {
+  userBadgeBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (fmWrap) fmWrap.classList.remove('open');
+    if (userProfileDropdown) userProfileDropdown.classList.toggle('open');
+    if (userProfileMenu) {
+      const isOpen = userProfileMenu.style.display === 'block';
+      userProfileMenu.style.display = isOpen ? 'none' : 'block';
+    }
+  });
+}
+
+if (userProfileMenu) {
+  userProfileMenu.addEventListener('click', e => e.stopPropagation());
+}
+
+document.getElementById('menu-gdrive-logout')?.addEventListener('click', () => {
+  googleDriveService.signOut();
+  updateAuthUI();
+  if (userProfileMenu) userProfileMenu.style.display = 'none';
+  if (userProfileDropdown) userProfileDropdown.classList.remove('open');
+  toast('Signed out');
+});
+
+document.getElementById('menu-gdrive-sync')?.addEventListener('click', async () => {
+  if (userProfileMenu) userProfileMenu.style.display = 'none';
+  if (userProfileDropdown) userProfileDropdown.classList.remove('open');
+  toast('Syncing with Google Drive...');
+  await syncToCloud();
+  renderRecentMenu();
+  toast('Cloud sync complete ☁️');
+});
+
+// OAuth Client ID modal handlers
+const clientModal = document.getElementById('gdrive-client-modal');
+const inputClientId = document.getElementById('input-client-id');
+
+document.getElementById('menu-gdrive-config')?.addEventListener('click', () => {
+  if (userProfileMenu) userProfileMenu.style.display = 'none';
+  if (userProfileDropdown) userProfileDropdown.classList.remove('open');
+  inputClientId.value = googleDriveService.getUserState().clientId || '';
+  if (authOriginEl) authOriginEl.textContent = window.location.origin;
+  clientModal.style.display = 'flex';
+});
+
+document.getElementById('btn-close-client-modal')?.addEventListener('click', () => {
+  clientModal.style.display = 'none';
+});
+
+document.getElementById('btn-cancel-client-id')?.addEventListener('click', () => {
+  clientModal.style.display = 'none';
+});
+
+document.getElementById('btn-copy-origin')?.addEventListener('click', () => {
+  const origin = window.location.origin;
+  navigator.clipboard.writeText(origin).then(() => {
+    toast('Copied origin to clipboard ✓');
+  }).catch(() => {
+    toast('Origin: ' + origin);
+  });
+});
+
+document.getElementById('btn-demo-guest-login')?.addEventListener('click', () => {
+  clientModal.style.display = 'none';
+  const user = googleDriveService.signInGuestDemo();
+  toast(`Continuing as ${user.name} ✓`);
+  updateAuthUI();
+});
+
+document.getElementById('btn-save-client-id')?.addEventListener('click', async () => {
+  const val = (inputClientId.value || '').trim();
+  if (!val) {
+    alert('Please enter your Google Cloud OAuth Client ID, or click "Continue as Offline Guest".');
+    return;
+  }
+  googleDriveService.setClientId(val);
+  clientModal.style.display = 'none';
+  toast('Client ID saved. Connecting to Google...');
+  await handleGoogleSignIn();
+});
+
+// ── Google Drive File & Image Export ──────────────────────────
+async function exportToGoogleDriveFile() {
+  if (!googleDriveService.getUserState().isSignedIn) {
+    if (confirm('Sign in to Google Account to export to Google Drive?')) {
+      await handleGoogleSignIn();
+      if (!googleDriveService.getUserState().isSignedIn) return;
+    } else return;
+  }
+
+  toast('Saving file to Google Drive...');
+  try {
+    const data = {
+      app: 'UMLGraphStudio', version: '1.0',
+      exportDate: new Date().toISOString(),
+      diagramName: state.diagramName,
+      diagramId: state.diagramId,
+      canvas: { zoom: state.zoom, panX: state.panX, panY: state.panY },
+      nodes: state.nodes,
+      connections: state.connections,
+    };
+    const filename = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}_${Date.now()}.umlgraph`;
+    const res = await googleDriveService.exportFileToDrive(filename, JSON.stringify(data, null, 2));
+
+    showExportToast('Saved file to Google Drive ☁️', res.webViewLink);
+  } catch(err) {
+    alert('Failed to save to Google Drive: ' + err.message);
+  }
+}
+
+async function exportToGoogleDriveImage() {
+  if (!googleDriveService.getUserState().isSignedIn) {
+    if (confirm('Sign in to Google Account to export image to Google Drive?')) {
+      await handleGoogleSignIn();
+      if (!googleDriveService.getUserState().isSignedIn) return;
+    } else return;
+  }
+
+  toast('Generating Image & Uploading to Google Drive...');
+  const world = document.getElementById('world');
+  const oldZoom = state.zoom, oldPanX = state.panX, oldPanY = state.panY;
+  state.zoom = 1; state.panX = 0; state.panY = 0;
+  applyTransform();
+
+  let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
+  state.nodes.forEach(n => {
+    if (n.x < minX) minX = n.x;
+    if (n.y < minY) minY = n.y;
+    const el = document.querySelector(`[data-node-id="${n.id}"]`);
+    if (el) {
+      if (n.x + el.offsetWidth > maxX) maxX = n.x + el.offsetWidth;
+      if (n.y + el.offsetHeight > maxY) maxY = n.y + el.offsetHeight;
+    }
+  });
+  if (state.nodes.length === 0) { minX=0; minY=0; maxX=800; maxY=600; }
+
+  try {
+    const canvas = await html2canvas(world, {
+      backgroundColor: '#0a0f1e',
+      x: minX - 40, y: minY - 40,
+      width: (maxX - minX) + 80, height: (maxY - minY) + 80,
+      scale: window.devicePixelRatio || 2
+    });
+    const dataUrl = canvas.toDataURL('image/png');
+    const filename = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}.png`;
+
+    const res = await googleDriveService.exportImageToDrive(filename, dataUrl);
+    showExportToast('Saved PNG image to Google Drive ☁️', res.webViewLink);
+  } catch(err) {
+    alert('Failed to save image to Google Drive: ' + err.message);
+  } finally {
+    state.zoom = oldZoom; state.panX = oldPanX; state.panY = oldPanY;
+    applyTransform();
+  }
+}
+
+function showExportToast(msg, link) {
+  if (link) {
+    toastEl.innerHTML = `${msg} <a href="${link}" target="_blank" style="color:#60a5fa;text-decoration:underline;margin-left:6px;font-weight:600">Open File ↗</a>`;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 6000);
+  } else {
+    toast(msg);
+  }
+}
+
+document.getElementById('menu-export-gdrive-file')?.addEventListener('click', () => {
+  document.getElementById('file-menu-wrap').classList.remove('open');
+  exportToGoogleDriveFile();
+});
+document.getElementById('menu-export-gdrive-img')?.addEventListener('click', () => {
+  document.getElementById('file-menu-wrap').classList.remove('open');
+  exportToGoogleDriveImage();
+});
+
+document.getElementById('menu-new').addEventListener('click', () => {
+  state.diagramId = uid('diag');
+  state.diagramName = 'Untitled Diagram';
+  document.getElementById('diagram-name').value = state.diagramName;
+  state.nodes = [];
+  state.connections = [];
+  state.selectedNodeId = null;
+  state.selectedConnId = null;
+  state.zoom = 1; state.panX = 40; state.panY = 40;
+  applyTransform();
+  snapshot();
+  renderAll();
+  toast('New diagram created');
+});
+
+document.getElementById('menu-close').addEventListener('click', () => {
+  if (state.nodes.length > 0 && !confirm('Close current canvas? Unexported changes may be lost.')) return;
+  state.nodes = [];
+  state.connections = [];
+  state.selectedNodeId = null;
+  state.selectedConnId = null;
+  snapshot();
+  renderAll();
+});
+
+document.getElementById('diagram-name').addEventListener('input', e => {
+  state.diagramName = e.target.value || 'Untitled Diagram';
+  saveToRecent();
+});
+document.getElementById('diagram-name').addEventListener('keydown', e => {
+  e.stopPropagation();
+  if (e.key === 'Enter') e.target.blur();
+});
+
+document.getElementById('menu-open').addEventListener('click', () => document.getElementById('file-menu-wrap').classList.remove('open') || document.getElementById('file-import').click());
+
+document.getElementById('menu-export-json').addEventListener('click', () => { document.getElementById('file-menu-wrap').classList.remove('open'); exportJSON(); });
+document.getElementById('menu-export-png').addEventListener('click', () => { document.getElementById('file-menu-wrap').classList.remove('open'); exportPNG(); });
+document.getElementById('menu-export-html').addEventListener('click', () => { document.getElementById('file-menu-wrap').classList.remove('open'); exportHTML(); });
+
+// Import Local File
+document.getElementById('file-import').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!Array.isArray(data.nodes) || !Array.isArray(data.connections)) throw new Error('Invalid format');
+    state.diagramId = data.diagramId || uid('diag');
+    state.diagramName = data.diagramName || file.name.replace(/\.[^/.]+$/, "");
+    document.getElementById('diagram-name').value = state.diagramName;
+    state.nodes = data.nodes;
+    state.connections = data.connections;
+    if (data.canvas) {
+      state.zoom = data.canvas.zoom || 1;
+      state.panX = data.canvas.panX || 0;
+      state.panY = data.canvas.panY || 0;
+      applyTransform();
+    }
+    state.selectedNodeId = null;
+    state.selectedConnId = null;
+    snapshot();
+    renderAll();
+    toast('Diagram imported ✓');
+  } catch(err) {
+    alert('Import failed: ' + err.message);
+  }
+  e.target.value = '';
+});
+
+// Export JSON Data
+function exportJSON() {
+  const data = {
+    app:'UMLGraphStudio', version:'1.0',
+    exportDate: new Date().toISOString(),
+    diagramName: state.diagramName,
+    diagramId: state.diagramId,
+    canvas: { zoom: state.zoom, panX: state.panX, panY: state.panY },
+    nodes: state.nodes,
+    connections: state.connections,
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}_${Date.now()}.umlgraph`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  toast('Diagram exported ✓');
+}
+
+// Export PNG Image
+async function exportPNG() {
+  toast('Generating Image...');
+  const world = document.getElementById('world');
+  
+  // Temporary reset pan/zoom to capture all nodes at 1x scale
+  const oldZoom = state.zoom, oldPanX = state.panX, oldPanY = state.panY;
+  state.zoom = 1; state.panX = 0; state.panY = 0;
+  applyTransform();
+  
+  // Calculate exact bounds
+  let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
+  state.nodes.forEach(n => {
+    if (n.x < minX) minX = n.x;
+    if (n.y < minY) minY = n.y;
+    const el = document.querySelector(`[data-node-id="${n.id}"]`);
+    if (el) {
+      if (n.x + el.offsetWidth > maxX) maxX = n.x + el.offsetWidth;
+      if (n.y + el.offsetHeight > maxY) maxY = n.y + el.offsetHeight;
+    }
+  });
+  if (state.nodes.length === 0) { minX=0; minY=0; maxX=800; maxY=600; }
+  
+  try {
+    const canvas = await html2canvas(world, {
+      backgroundColor: '#0a0f1e',
+      x: minX - 40, y: minY - 40,
+      width: (maxX - minX) + 80, height: (maxY - minY) + 80,
+      scale: window.devicePixelRatio || 2
+    });
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}.png`;
+    a.click();
+    toast('Image exported ✓');
+  } catch (err) {
+    alert('Failed to export PNG: ' + err);
+  } finally {
+    state.zoom = oldZoom; state.panX = oldPanX; state.panY = oldPanY;
+    applyTransform();
+  }
+}
+
+// Export HTML Webpage
+async function exportHTML() {
+  toast('Generating HTML...');
+  try {
+    const res = await fetch(window.location.href);
+    let html = await res.text();
+    const dataJSON = JSON.stringify({
+      nodes: state.nodes, connections: state.connections,
+      diagramId: state.diagramId, diagramName: state.diagramName,
+      canvas: { zoom: state.zoom, panX: state.panX, panY: state.panY }
+    });
+    
+    // Inject the loader script before the closing </body> tag.
+    const loader = '<scr'+'ipt>\n' + `
+      window.addEventListener('load', () => {
+        const data = ${dataJSON};
+        state.diagramId = data.diagramId;
+        state.diagramName = data.diagramName || 'Untitled Diagram';
+        document.getElementById('diagram-name').value = state.diagramName;
+        state.nodes = data.nodes;
+        state.connections = data.connections;
+        state.zoom = data.canvas?.zoom || 1;
+        state.panX = data.canvas?.panX || 40;
+        state.panY = data.canvas?.panY || 40;
+        state.history = []; state.histIdx = -1;
+        applyTransform();
+        snapshot();
+        renderAll();
+      });
+    ` + '<\\/scr'+'ipt></body>';
+    
+    html = html.replace('</body>', loader);
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('HTML exported ✓');
+  } catch(e) {
+    alert('Failed to export HTML: ' + e);
+  }
+}
+
+// Auto-Format graph layout
+document.getElementById('btn-format').addEventListener('click', () => {
+  if (state.nodes.length === 0) return;
+  autoFormat();
+  toast('Graph formatted ✓');
+});
+
+// Zoom controls
+document.getElementById('zc-in').addEventListener('click', () => {
+  state.zoom = Math.min(4, state.zoom * 1.2);
+  applyTransform();
+});
+document.getElementById('zc-out').addEventListener('click', () => {
+  state.zoom = Math.max(0.15, state.zoom / 1.2);
+  applyTransform();
+});
+document.getElementById('zc-reset').addEventListener('click', () => {
+  state.zoom = 1; state.panX = 40; state.panY = 40;
+  applyTransform();
+  renderAll();
+});
+
+// ══════════════════════════════════════════════════════════════
+// AUTO FORMAT LAYOUT (Sugiyama / Layered BFS)
+// ══════════════════════════════════════════════════════════════
+function autoFormat() {
+  const N = state.nodes.length;
+  if (N === 0) return;
+
+  const idMap = {};
+  state.nodes.forEach((n,i) => idMap[n.id] = i);
+
+  // Build adjacency
+  const out = Array.from({length:N}, ()=>[]);
+  const inDeg = new Array(N).fill(0);
+  state.connections.forEach(c => {
+    const s = idMap[c.src], t = idMap[c.tgt];
+    if (s !== undefined && t !== undefined && s !== t) {
+      out[s].push(t);
+      inDeg[t]++;
+    }
+  });
+
+  // Topological layers via BFS
+  const layer = new Array(N).fill(-1);
+  const queue = [];
+  state.nodes.forEach((n,i) => { if (inDeg[i]===0) { layer[i]=0; queue.push(i); }});
+  if (queue.length===0) { layer[0]=0; queue.push(0); }
+
+  while (queue.length) {
+    const u = queue.shift();
+    out[u].forEach(v => {
+      if (layer[u]+1 > layer[v]) {
+        layer[v] = layer[u]+1;
+        queue.push(v);
+      }
+    });
+  }
+  // Assign remaining nodes
+  state.nodes.forEach((n,i) => { if (layer[i]===-1) layer[i] = 0; });
+
+  // Group by layer
+  const layers = {};
+  state.nodes.forEach((n,i) => {
+    const l = layer[i];
+    if (!layers[l]) layers[l]=[];
+    layers[l].push(i);
+  });
+
+  const GAP_X = 300, GAP_Y = 200;
+  const MARGIN = 80;
+
+  Object.entries(layers).sort(([a],[b])=>+a-+b).forEach(([lvl, nodeIdxs]) => {
+    const col = +lvl;
+    const count = nodeIdxs.length;
+    const totalH = (count-1) * GAP_Y;
+    nodeIdxs.forEach((ni, row) => {
+      state.nodes[ni].x = MARGIN + col * GAP_X;
+      state.nodes[ni].y = MARGIN + row * GAP_Y - totalH/2 + 300;
+      if (MARGIN > state.nodes[ni].y) state.nodes[ni].y = MARGIN;
+    });
+  });
+
+  snapshot();
+  renderAll();
+}
+
+// ══════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// DEMO DIAGRAM
+// ══════════════════════════════════════════════════════════════
+function loadDemo() {
+  // ═══════════════════════════════════════════════════════════════
+  // 742 EVERGREEN TERRACE — Dysfunctional Systems Architecture v1.0
+  // Springfield, OR  |  Nuclear Hazard Level: MAXIMUM
+  //
+  // Layout: Wide pentagon — Homer at center, 4 characters orbiting.
+  // Zoom 0.85 — all nodes visible, comfortable breathing room.
+  // ═══════════════════════════════════════════════════════════════
+  state.diagramName = '742 Evergreen Terrace — Dysfunctional Systems Architecture';
+  document.getElementById('diagram-name').value = state.diagramName;
+
+  //  Pentagon positions (center ≈ 560, 360  |  orbit radius ≈ 330px)
+  //
+  //        [Bart]            [Marge]
+  //           \               /
+  //            \             /
+  //             ──[Homer]───
+  //            /             \
+  //           /               \
+  //       [Burns]          [Walter]
+  //
+  state.nodes = [
+    {
+      id:'homer', x:460, y:320, w:260,
+      title:'Homer J. Simpson',
+      desc:'Chief Nuclear Safety Inspector. Zero safety record since 1989. World record: most "D\'oh"s per minute under reactor pressure.',
+      priority:'D\'H',
+      color:'#1a1a0a', borderColor:'#facc15',
+      shape:'rounded', imageUrl:null,
+      attributes:[], methods:[]
+    },
+    {
+      id:'marge', x:840, y:80, w:260,
+      title:'Marge Simpson',
+      desc:'Load Balancer & Sole Competent Adult. Uptime: 34 yrs. Handles 100% of household crises. No vacations. No sick days. No thanks.',
+      priority:'MVP',
+      color:'#0c1a2e', borderColor:'#38bdf8',
+      shape:'rounded', imageUrl:null,
+      attributes:[], methods:[]
+    },
+    {
+      id:'bart', x:60, y:70, w:260,
+      title:'Bart Simpson',
+      desc:'Chaos Agent & Distributed Denial-of-Service specialist. 94% of Springfield incident reports trace back to this node. SaaS = Skateboard-as-a-Service.',
+      priority:'EAT',
+      color:'#1c0f00', borderColor:'#f97316',
+      shape:'rounded', imageUrl:'images/bart.jpg',
+      attributes:[], methods:[]
+    },
+    {
+      id:'burns', x:60, y:570, w:260,
+      title:'C. Montgomery Burns',
+      desc:'Legacy Monolith. Age: 104. Tech debt: biblical. Still on COBOL mainframe, 1963. Core villain microservice. Has blocked every PR since 1890.',
+      priority:'EXC',
+      color:'#0d0d0d', borderColor:'#dc2626',
+      shape:'cylinder', imageUrl:'images/burns.jpg',
+      attributes:[], methods:[]
+    },
+    {
+      id:'walter', x:860, y:570, w:260,
+      title:'"Heisenberg" White',
+      desc:'Chemistry Consultant. Tried to corner Springfield\'s donut-sugar black market. Homer consumed all product in one sitting. Lesson: never ship food-adjacent blue things.',
+      priority:'CH3',
+      color:'#0a0a00', borderColor:'#84cc16',
+      shape:'rounded', imageUrl:'images/walter.jpg',
+      attributes:[], methods:[]
+    },
+  ];
+
+  state.connections = [
+    // ── Core family bonds ────────────────────────────────────────
+    {
+      id:'c01', src:'homer', tgt:'marge',
+      lineType:'two-way', style:'curved',
+      label:'Married (somehow)', color:'#facc15'
+    },
+    {
+      id:'c02', src:'homer', tgt:'bart',
+      lineType:'one-way', style:'curved',
+      label:'Son (regrets daily)', color:'#f97316'
+    },
+    {
+      id:'c03', src:'burns', tgt:'homer',
+      lineType:'one-way', style:'ortho',
+      label:'Employs (loosely)', color:'#dc2626'
+    },
+
+    // ── Shocking crossover connections ───────────────────────────
+    {
+      id:'c04', src:'walter', tgt:'homer',
+      lineType:'dotted', style:'curved',
+      label:'Homer ate ALL of it', color:'#84cc16'
+    },
+    {
+      id:'c05', src:'bart', tgt:'walter',
+      lineType:'one-way', style:'curved',
+      label:'Secret apprentice 🧪', color:'#a3e635'
+    },
+    {
+      id:'c06', src:'burns', tgt:'walter',
+      lineType:'dotted', style:'curved',
+      label:'VC funding (tax shelter)', color:'#7f1d1d'
+    },
+  ];
+
+  state.selectedNodeId = null;
+  state.selectedConnId = null;
+  state.zoom = 0.85; state.panX = 60; state.panY = 30;
+  applyTransform();
+  snapshot();
+  renderAll();
+  toast('🍩 Springfield Systems loaded — D\'oh!');
+}
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+// Viewport resize for screen keyboard: auto-scroll active node into view
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    const activeEl = document.querySelector('.gnode.selected') || document.querySelector('.node-inline-input');
+    if (activeEl) {
+      const rect = activeEl.getBoundingClientRect();
+      if (rect.bottom > window.visualViewport.height) {
+        state.panY -= (rect.bottom - window.visualViewport.height + 24);
+        applyTransform();
+      }
+    }
+  });
+}
+
+// Inspector toggle for mobile/responsive
+const btnToggleInsp = document.getElementById('btn-toggle-inspector');
+if (btnToggleInsp) {
+  btnToggleInsp.addEventListener('click', () => {
+    inspector.classList.toggle('open');
+  });
+}
+
+applyTransform();
+snapshot();
+loadDemo();
+</script>
+</body>
+</html>

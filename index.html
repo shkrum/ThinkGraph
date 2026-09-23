@@ -128,6 +128,41 @@ body{
 .port[data-anchor="bottom"]{bottom:-6px;left:calc(50% - 6px)}
 .port[data-anchor="left"]  {left:-6px;top:calc(50% - 6px)}
 
+/* Corner Resize Handles with enlarged touch hit target for touchscreens & mouse */
+.gnode .resize-handle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #6366f1;
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
+  z-index: 30;
+  touch-action: none;
+}
+.gnode .resize-handle::after {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+}
+.gnode:hover .resize-handle,
+.gnode.selected .resize-handle {
+  opacity: 1;
+  pointer-events: auto;
+}
+.gnode .resize-handle:hover,
+.gnode .resize-handle:active {
+  transform: scale(1.5);
+  background: #818cf8;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.9);
+}
+.resize-nw { top: -7px; left: -7px; cursor: nwse-resize; }
+.resize-ne { top: -7px; right: -7px; cursor: nesw-resize; }
+.resize-se { bottom: -7px; right: -7px; cursor: nwse-resize; }
+.resize-sw { bottom: -7px; left: -7px; cursor: nesw-resize; }
+
 /* Node header bar with priority */
 .node-head{
   display:flex;align-items:center;justify-content:space-between;
@@ -1084,6 +1119,7 @@ function deleteConn(id) {
 function nodeCenter(n) { return { x: n.x + n.w/2, y: n.y + nodeHeight(n)/2 }; }
 
 function nodeHeight(n) {
+  if (n.h) return n.h;
   let h = 90;
   if (n.imageUrl) h += 148;
   if (n.attributes?.length || n.methods?.length) h += (n.attributes.length + n.methods.length) * 18 + 14;
@@ -1237,12 +1273,23 @@ function renderNodes() {
     const isSel = state.selectedNodeId === node.id;
     const dimmed = filter && !node.priority.includes(filter);
 
+    const currentW = node.w || 200;
+    const currentH = node.h || nodeHeight(node);
+    const scale = Math.max(0.65, Math.min(3.5, currentW / 200));
+
+    const titleFontSize = Math.max(12, Math.round(13 * scale));
+    const descFontSize = Math.max(10, Math.round(11 * scale));
+    const mediaMaxH = Math.max(70, Math.round(140 * scale));
+    const prioFontSize = Math.max(9, Math.round(10 * scale));
+    const innerPadding = Math.max(6, Math.round(10 * scale));
+
     const el = document.createElement('div');
     el.className = 'gnode' + (isSel ? ' selected' : '');
     el.dataset.nodeId = node.id;
     el.style.left = node.x + 'px';
     el.style.top  = node.y + 'px';
-    el.style.width = node.w + 'px';
+    el.style.width = currentW + 'px';
+    el.style.height = currentH + 'px';
     el.style.background = node.color;
     el.style.borderColor = node.borderColor;
     el.style.opacity = dimmed ? '0.25' : '1';
@@ -1258,27 +1305,42 @@ function renderNodes() {
       <div class="port" data-anchor="bottom" data-node-id="${node.id}"></div>
       <div class="port" data-anchor="left"   data-node-id="${node.id}"></div>
 
-      <div class="node-head">
+      <!-- Corner Resize Handles (Finger Touch & Mouse) -->
+      <div class="resize-handle resize-nw" data-corner="nw" data-node-id="${node.id}" title="Resize (Top-Left)"></div>
+      <div class="resize-handle resize-ne" data-corner="ne" data-node-id="${node.id}" title="Resize (Top-Right)"></div>
+      <div class="resize-handle resize-se" data-corner="se" data-node-id="${node.id}" title="Resize (Bottom-Right)"></div>
+      <div class="resize-handle resize-sw" data-corner="sw" data-node-id="${node.id}" title="Resize (Bottom-Left)"></div>
+
+      <div class="node-head" style="padding: ${innerPadding - 2}px ${innerPadding}px;">
         <div class="prio-wrap">
-          <span class="prio-label">Prio</span>
+          <span class="prio-label" style="font-size: ${prioFontSize - 1}px;">Prio</span>
           <input class="node-prio-input" type="text" maxlength="3"
                  value="${esc(node.priority)}"
                  data-node-id="${node.id}"
+                 style="font-size: ${prioFontSize}px; width: ${Math.round(38 * scale)}px;"
                  inputmode="text" enterkeyhint="next" autocapitalize="characters"
                  spellcheck="false" autocomplete="off"/>
         </div>
         <div style="display:flex;align-items:center;gap:4px">
           <button class="node-edit-btn" data-node-id="${node.id}" title="Edit text (calls keyboard)">✏️</button>
-          <span class="node-id-tag">${node.id.split('_')[1]||node.id}</span>
+          <span class="node-id-tag" style="font-size: ${prioFontSize - 2}px;">${node.id.split('_')[1]||node.id}</span>
         </div>
       </div>
 
-      <div class="node-body">
-        <div class="node-title" data-field="title" data-node-id="${node.id}">${esc(node.title)}</div>
-        ${node.imageUrl ? `<div class="node-img-wrap"><img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}else if(this.dataset.tried==='1'){this.dataset.tried='2';this.src='https://raw.githubusercontent.com/shkrum/ThinkGraph/main/'+this.getAttribute('src')}"/></div>` : ''}
-        <div class="node-desc" data-field="desc" data-node-id="${node.id}">${esc(node.desc)}</div>
+      <div class="node-body" style="padding: ${innerPadding}px; display: flex; flex-direction: column; gap: 6px; height: calc(100% - ${Math.round(30 * scale)}px); overflow: auto;">
+        <div class="node-title" data-field="title" data-node-id="${node.id}" style="font-size: ${titleFontSize}px;">${esc(node.title)}</div>
+        ${node.imageUrl ? `
+          <div class="node-img-wrap" style="max-height: ${mediaMaxH + 10}px;">
+            ${(node.mediaType === 'video' || (node.imageUrl || '').startsWith('data:video')) ? `
+              <video src="${esc(resolveImgUrl(node.imageUrl))}" controls style="max-height: ${mediaMaxH}px; width: 100%; border-radius: 6px; object-fit: contain;" preload="metadata"></video>
+            ` : `
+              <img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" style="max-height: ${mediaMaxH}px; width: 100%; object-fit: contain;" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}else if(this.dataset.tried==='1'){this.dataset.tried='2';this.src='https://raw.githubusercontent.com/shkrum/ThinkGraph/main/'+this.getAttribute('src')}"/>
+            `}
+          </div>
+        ` : ''}
+        <div class="node-desc" data-field="desc" data-node-id="${node.id}" style="font-size: ${descFontSize}px; flex: 1; overflow: auto;">${esc(node.desc)}</div>
         ${(node.attributes?.length || node.methods?.length) ? `
-          <div class="node-uml-attrs">
+          <div class="node-uml-attrs" style="font-size: ${descFontSize - 1}px;">
             ${node.attributes.map(a=>`<div>${esc(a)}</div>`).join('')}
             ${node.methods.map(m=>`<div class="node-uml-methods">${esc(m)}</div>`).join('')}
           </div>` : ''}
@@ -1361,6 +1423,142 @@ function startInlineEdit(node, fieldName, fieldEl) {
 // ══════════════════════════════════════════════════════════════
 function attachNodeEvents(el, nodeData) {
 
+  // ── Corner Handles – Drag Resizing (Pointer Events for Touch & Mouse) ──
+  el.querySelectorAll('.resize-handle').forEach(handle => {
+    handle.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      state.selectedNodeId = nodeData.id;
+      state.selectedConnId = null;
+      world.querySelectorAll('.gnode.selected').forEach(g => g.classList.remove('selected'));
+      el.classList.add('selected');
+      renderInspector();
+
+      try { handle.setPointerCapture(e.pointerId); } catch {}
+
+      const corner = handle.dataset.corner;
+      const startWorld = screenToWorld(e.clientX, e.clientY);
+      const n = state.nodes.find(item => item.id === nodeData.id);
+      if (!n) return;
+
+      const startX = n.x;
+      const startY = n.y;
+      const startW = n.w || 200;
+      const startH = n.h || nodeHeight(n);
+
+      let rafId = null;
+
+      function onResizeMove(me) {
+        if (me.pointerId !== e.pointerId) return;
+
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          const curWorld = screenToWorld(me.clientX, me.clientY);
+          const dx = curWorld.x - startWorld.x;
+          const dy = curWorld.y - startWorld.y;
+
+          const minW = 140;
+          const minH = 90;
+
+          let newX = startX;
+          let newY = startY;
+          let newW = startW;
+          let newH = startH;
+
+          if (corner === 'se') {
+            newW = Math.max(minW, startW + dx);
+            newH = Math.max(minH, startH + dy);
+          } else if (corner === 'sw') {
+            const propW = startW - dx;
+            if (propW >= minW) {
+              newW = propW;
+              newX = startX + dx;
+            } else {
+              newW = minW;
+              newX = startX + (startW - minW);
+            }
+            newH = Math.max(minH, startH + dy);
+          } else if (corner === 'ne') {
+            newW = Math.max(minW, startW + dx);
+            const propH = startH - dy;
+            if (propH >= minH) {
+              newH = propH;
+              newY = startY + dy;
+            } else {
+              newH = minH;
+              newY = startY + (startH - minH);
+            }
+          } else if (corner === 'nw') {
+            const propW = startW - dx;
+            if (propW >= minW) {
+              newW = propW;
+              newX = startX + dx;
+            } else {
+              newW = minW;
+              newX = startX + (startW - minW);
+            }
+            const propH = startH - dy;
+            if (propH >= minH) {
+              newH = propH;
+              newY = startY + dy;
+            } else {
+              newH = minH;
+              newY = startY + (startH - minH);
+            }
+          }
+
+          // Snap to 10px grid
+          newW = Math.round(newW / 10) * 10;
+          newH = Math.round(newH / 10) * 10;
+          newX = Math.round(newX / 10) * 10;
+          newY = Math.round(newY / 10) * 10;
+
+          n.x = newX;
+          n.y = newY;
+          n.w = newW;
+          n.h = newH;
+
+          // Update card DOM elements & content scale live during drag
+          const fresh = world.querySelector('[data-node-id="' + nodeData.id + '"]');
+          if (fresh) {
+            fresh.style.left = newX + 'px';
+            fresh.style.top = newY + 'px';
+            fresh.style.width = newW + 'px';
+            fresh.style.height = newH + 'px';
+
+            const scale = Math.max(0.65, Math.min(3.5, newW / 200));
+            const t = fresh.querySelector('.node-title');
+            if (t) t.style.fontSize = Math.max(12, Math.round(13 * scale)) + 'px';
+            const d = fresh.querySelector('.node-desc');
+            if (d) d.style.fontSize = Math.max(10, Math.round(11 * scale)) + 'px';
+            const imgWrap = fresh.querySelector('.node-img-wrap');
+            if (imgWrap) imgWrap.style.maxHeight = Math.max(70, Math.round(140 * scale)) + 10 + 'px';
+            const img = fresh.querySelector('.node-img-wrap img, .node-img-wrap video');
+            if (img) img.style.maxHeight = Math.max(70, Math.round(140 * scale)) + 'px';
+          }
+
+          renderConnections();
+        });
+      }
+
+      function onResizeUp(ue) {
+        if (ue.pointerId !== e.pointerId) return;
+        if (rafId) cancelAnimationFrame(rafId);
+        try { handle.releasePointerCapture(e.pointerId); } catch {}
+        handle.removeEventListener('pointermove', onResizeMove);
+        handle.removeEventListener('pointerup', onResizeUp);
+        handle.removeEventListener('pointercancel', onResizeUp);
+        snapshot();
+        renderNodes();
+      }
+
+      handle.addEventListener('pointermove', onResizeMove);
+      handle.addEventListener('pointerup', onResizeUp);
+      handle.addEventListener('pointercancel', onResizeUp);
+    });
+  });
+
   // ── Priority input ───────────────────────────────────────
   const prioInput = el.querySelector('.node-prio-input');
   prioInput.addEventListener('pointerdown', e => e.stopPropagation());
@@ -1425,8 +1623,8 @@ function attachNodeEvents(el, nodeData) {
 
   // ── Node body – drag to move with Pointer Events ─────────
   el.addEventListener('pointerdown', e => {
-    // Skip if clicking a port, input, textarea, button, or inline editor
-    if (e.target.classList.contains('port')) return;
+    // Skip if clicking a port, resize handle, input, textarea, button, or inline editor
+    if (e.target.classList.contains('port') || e.target.classList.contains('resize-handle')) return;
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
     if (e.target.classList.contains('node-inline-input')) return;
     if (e.target.closest('.node-edit-btn')) return;

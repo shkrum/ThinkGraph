@@ -102,28 +102,36 @@ export class Inspector {
             </div>
           </div>
 
-          <!-- Image Attachment -->
+          <!-- Photo / Video Attachment -->
           <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-            <label class="text-xs font-semibold text-slate-300 block">Attached Image</label>
-            ${node.imageUrl ? `
-              <div class="relative group rounded-lg overflow-hidden border border-slate-700 max-h-32 bg-slate-950 flex items-center justify-center">
-                <img src="${node.imageUrl}" class="object-contain max-h-32 w-full" />
-                <button id="btn-remove-image" class="absolute top-2 right-2 p-1 rounded bg-red-600/80 text-white text-xs hover:bg-red-600 transition">
+            <label class="text-xs font-semibold text-slate-300 block flex items-center justify-between">
+              <span>Attached Photo / Video</span>
+              <span class="text-[10px] text-slate-400 font-normal">Base64 JSON</span>
+            </label>
+            ${(node.mediaUrl || node.imageUrl) ? `
+              <div class="relative group rounded-lg overflow-hidden border border-slate-700 max-h-40 bg-slate-950 flex items-center justify-center">
+                ${(node.mediaType === 'video' || (node.mediaUrl || node.imageUrl || '').startsWith('data:video')) ? `
+                  <video src="${node.mediaUrl || node.imageUrl}" controls class="max-h-36 w-full rounded object-contain"></video>
+                ` : `
+                  <img src="${node.mediaUrl || node.imageUrl}" class="object-contain max-h-36 w-full" />
+                `}
+                <button id="btn-remove-media" class="absolute top-2 right-2 p-1 rounded bg-red-600/80 text-white text-xs hover:bg-red-600 transition z-10 shadow-md">
                   ✕ Remove
                 </button>
               </div>
             ` : `
-              <div class="text-center p-3 border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-xl transition cursor-pointer" id="box-upload-image">
+              <div class="text-center p-3 border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-xl transition cursor-pointer" id="box-upload-media">
                 <svg class="w-6 h-6 text-slate-500 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
-                <span class="text-xs text-indigo-400 font-medium">Click to upload image</span>
-                <input type="file" id="file-node-image" accept="image/*" class="hidden" />
+                <span class="text-xs text-indigo-400 font-medium block">Click to upload photo or video</span>
+                <span class="text-[10px] text-slate-500">Supports PNG, JPG, MP4, WebM</span>
+                <input type="file" id="file-node-media" accept="image/*,video/*" class="hidden" />
               </div>
             `}
           </div>
 
-          <!-- Shape & Style -->
+          <!-- Dimensions & Shape -->
           <div class="space-y-3">
             <div>
               <label class="text-xs font-semibold text-slate-300 mb-1 block">Node Shape</label>
@@ -134,6 +142,18 @@ export class Inspector {
                 <option value="cylinder" ${node.shape === 'cylinder' ? 'selected' : ''}>Database Cylinder</option>
                 <option value="uml-class" ${node.shape === 'uml-class' ? 'selected' : ''}>UML Class Box</option>
               </select>
+            </div>
+
+            <!-- Width & Height Inputs -->
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-xs font-semibold text-slate-400 mb-1 block">Width (px)</label>
+                <input id="input-node-width" type="number" min="140" max="1200" value="${node.width || 220}" class="w-full px-3 py-1 text-xs text-slate-200 bg-slate-900 border border-slate-700 rounded-lg focus:border-indigo-500 outline-none" />
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-400 mb-1 block">Height (px)</label>
+                <input id="input-node-height" type="number" min="90" max="1200" value="${node.height || 140}" class="w-full px-3 py-1 text-xs text-slate-200 bg-slate-900 border border-slate-700 rounded-lg focus:border-indigo-500 outline-none" />
+              </div>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
@@ -176,9 +196,17 @@ export class Inspector {
       this.store.updateNode(node.id, { description: e.target.value }, false);
     });
 
-    // Shape & Colors
+    // Shape, Dimensions & Colors
     this.container.querySelector('#select-node-shape')?.addEventListener('change', (e) => {
       this.store.updateNode(node.id, { shape: e.target.value });
+    });
+    this.container.querySelector('#input-node-width')?.addEventListener('input', (e) => {
+      const val = Math.max(140, parseInt(e.target.value) || 220);
+      this.store.updateNode(node.id, { width: val });
+    });
+    this.container.querySelector('#input-node-height')?.addEventListener('input', (e) => {
+      const val = Math.max(90, parseInt(e.target.value) || 140);
+      this.store.updateNode(node.id, { height: val });
     });
     this.container.querySelector('#input-node-bg')?.addEventListener('input', (e) => {
       this.store.updateNode(node.id, { color: e.target.value });
@@ -187,26 +215,35 @@ export class Inspector {
       this.store.updateNode(node.id, { borderColor: e.target.value });
     });
 
-    // Image Upload
-    const uploadBox = this.container.querySelector('#box-upload-image');
-    const imageInput = this.container.querySelector('#file-node-image');
-    uploadBox?.addEventListener('click', () => imageInput?.click());
+    // Photo / Video Upload
+    const uploadBox = this.container.querySelector('#box-upload-media');
+    const mediaInput = this.container.querySelector('#file-node-media');
+    uploadBox?.addEventListener('click', () => mediaInput?.click());
 
-    imageInput?.addEventListener('change', async (e) => {
+    mediaInput?.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (file) {
         try {
           const base64 = await FileHandler.convertFileToBase64(file);
-          this.store.updateNode(node.id, { imageUrl: base64 });
+          const isVideo = file.type.startsWith('video/');
+          this.store.updateNode(node.id, {
+            mediaUrl: base64,
+            imageUrl: base64,
+            mediaType: isVideo ? 'video' : 'image'
+          });
         } catch (err) {
-          alert("Image upload failed: " + err.message);
+          alert("Media upload failed: " + err.message);
         }
       }
     });
 
-    // Remove Image
-    this.container.querySelector('#btn-remove-image')?.addEventListener('click', () => {
-      this.store.updateNode(node.id, { imageUrl: null });
+    // Remove Media
+    this.container.querySelector('#btn-remove-media')?.addEventListener('click', () => {
+      this.store.updateNode(node.id, {
+        mediaUrl: null,
+        imageUrl: null,
+        mediaType: null
+      });
     });
   }
 

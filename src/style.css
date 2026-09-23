@@ -146,6 +146,36 @@ body {
 .anchor-bottom { bottom: -7px; left: calc(50% - 7px); }
 .anchor-left { left: -7px; top: calc(50% - 7px); }
 
+/* Corner Resize Handles */
+.resize-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #6366f1;
+  border: 2px solid #ffffff;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
+  z-index: 30;
+  touch-action: none;
+}
+
+.uml-node:hover .resize-handle,
+.uml-node.selected .resize-handle {
+  opacity: 1;
+}
+
+.resize-handle:hover {
+  transform: scale(1.4);
+  background: #818cf8;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.8);
+}
+
+.resize-nw { top: -6px; left: -6px; cursor: nwse-resize; }
+.resize-ne { top: -6px; right: -6px; cursor: nesw-resize; }
+.resize-se { bottom: -6px; right: -6px; cursor: nwse-resize; }
+.resize-sw { bottom: -6px; left: -6px; cursor: nesw-resize; }
+
 /* Priority Badge Styling */
 .priority-badge {
   font-family: 'Fira Code', monospace;

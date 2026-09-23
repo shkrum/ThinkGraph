@@ -133,7 +133,9 @@ export class DiagramStore {
       color: options.color || '#1e293b',
       borderColor: options.borderColor || '#3b82f6',
       textColor: options.textColor || '#f8fafc',
-      imageUrl: options.imageUrl || null,
+      imageUrl: options.imageUrl || options.mediaUrl || null,
+      mediaUrl: options.mediaUrl || options.imageUrl || null,
+      mediaType: options.mediaType || (options.mediaUrl?.startsWith('data:video') ? 'video' : (options.imageUrl || options.mediaUrl ? 'image' : null)),
       attributes: options.attributes || [],
       methods: options.methods || [],
       createdAt: new Date().toISOString()
@@ -270,14 +272,24 @@ export class DiagramStore {
       throw new Error("Invalid diagram JSON file format.");
     }
 
-    this.nodes = data.nodes.map(n => ({
-      ...n,
-      priority: String(n.priority || 'P01').substring(0, 3).toUpperCase(),
-      x: typeof n.x === 'number' ? n.x : 100,
-      y: typeof n.y === 'number' ? n.y : 100,
-      width: typeof n.width === 'number' ? n.width : 220,
-      height: typeof n.height === 'number' ? n.height : 140
-    }));
+    this.nodes = data.nodes.map(n => {
+      const url = n.mediaUrl || n.imageUrl || null;
+      let type = n.mediaType;
+      if (!type && url) {
+        type = url.startsWith('data:video') ? 'video' : 'image';
+      }
+      return {
+        ...n,
+        priority: String(n.priority || 'P01').substring(0, 3).toUpperCase(),
+        x: typeof n.x === 'number' ? n.x : 100,
+        y: typeof n.y === 'number' ? n.y : 100,
+        width: typeof n.width === 'number' ? n.width : 220,
+        height: typeof n.height === 'number' ? n.height : 140,
+        mediaUrl: url,
+        imageUrl: url,
+        mediaType: type
+      };
+    });
 
     this.connections = data.connections.map(c => ({
       ...c,

@@ -12,6 +12,10 @@ export class CanvasRenderer {
     this.draggingNode = null;
     this.nodeDragOffset = { x: 0, y: 0 };
 
+    this.resizingNode = null;
+    this.resizeCorner = null;
+    this.resizeStart = null;
+
     this.connectingFrom = null; // { nodeId, anchorType, startX, startY }
     this.mouseWorldPos = { x: 0, y: 0 };
 
@@ -129,11 +133,23 @@ export class CanvasRenderer {
       const matchesFilter = !filter || node.priority.includes(filter);
       const isSelected = this.store.selectedNodeId === node.id;
 
+      // Calculate scale factor relative to baseline (220px width)
+      const currentWidth = node.width || 220;
+      const currentHeight = node.height || 140;
+      const scale = Math.max(0.65, Math.min(3.5, currentWidth / 220));
+
+      const titleFontSize = Math.max(12, Math.round(14 * scale));
+      const descFontSize = Math.max(10, Math.round(12 * scale));
+      const mediaMaxHeight = Math.max(70, Math.round(140 * scale));
+      const prioFontSize = Math.max(9, Math.round(11 * scale));
+      const innerPadding = Math.max(8, Math.round(12 * scale));
+
       const nodeEl = document.createElement('div');
       nodeEl.dataset.id = node.id;
       nodeEl.style.left = `${node.x}px`;
       nodeEl.style.top = `${node.y}px`;
-      nodeEl.style.width = `${node.width}px`;
+      nodeEl.style.width = `${currentWidth}px`;
+      nodeEl.style.height = `${currentHeight}px`;
       nodeEl.style.backgroundColor = node.color || '#1e293b';
       nodeEl.style.borderColor = node.borderColor || '#3b82f6';
       
@@ -149,37 +165,50 @@ export class CanvasRenderer {
         <div class="anchor-port anchor-bottom" data-anchor="bottom" title="Drag to Connect (Bottom)"></div>
         <div class="anchor-port anchor-left" data-anchor="left" title="Drag to Connect (Left)"></div>
 
-        <div class="node-inner p-3 flex flex-col gap-2">
+        <!-- Corner Resize Handles -->
+        <div class="resize-handle resize-nw" data-corner="nw" title="Resize (Top-Left)"></div>
+        <div class="resize-handle resize-ne" data-corner="ne" title="Resize (Top-Right)"></div>
+        <div class="resize-handle resize-se" data-corner="se" title="Resize (Bottom-Right)"></div>
+        <div class="resize-handle resize-sw" data-corner="sw" title="Resize (Bottom-Left)"></div>
+
+        <div class="node-inner flex flex-col gap-2 h-full overflow-auto" style="padding: ${innerPadding}px;">
           <!-- Top Row: Priority Input Badge + Actions -->
-          <div class="flex items-center justify-between gap-2 border-b border-slate-700/50 pb-2">
+          <div class="flex items-center justify-between gap-2 border-b border-slate-700/50 pb-1.5 flex-shrink-0">
             <div class="flex items-center gap-1.5" title="Priority Code (3 Chars Max)">
-              <span class="text-[10px] uppercase font-bold text-slate-400">Prio:</span>
+              <span class="uppercase font-bold text-slate-400" style="font-size: ${prioFontSize - 1}px;">Prio:</span>
               <input type="text" maxlength="3" value="${node.priority}" 
-                class="priority-input-node text-xs font-mono font-bold text-yellow-300 bg-slate-900/90 border border-yellow-500/40 rounded px-1.5 py-0.5 text-center w-12 outline-none uppercase focus:border-yellow-400" 
+                class="priority-input-node font-mono font-bold text-yellow-300 bg-slate-900/90 border border-yellow-500/40 rounded px-1.5 py-0.5 text-center w-12 outline-none uppercase focus:border-yellow-400" 
+                style="font-size: ${prioFontSize}px;"
                 data-node-id="${node.id}" />
             </div>
             
-            <span class="text-[10px] font-mono text-slate-500">${node.id.replace('node_', '#')}</span>
+            <span class="font-mono text-slate-500" style="font-size: ${prioFontSize - 2}px;">${node.id.replace('node_', '#')}</span>
           </div>
 
           <!-- Title (Double click to edit) -->
-          <h4 class="node-editable-title font-bold text-sm text-slate-100 leading-tight tracking-tight break-words cursor-text select-text" 
+          <h4 class="node-editable-title font-bold text-slate-100 leading-tight tracking-tight break-words cursor-text select-text flex-shrink-0" 
+              style="font-size: ${titleFontSize}px;"
               title="Double click to edit title" data-field="title">${node.title}</h4>
 
-          <!-- Image Attachment (If Present) -->
-          ${node.imageUrl ? `
-            <div class="rounded-lg overflow-hidden border border-slate-700/80 bg-slate-950/80 max-h-36 flex items-center justify-center p-1">
-              <img src="${node.imageUrl}" class="object-contain max-h-32 rounded w-full" alt="Node image" />
+          <!-- Media Attachment (Photo or Video, If Present) -->
+          ${(node.mediaUrl || node.imageUrl) ? `
+            <div class="rounded-lg overflow-hidden border border-slate-700/80 bg-slate-950/80 flex items-center justify-center p-1 flex-shrink-0" style="max-height: ${mediaMaxHeight + 10}px;">
+              ${(node.mediaType === 'video' || (node.mediaUrl || node.imageUrl || '').startsWith('data:video')) ? `
+                <video src="${node.mediaUrl || node.imageUrl}" controls class="rounded w-full object-contain pointer-events-auto" style="max-height: ${mediaMaxHeight}px;" preload="metadata"></video>
+              ` : `
+                <img src="${node.mediaUrl || node.imageUrl}" class="object-contain rounded w-full" style="max-height: ${mediaMaxHeight}px;" alt="Node media" />
+              `}
             </div>
           ` : ''}
 
           <!-- Description (Double click to edit) -->
-          <p class="node-editable-desc text-xs text-slate-300 leading-normal break-words cursor-text select-text" 
+          <p class="node-editable-desc text-slate-300 leading-normal break-words cursor-text select-text flex-1 overflow-auto" 
+             style="font-size: ${descFontSize}px;"
              title="Double click to edit description" data-field="description">${node.description}</p>
 
           <!-- UML Class Attributes / Methods Format if UML Shape -->
           ${node.shape === 'uml-class' ? `
-            <div class="mt-1 pt-1 border-t border-slate-700 text-[11px] font-mono text-indigo-300 space-y-0.5">
+            <div class="mt-1 pt-1 border-t border-slate-700 font-mono text-indigo-300 space-y-0.5 flex-shrink-0" style="font-size: ${descFontSize - 1}px;">
               ${(node.attributes || []).map(attr => `<div>${attr}</div>`).join('')}
               ${(node.methods || []).map(m => `<div class="text-emerald-300">${m}</div>`).join('')}
             </div>
@@ -195,9 +224,11 @@ export class CanvasRenderer {
   attachNodeElementEvents(nodeEl, node) {
     // 1. Mouse Drag & Hold on Node (Press-Hold-Move-Release)
     nodeEl.addEventListener('pointerdown', (e) => {
-      // Ignore if clicking anchor port, priority input, or active contenteditable
+      // Ignore if clicking anchor port, resize handle, priority input, video player, or active contenteditable
       if (e.target.classList.contains('anchor-port') || 
+          e.target.classList.contains('resize-handle') ||
           e.target.tagName === 'INPUT' || 
+          e.target.tagName === 'VIDEO' ||
           e.target.isContentEditable) {
         return;
       }
@@ -249,6 +280,122 @@ export class CanvasRenderer {
         this.store.updateNode(node.id, { x: this.draggingNode.x, y: this.draggingNode.y }, true);
         this.draggingNode = null;
       }
+    });
+
+    // 1b. Corner Handles Drag Resizing
+    const resizeHandles = nodeEl.querySelectorAll('.resize-handle');
+    resizeHandles.forEach(handle => {
+      handle.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        this.store.selectNode(node.id);
+
+        const corner = handle.dataset.corner;
+        const startWorld = this.screenToWorld(e.clientX, e.clientY);
+
+        this.resizingNode = node;
+        this.resizeCorner = corner;
+        this.resizeStart = {
+          x: node.x,
+          y: node.y,
+          width: node.width || 220,
+          height: node.height || 140,
+          worldX: startWorld.x,
+          worldY: startWorld.y
+        };
+
+        try {
+          handle.setPointerCapture(e.pointerId);
+        } catch (err) {}
+      });
+
+      handle.addEventListener('pointermove', (e) => {
+        if (this.resizingNode && this.resizingNode.id === node.id && this.resizeStart) {
+          e.stopPropagation();
+          const currentWorld = this.screenToWorld(e.clientX, e.clientY);
+          const dx = currentWorld.x - this.resizeStart.worldX;
+          const dy = currentWorld.y - this.resizeStart.worldY;
+
+          const minW = 140;
+          const minH = 90;
+
+          let newX = this.resizeStart.x;
+          let newY = this.resizeStart.y;
+          let newW = this.resizeStart.width;
+          let newH = this.resizeStart.height;
+
+          if (this.resizeCorner === 'se') {
+            newW = Math.max(minW, this.resizeStart.width + dx);
+            newH = Math.max(minH, this.resizeStart.height + dy);
+          } else if (this.resizeCorner === 'sw') {
+            const proposedW = this.resizeStart.width - dx;
+            if (proposedW >= minW) {
+              newW = proposedW;
+              newX = this.resizeStart.x + dx;
+            } else {
+              newW = minW;
+              newX = this.resizeStart.x + (this.resizeStart.width - minW);
+            }
+            newH = Math.max(minH, this.resizeStart.height + dy);
+          } else if (this.resizeCorner === 'ne') {
+            newW = Math.max(minW, this.resizeStart.width + dx);
+            const proposedH = this.resizeStart.height - dy;
+            if (proposedH >= minH) {
+              newH = proposedH;
+              newY = this.resizeStart.y + dy;
+            } else {
+              newH = minH;
+              newY = this.resizeStart.y + (this.resizeStart.height - minH);
+            }
+          } else if (this.resizeCorner === 'nw') {
+            const proposedW = this.resizeStart.width - dx;
+            if (proposedW >= minW) {
+              newW = proposedW;
+              newX = this.resizeStart.x + dx;
+            } else {
+              newW = minW;
+              newX = this.resizeStart.x + (this.resizeStart.width - minW);
+            }
+            const proposedH = this.resizeStart.height - dy;
+            if (proposedH >= minH) {
+              newH = proposedH;
+              newY = this.resizeStart.y + dy;
+            } else {
+              newH = minH;
+              newY = this.resizeStart.y + (this.resizeStart.height - minH);
+            }
+          }
+
+          if (this.store.gridSnap) {
+            newW = Math.round(newW / this.store.gridSize) * this.store.gridSize;
+            newH = Math.round(newH / this.store.gridSize) * this.store.gridSize;
+            newX = Math.round(newX / this.store.gridSize) * this.store.gridSize;
+            newY = Math.round(newY / this.store.gridSize) * this.store.gridSize;
+          }
+
+          this.store.updateNode(node.id, {
+            x: newX,
+            y: newY,
+            width: newW,
+            height: newH
+          }, false);
+
+          this.renderConnections();
+        }
+      });
+
+      handle.addEventListener('pointerup', (e) => {
+        if (this.resizingNode && this.resizingNode.id === node.id) {
+          try {
+            handle.releasePointerCapture(e.pointerId);
+          } catch (err) {}
+
+          this.store.saveStateToHistory();
+          this.resizingNode = null;
+          this.resizeCorner = null;
+          this.resizeStart = null;
+        }
+      });
     });
 
     // 2. Anchor port connection drag start

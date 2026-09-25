@@ -128,6 +128,41 @@ body{
 .port[data-anchor="bottom"]{bottom:-6px;left:calc(50% - 6px)}
 .port[data-anchor="left"]  {left:-6px;top:calc(50% - 6px)}
 
+/* Corner Resize Handles with enlarged touch hit target for touchscreens & mouse */
+.gnode .resize-handle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #6366f1;
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
+  z-index: 30;
+  touch-action: none;
+}
+.gnode .resize-handle::after {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+}
+.gnode:hover .resize-handle,
+.gnode.selected .resize-handle {
+  opacity: 1;
+  pointer-events: auto;
+}
+.gnode .resize-handle:hover,
+.gnode .resize-handle:active {
+  transform: scale(1.5);
+  background: #818cf8;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.9);
+}
+.resize-nw { top: -7px; left: -7px; cursor: nwse-resize; }
+.resize-ne { top: -7px; right: -7px; cursor: nesw-resize; }
+.resize-se { bottom: -7px; right: -7px; cursor: nwse-resize; }
+.resize-sw { bottom: -7px; left: -7px; cursor: nesw-resize; }
+
 /* Node header bar with priority */
 .node-head{
   display:flex;align-items:center;justify-content:space-between;
@@ -247,6 +282,60 @@ select.insp-input option{background:#1e293b}
   border:none;
 }
 
+/* ─── ATTACHMENTS ─────────────────────────────────────────── */
+.att-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 6px;font-size:9px;font-weight:600;
+  background:rgba(99,102,241,0.15);color:#a5b4fc;
+  border:1px solid rgba(99,102,241,0.3);border-radius:5px;
+  cursor:default;white-space:nowrap;
+}
+.att-list{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.att-item{
+  display:flex;align-items:center;gap:6px;padding:5px 8px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:6px;font-size:11px;color:#e2e8f0;
+  transition:background 0.15s;
+}
+.att-item:hover{background:rgba(255,255,255,0.08)}
+.att-icon{
+  width:26px;height:26px;border-radius:5px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;text-transform:uppercase;
+}
+.att-icon.img{background:rgba(16,185,129,0.2);color:#6ee7b7}
+.att-icon.vid{background:rgba(236,72,153,0.2);color:#f9a8d4}
+.att-icon.pdf{background:rgba(239,68,68,0.2);color:#fca5a5}
+.att-icon.doc{background:rgba(59,130,246,0.2);color:#93c5fd}
+.att-icon.sht{background:rgba(34,197,94,0.2);color:#86efac}
+.att-icon.gen{background:rgba(148,163,184,0.2);color:#cbd5e1}
+.att-name{
+  flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-weight:500;
+}
+.att-size{font-size:9px;color:#64748b;flex-shrink:0}
+.att-dl,.att-rm{
+  padding:2px 5px;font-size:9px;font-weight:600;border-radius:4px;
+  cursor:pointer;border:none;flex-shrink:0;transition:all 0.15s;
+}
+.att-dl{background:rgba(99,102,241,0.15);color:#a5b4fc}
+.att-dl:hover{background:rgba(99,102,241,0.3)}
+.att-rm{background:rgba(239,68,68,0.15);color:#fca5a5}
+.att-rm:hover{background:rgba(239,68,68,0.3)}
+.att-upload-btn{
+  width:100%;padding:6px;font-size:11px;font-weight:600;
+  background:rgba(99,102,241,0.1);color:#a5b4fc;
+  border:1.5px dashed rgba(99,102,241,0.35);border-radius:7px;
+  cursor:pointer;transition:all 0.15s;text-align:center;
+}
+.att-upload-btn:hover{background:rgba(99,102,241,0.2);border-color:#6366f1;color:#c7d2fe}
+body.light-theme .att-badge{background:rgba(99,102,241,0.1);color:#4338ca;border-color:rgba(99,102,241,0.25)}
+body.light-theme .att-item{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.08);color:#1e293b}
+body.light-theme .att-item:hover{background:rgba(0,0,0,0.06)}
+body.light-theme .att-size{color:#94a3b8}
+body.light-theme .att-upload-btn{background:rgba(99,102,241,0.06);color:#4338ca;border-color:rgba(99,102,241,0.3)}
+body.light-theme .att-upload-btn:hover{background:rgba(99,102,241,0.12)}
+
 /* ─── DROPDOWN MENU & FILE NAME ───────────────────────────── */
 .dropdown { position:relative; display:inline-block; overflow:visible; }
 .dropdown-content {
@@ -337,6 +426,202 @@ textarea.node-inline-input{
   #inspector.open{transform:translateX(0)}
   .insp-mobile-close-bar{display:flex!important}
 }
+
+/* ─── WHITE / LIGHT THEME OVERRIDES ───────────────────────── */
+body.light-theme {
+  background: #f8fafc;
+  color: #0f172a;
+}
+body.light-theme #toolbar {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+body.light-theme #toolbar .logo {
+  color: #0f172a;
+}
+body.light-theme .tb-btn {
+  background: rgba(0, 0, 0, 0.04);
+  color: #334155;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+body.light-theme .tb-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+body.light-theme .tb-btn.active {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: #6366f1;
+  color: #4f46e5;
+}
+body.light-theme .tb-btn.primary {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: #ffffff;
+  border-color: #6366f1;
+}
+body.light-theme .tb-btn.primary:hover {
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+}
+body.light-theme .tb-sep {
+  background: rgba(0, 0, 0, 0.1);
+}
+body.light-theme #line-type-group {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+body.light-theme #diagram-name {
+  color: #0f172a;
+}
+body.light-theme #diagram-name:hover,
+body.light-theme #diagram-name:focus {
+  background: rgba(0, 0, 0, 0.04);
+  border-bottom-color: rgba(0, 0, 0, 0.2);
+}
+body.light-theme #prio-filter,
+body.light-theme #input-priority-filter {
+  background: #ffffff;
+  color: #d97706;
+  border-color: rgba(217, 119, 6, 0.4);
+}
+body.light-theme .dropdown-content,
+body.light-theme .submenu {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #0f172a;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+}
+body.light-theme .menu-item {
+  color: #334155;
+}
+body.light-theme .menu-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: #4338ca;
+}
+body.light-theme .menu-sep {
+  background: rgba(0, 0, 0, 0.08);
+}
+body.light-theme .submenu-empty {
+  color: #94a3b8;
+}
+body.light-theme #canvas-root {
+  background: #f8fafc;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.15) 1.2px, transparent 1.2px);
+}
+body.light-theme .gnode,
+body.light-theme .uml-node {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+body.light-theme .gnode.selected,
+body.light-theme .uml-node.selected {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.35), 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+body.light-theme .node-head {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+body.light-theme .node-head .prio-label {
+  color: #64748b;
+}
+body.light-theme .node-id-tag {
+  color: #94a3b8;
+}
+body.light-theme .node-title {
+  color: #0f172a;
+}
+body.light-theme .node-desc {
+  color: #475569;
+}
+body.light-theme .node-prio-input {
+  background: rgba(251, 191, 36, 0.15);
+  color: #b45309;
+  border-color: rgba(217, 119, 6, 0.4);
+}
+body.light-theme .node-img-wrap {
+  background: #f8fafc;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+body.light-theme .node-uml-attrs {
+  border-top-color: rgba(0, 0, 0, 0.08);
+  color: #4338ca;
+}
+body.light-theme .node-uml-methods {
+  color: #047857;
+}
+body.light-theme .node-title[contenteditable="true"],
+body.light-theme .node-desc[contenteditable="true"] {
+  outline-color: #6366f1;
+  background: rgba(99, 102, 241, 0.08);
+}
+body.light-theme .node-inline-input {
+  background: #ffffff;
+  border-color: #6366f1;
+  color: #0f172a;
+}
+body.light-theme #svg-layer text.conn-label {
+  fill: #1e293b;
+}
+body.light-theme #svg-layer rect.conn-label-bg {
+  fill: #ffffff;
+  stroke: #cbd5e1;
+}
+body.light-theme #inspector {
+  background: rgba(255, 255, 255, 0.96);
+  border-left-color: rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+}
+body.light-theme .insp-section {
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+body.light-theme .insp-title {
+  color: #475569;
+}
+body.light-theme .insp-label {
+  color: #64748b;
+}
+body.light-theme .insp-input {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+body.light-theme .insp-input:focus {
+  border-color: #6366f1;
+  background: #ffffff;
+}
+body.light-theme select.insp-input option {
+  background: #ffffff;
+  color: #0f172a;
+}
+body.light-theme #zoom-controls {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+body.light-theme .zc-btn {
+  color: #475569;
+}
+body.light-theme .zc-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #0f172a;
+}
+body.light-theme #zoom-label {
+  color: #64748b;
+}
+body.light-theme .zc-sep {
+  background: rgba(0, 0, 0, 0.1);
+}
+body.light-theme #toast {
+  background: #0f172a;
+  border-color: rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+}
+body.light-theme #gdrive-client-modal > div {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #0f172a;
+}
 </style>
 </head>
 <body>
@@ -370,6 +655,21 @@ textarea.node-inline-input{
       </div>
       <div class="menu-sep"></div>
       <div class="menu-item" id="menu-close" style="color:#fca5a5">Close Canvas</div>
+    </div>
+  </div>
+
+  <div class="dropdown" id="settings-menu-wrap">
+    <button class="tb-btn" id="btn-settings-menu" style="border:none;background:transparent;font-size:13px">Settings ▾</button>
+    <div class="dropdown-content" id="settings-menu-dropdown">
+      <div style="padding:6px 14px;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Appearance / Theme</div>
+      <div class="menu-item" id="menu-theme-dark" style="cursor:pointer">
+        <span style="display:flex;align-items:center;gap:6px">🌙 Dark Theme</span>
+        <span class="theme-check" id="check-theme-dark" style="font-weight:700;color:#6366f1">✓</span>
+      </div>
+      <div class="menu-item" id="menu-theme-light" style="cursor:pointer">
+        <span style="display:flex;align-items:center;gap:6px">☀️ White Theme</span>
+        <span class="theme-check" id="check-theme-light" style="display:none;font-weight:700;color:#6366f1">✓</span>
+      </div>
     </div>
   </div>
 
@@ -979,6 +1279,7 @@ function addNode(opts = {}) {
     imageUrl: opts.imageUrl ?? null,
     attributes: opts.attributes ?? [],
     methods: opts.methods ?? [],
+    attachments: opts.attachments ?? [],
   };
   state.nodes.push(node);
   state.selectedNodeId = node.id;
@@ -1084,9 +1385,11 @@ function deleteConn(id) {
 function nodeCenter(n) { return { x: n.x + n.w/2, y: n.y + nodeHeight(n)/2 }; }
 
 function nodeHeight(n) {
+  if (n.h) return n.h;
   let h = 90;
   if (n.imageUrl) h += 148;
   if (n.attributes?.length || n.methods?.length) h += (n.attributes.length + n.methods.length) * 18 + 14;
+  if (n.attachments?.length) h += 24;
   return h;
 }
 
@@ -1237,12 +1540,23 @@ function renderNodes() {
     const isSel = state.selectedNodeId === node.id;
     const dimmed = filter && !node.priority.includes(filter);
 
+    const currentW = node.w || 200;
+    const currentH = node.h || nodeHeight(node);
+    const scale = Math.max(0.65, Math.min(3.5, currentW / 200));
+
+    const titleFontSize = Math.max(12, Math.round(13 * scale));
+    const descFontSize = Math.max(10, Math.round(11 * scale));
+    const mediaMaxH = Math.max(70, Math.round(140 * scale));
+    const prioFontSize = Math.max(9, Math.round(10 * scale));
+    const innerPadding = Math.max(6, Math.round(10 * scale));
+
     const el = document.createElement('div');
     el.className = 'gnode' + (isSel ? ' selected' : '');
     el.dataset.nodeId = node.id;
     el.style.left = node.x + 'px';
     el.style.top  = node.y + 'px';
-    el.style.width = node.w + 'px';
+    el.style.width = currentW + 'px';
+    el.style.height = currentH + 'px';
     el.style.background = node.color;
     el.style.borderColor = node.borderColor;
     el.style.opacity = dimmed ? '0.25' : '1';
@@ -1258,29 +1572,48 @@ function renderNodes() {
       <div class="port" data-anchor="bottom" data-node-id="${node.id}"></div>
       <div class="port" data-anchor="left"   data-node-id="${node.id}"></div>
 
-      <div class="node-head">
+      <!-- Corner Resize Handles (Finger Touch & Mouse) -->
+      <div class="resize-handle resize-nw" data-corner="nw" data-node-id="${node.id}" title="Resize (Top-Left)"></div>
+      <div class="resize-handle resize-ne" data-corner="ne" data-node-id="${node.id}" title="Resize (Top-Right)"></div>
+      <div class="resize-handle resize-se" data-corner="se" data-node-id="${node.id}" title="Resize (Bottom-Right)"></div>
+      <div class="resize-handle resize-sw" data-corner="sw" data-node-id="${node.id}" title="Resize (Bottom-Left)"></div>
+
+      <div class="node-head" style="padding: ${innerPadding - 2}px ${innerPadding}px;">
         <div class="prio-wrap">
-          <span class="prio-label">Prio</span>
+          <span class="prio-label" style="font-size: ${prioFontSize - 1}px;">Prio</span>
           <input class="node-prio-input" type="text" maxlength="3"
                  value="${esc(node.priority)}"
                  data-node-id="${node.id}"
+                 style="font-size: ${prioFontSize}px; width: ${Math.round(38 * scale)}px;"
                  inputmode="text" enterkeyhint="next" autocapitalize="characters"
                  spellcheck="false" autocomplete="off"/>
         </div>
         <div style="display:flex;align-items:center;gap:4px">
           <button class="node-edit-btn" data-node-id="${node.id}" title="Edit text (calls keyboard)">✏️</button>
-          <span class="node-id-tag">${node.id.split('_')[1]||node.id}</span>
+          <span class="node-id-tag" style="font-size: ${prioFontSize - 2}px;">${node.id.split('_')[1]||node.id}</span>
         </div>
       </div>
 
-      <div class="node-body">
-        <div class="node-title" data-field="title" data-node-id="${node.id}">${esc(node.title)}</div>
-        ${node.imageUrl ? `<div class="node-img-wrap"><img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}else if(this.dataset.tried==='1'){this.dataset.tried='2';this.src='https://raw.githubusercontent.com/shkrum/ThinkGraph/main/'+this.getAttribute('src')}"/></div>` : ''}
-        <div class="node-desc" data-field="desc" data-node-id="${node.id}">${esc(node.desc)}</div>
+      <div class="node-body" style="padding: ${innerPadding}px; display: flex; flex-direction: column; gap: 6px; height: calc(100% - ${Math.round(30 * scale)}px); overflow: auto;">
+        <div class="node-title" data-field="title" data-node-id="${node.id}" style="font-size: ${titleFontSize}px;">${esc(node.title)}</div>
+        ${node.imageUrl ? `
+          <div class="node-img-wrap" style="max-height: ${mediaMaxH + 10}px;">
+            ${(node.mediaType === 'video' || (node.imageUrl || '').startsWith('data:video')) ? `
+              <video src="${esc(resolveImgUrl(node.imageUrl))}" controls style="max-height: ${mediaMaxH}px; width: 100%; border-radius: 6px; object-fit: contain;" preload="metadata"></video>
+            ` : `
+              <img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" style="max-height: ${mediaMaxH}px; width: 100%; object-fit: contain;" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}else if(this.dataset.tried==='1'){this.dataset.tried='2';this.src='https://raw.githubusercontent.com/shkrum/ThinkGraph/main/'+this.getAttribute('src')}"/>
+            `}
+          </div>
+        ` : ''}
+        <div class="node-desc" data-field="desc" data-node-id="${node.id}" style="font-size: ${descFontSize}px; flex: 1; overflow: auto;">${esc(node.desc)}</div>
         ${(node.attributes?.length || node.methods?.length) ? `
-          <div class="node-uml-attrs">
+          <div class="node-uml-attrs" style="font-size: ${descFontSize - 1}px;">
             ${node.attributes.map(a=>`<div>${esc(a)}</div>`).join('')}
             ${node.methods.map(m=>`<div class="node-uml-methods">${esc(m)}</div>`).join('')}
+          </div>` : ''}
+        ${node.attachments?.length ? `
+          <div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:3px">
+            <span class="att-badge">📎 ${node.attachments.length} file${node.attachments.length>1?'s':''}</span>
           </div>` : ''}
       </div>
     `;
@@ -1361,6 +1694,142 @@ function startInlineEdit(node, fieldName, fieldEl) {
 // ══════════════════════════════════════════════════════════════
 function attachNodeEvents(el, nodeData) {
 
+  // ── Corner Handles – Drag Resizing (Pointer Events for Touch & Mouse) ──
+  el.querySelectorAll('.resize-handle').forEach(handle => {
+    handle.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      state.selectedNodeId = nodeData.id;
+      state.selectedConnId = null;
+      world.querySelectorAll('.gnode.selected').forEach(g => g.classList.remove('selected'));
+      el.classList.add('selected');
+      renderInspector();
+
+      try { handle.setPointerCapture(e.pointerId); } catch {}
+
+      const corner = handle.dataset.corner;
+      const startWorld = screenToWorld(e.clientX, e.clientY);
+      const n = state.nodes.find(item => item.id === nodeData.id);
+      if (!n) return;
+
+      const startX = n.x;
+      const startY = n.y;
+      const startW = n.w || 200;
+      const startH = n.h || nodeHeight(n);
+
+      let rafId = null;
+
+      function onResizeMove(me) {
+        if (me.pointerId !== e.pointerId) return;
+
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          const curWorld = screenToWorld(me.clientX, me.clientY);
+          const dx = curWorld.x - startWorld.x;
+          const dy = curWorld.y - startWorld.y;
+
+          const minW = 140;
+          const minH = 90;
+
+          let newX = startX;
+          let newY = startY;
+          let newW = startW;
+          let newH = startH;
+
+          if (corner === 'se') {
+            newW = Math.max(minW, startW + dx);
+            newH = Math.max(minH, startH + dy);
+          } else if (corner === 'sw') {
+            const propW = startW - dx;
+            if (propW >= minW) {
+              newW = propW;
+              newX = startX + dx;
+            } else {
+              newW = minW;
+              newX = startX + (startW - minW);
+            }
+            newH = Math.max(minH, startH + dy);
+          } else if (corner === 'ne') {
+            newW = Math.max(minW, startW + dx);
+            const propH = startH - dy;
+            if (propH >= minH) {
+              newH = propH;
+              newY = startY + dy;
+            } else {
+              newH = minH;
+              newY = startY + (startH - minH);
+            }
+          } else if (corner === 'nw') {
+            const propW = startW - dx;
+            if (propW >= minW) {
+              newW = propW;
+              newX = startX + dx;
+            } else {
+              newW = minW;
+              newX = startX + (startW - minW);
+            }
+            const propH = startH - dy;
+            if (propH >= minH) {
+              newH = propH;
+              newY = startY + dy;
+            } else {
+              newH = minH;
+              newY = startY + (startH - minH);
+            }
+          }
+
+          // Snap to 10px grid
+          newW = Math.round(newW / 10) * 10;
+          newH = Math.round(newH / 10) * 10;
+          newX = Math.round(newX / 10) * 10;
+          newY = Math.round(newY / 10) * 10;
+
+          n.x = newX;
+          n.y = newY;
+          n.w = newW;
+          n.h = newH;
+
+          // Update card DOM elements & content scale live during drag
+          const fresh = world.querySelector('[data-node-id="' + nodeData.id + '"]');
+          if (fresh) {
+            fresh.style.left = newX + 'px';
+            fresh.style.top = newY + 'px';
+            fresh.style.width = newW + 'px';
+            fresh.style.height = newH + 'px';
+
+            const scale = Math.max(0.65, Math.min(3.5, newW / 200));
+            const t = fresh.querySelector('.node-title');
+            if (t) t.style.fontSize = Math.max(12, Math.round(13 * scale)) + 'px';
+            const d = fresh.querySelector('.node-desc');
+            if (d) d.style.fontSize = Math.max(10, Math.round(11 * scale)) + 'px';
+            const imgWrap = fresh.querySelector('.node-img-wrap');
+            if (imgWrap) imgWrap.style.maxHeight = Math.max(70, Math.round(140 * scale)) + 10 + 'px';
+            const img = fresh.querySelector('.node-img-wrap img, .node-img-wrap video');
+            if (img) img.style.maxHeight = Math.max(70, Math.round(140 * scale)) + 'px';
+          }
+
+          renderConnections();
+        });
+      }
+
+      function onResizeUp(ue) {
+        if (ue.pointerId !== e.pointerId) return;
+        if (rafId) cancelAnimationFrame(rafId);
+        try { handle.releasePointerCapture(e.pointerId); } catch {}
+        handle.removeEventListener('pointermove', onResizeMove);
+        handle.removeEventListener('pointerup', onResizeUp);
+        handle.removeEventListener('pointercancel', onResizeUp);
+        snapshot();
+        renderNodes();
+      }
+
+      handle.addEventListener('pointermove', onResizeMove);
+      handle.addEventListener('pointerup', onResizeUp);
+      handle.addEventListener('pointercancel', onResizeUp);
+    });
+  });
+
   // ── Priority input ───────────────────────────────────────
   const prioInput = el.querySelector('.node-prio-input');
   prioInput.addEventListener('pointerdown', e => e.stopPropagation());
@@ -1425,8 +1894,8 @@ function attachNodeEvents(el, nodeData) {
 
   // ── Node body – drag to move with Pointer Events ─────────
   el.addEventListener('pointerdown', e => {
-    // Skip if clicking a port, input, textarea, button, or inline editor
-    if (e.target.classList.contains('port')) return;
+    // Skip if clicking a port, resize handle, input, textarea, button, or inline editor
+    if (e.target.classList.contains('port') || e.target.classList.contains('resize-handle')) return;
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON') return;
     if (e.target.classList.contains('node-inline-input')) return;
     if (e.target.closest('.node-edit-btn')) return;
@@ -1774,6 +2243,25 @@ function renderNodeInspector(node) {
           </div>`}
       </div>
 
+      <div class="insp-row">
+        <label class="insp-label">📎 Attachments (${(node.attachments||[]).length})</label>
+        <div class="att-list" id="att-list">
+          ${(node.attachments||[]).map((att, i) => `
+            <div class="att-item">
+              <div class="att-icon ${attIconClass(att.type)}">${attIconLabel(att.type)}</div>
+              <span class="att-name" title="${esc(att.name)}">${esc(att.name)}</span>
+              <span class="att-size">${formatFileSize(att.size)}</span>
+              <button class="att-dl" data-att-idx="${i}" title="Download">⬇</button>
+              <button class="att-rm" data-att-idx="${i}" title="Remove">✕</button>
+            </div>
+          `).join('')}
+        </div>
+        <button class="att-upload-btn" id="att-upload-btn" style="margin-top:6px">
+          + Add File Attachment
+          <input type="file" id="att-file-input" multiple style="display:none"/>
+        </button>
+      </div>
+
       <button class="insp-del-btn" id="ip-delete">🗑 Delete Node</button>
     </div>
   `;
@@ -1823,6 +2311,68 @@ function renderNodeInspector(node) {
   }
   const delImg = document.getElementById('ip-img-del');
   if (delImg) delImg.addEventListener('click', () => updateNode(node.id, { imageUrl: null }));
+
+  // Attachments
+  const attUploadBtn = document.getElementById('att-upload-btn');
+  const attFileInput = document.getElementById('att-file-input');
+  if (attUploadBtn && attFileInput) {
+    attUploadBtn.addEventListener('click', (e) => {
+      if (e.target === attFileInput) return;
+      attFileInput.click();
+    });
+    attFileInput.addEventListener('click', e => e.stopPropagation());
+    attFileInput.addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+      const n = state.nodes.find(item => item.id === node.id);
+      if (!n) return;
+      if (!n.attachments) n.attachments = [];
+      for (const file of files) {
+        const data = await fileToBase64(file);
+        n.attachments.push({
+          id: uid('att'),
+          name: file.name,
+          type: file.type || 'application/octet-stream',
+          size: file.size,
+          data: data,
+          addedAt: new Date().toISOString()
+        });
+      }
+      snapshot();
+      renderAll();
+    });
+  }
+
+  // Attachment download buttons
+  document.querySelectorAll('#att-list .att-dl').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.attIdx);
+      const n = state.nodes.find(item => item.id === node.id);
+      if (!n || !n.attachments?.[idx]) return;
+      const att = n.attachments[idx];
+      const a = document.createElement('a');
+      a.href = att.data;
+      a.download = att.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      toast('Downloaded: ' + att.name);
+    });
+  });
+
+  // Attachment remove buttons
+  document.querySelectorAll('#att-list .att-rm').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.attIdx);
+      const n = state.nodes.find(item => item.id === node.id);
+      if (!n || !n.attachments?.[idx]) return;
+      const name = n.attachments[idx].name;
+      n.attachments.splice(idx, 1);
+      snapshot();
+      renderAll();
+      toast('Removed: ' + name);
+    });
+  });
 }
 
 function renderConnInspector(conn) {
@@ -2070,14 +2620,63 @@ async function renderRecentMenu() {
   });
 }
 
+let currentTheme = localStorage.getItem('uml_studio_theme') || 'dark';
+
+function applyTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('uml_studio_theme', theme);
+  const darkCheck = document.getElementById('check-theme-dark');
+  const lightCheck = document.getElementById('check-theme-light');
+  
+  if (theme === 'light') {
+    document.body.classList.add('light-theme');
+    if (darkCheck) darkCheck.style.display = 'none';
+    if (lightCheck) lightCheck.style.display = 'inline-block';
+  } else {
+    document.body.classList.remove('light-theme');
+    if (darkCheck) darkCheck.style.display = 'inline-block';
+    if (lightCheck) lightCheck.style.display = 'none';
+  }
+}
+
+// Initial theme setup
+applyTheme(currentTheme);
+
 const fmWrap = document.getElementById('file-menu-wrap');
-document.getElementById('btn-file-menu').addEventListener('click', e => {
+const smWrap = document.getElementById('settings-menu-wrap');
+
+document.getElementById('btn-file-menu')?.addEventListener('click', e => {
   e.stopPropagation();
   renderRecentMenu();
+  if (smWrap) smWrap.classList.remove('open');
+  if (userProfileDropdown) userProfileDropdown.classList.remove('open');
+  if (userProfileMenu) userProfileMenu.style.display = 'none';
   fmWrap.classList.toggle('open');
 });
+
+document.getElementById('btn-settings-menu')?.addEventListener('click', e => {
+  e.stopPropagation();
+  if (fmWrap) fmWrap.classList.remove('open');
+  if (userProfileDropdown) userProfileDropdown.classList.remove('open');
+  if (userProfileMenu) userProfileMenu.style.display = 'none';
+  if (smWrap) smWrap.classList.toggle('open');
+});
+
+document.getElementById('menu-theme-dark')?.addEventListener('click', () => {
+  applyTheme('dark');
+  if (smWrap) smWrap.classList.remove('open');
+  toast('Dark Theme applied 🌙');
+});
+
+document.getElementById('menu-theme-light')?.addEventListener('click', () => {
+  applyTheme('light');
+  if (smWrap) smWrap.classList.remove('open');
+  toast('White Theme applied ☀️');
+});
+
 document.addEventListener('click', () => {
-  fmWrap.classList.remove('open');
+  if (fmWrap) fmWrap.classList.remove('open');
+  if (smWrap) smWrap.classList.remove('open');
   const userMenu = document.getElementById('user-profile-menu');
   if (userMenu) userMenu.style.display = 'none';
 });
@@ -2326,7 +2925,7 @@ async function exportToGoogleDriveImage() {
 
   try {
     const canvas = await html2canvas(world, {
-      backgroundColor: '#0a0f1e',
+      backgroundColor: currentTheme === 'light' ? '#f8fafc' : '#0a0f1e',
       x: minX - 40, y: minY - 40,
       width: (maxX - minX) + 80, height: (maxY - minY) + 80,
       scale: window.devicePixelRatio || 2
@@ -2479,7 +3078,7 @@ async function exportPNG() {
   
   try {
     const canvas = await html2canvas(world, {
-      backgroundColor: '#0a0f1e',
+      backgroundColor: currentTheme === 'light' ? '#f8fafc' : '#0a0f1e',
       x: minX - 40, y: minY - 40,
       width: (maxX - minX) + 80, height: (maxY - minY) + 80,
       scale: window.devicePixelRatio || 2
@@ -2639,6 +3238,38 @@ function fileToBase64(file) {
     r.onerror = rej;
     r.readAsDataURL(file);
   });
+}
+
+function attIconClass(mime) {
+  if (!mime) return 'gen';
+  if (mime.startsWith('image/')) return 'img';
+  if (mime.startsWith('video/')) return 'vid';
+  if (mime === 'application/pdf') return 'pdf';
+  if (mime.includes('word') || mime.includes('document') || mime.includes('text')) return 'doc';
+  if (mime.includes('sheet') || mime.includes('excel') || mime.includes('csv')) return 'sht';
+  return 'gen';
+}
+
+function attIconLabel(mime) {
+  if (!mime) return '?';
+  if (mime.startsWith('image/')) return '🖼';
+  if (mime.startsWith('video/')) return '🎬';
+  if (mime === 'application/pdf') return 'PDF';
+  if (mime.includes('word') || mime.includes('document')) return 'DOC';
+  if (mime.includes('sheet') || mime.includes('excel')) return 'XLS';
+  if (mime.includes('csv')) return 'CSV';
+  if (mime.includes('text')) return 'TXT';
+  if (mime.includes('zip') || mime.includes('archive') || mime.includes('rar')) return 'ZIP';
+  if (mime.includes('json')) return 'JSN';
+  const ext = mime.split('/').pop()?.toUpperCase().slice(0,3);
+  return ext || '📄';
+}
+
+function formatFileSize(bytes) {
+  if (!bytes || bytes === 0) return '0 B';
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/(1024*1024)).toFixed(1) + ' MB';
 }
 
 // ══════════════════════════════════════════════════════════════

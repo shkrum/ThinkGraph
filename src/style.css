@@ -15,6 +15,17 @@
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+body.light-theme {
+  --bg-dark: #f8fafc;
+  --bg-canvas: #f1f5f9;
+  --panel-bg: rgba(255, 255, 255, 0.92);
+  --panel-border: rgba(0, 0, 0, 0.08);
+  --node-bg-default: #ffffff;
+  --node-border-default: #cbd5e1;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+}
+
 body {
   margin: 0;
   padding: 0;

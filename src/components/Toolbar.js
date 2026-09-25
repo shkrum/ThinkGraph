@@ -25,6 +25,26 @@ export class Toolbar {
             </h1>
             <p class="text-xs text-slate-400">Interactive Graph & UML Diagram Editor</p>
           </div>
+
+          <div class="h-6 w-px bg-slate-800 mx-1"></div>
+
+          <!-- Settings Dropdown (Level with File actions) -->
+          <div class="relative dropdown" id="settings-menu-wrap">
+            <button id="btn-settings-menu" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
+              <span>Settings ▾</span>
+            </button>
+            <div id="settings-menu-dropdown" class="dropdown-content absolute top-full left-0 mt-1.5 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-xl p-1.5 hidden z-50">
+              <div class="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Appearance / Theme</div>
+              <button id="menu-theme-dark" class="w-full text-left px-3 py-1.5 text-xs text-slate-200 hover:bg-indigo-600/20 hover:text-white rounded-lg flex items-center justify-between transition">
+                <span>🌙 Dark Theme</span>
+                <span id="tb-check-dark" class="text-indigo-400 font-bold">✓</span>
+              </button>
+              <button id="menu-theme-light" class="w-full text-left px-3 py-1.5 text-xs text-slate-200 hover:bg-indigo-600/20 hover:text-white rounded-lg flex items-center justify-between transition">
+                <span>☀️ White Theme</span>
+                <span id="tb-check-light" class="text-indigo-400 font-bold hidden">✓</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Central Floating Tool Groups -->
@@ -117,6 +137,50 @@ export class Toolbar {
   }
 
   attachEvents() {
+    // Theme & Settings Menu
+    const btnSettings = this.container.querySelector('#btn-settings-menu');
+    const settingsDropdown = this.container.querySelector('#settings-menu-dropdown');
+    const menuDark = this.container.querySelector('#menu-theme-dark');
+    const menuLight = this.container.querySelector('#menu-theme-light');
+    const checkDark = this.container.querySelector('#tb-check-dark');
+    const checkLight = this.container.querySelector('#tb-check-light');
+
+    const updateCheckmarks = (theme) => {
+      if (theme === 'light') {
+        document.body.classList.add('light-theme');
+        checkDark?.classList.add('hidden');
+        checkLight?.classList.remove('hidden');
+      } else {
+        document.body.classList.remove('light-theme');
+        checkDark?.classList.remove('hidden');
+        checkLight?.classList.add('hidden');
+      }
+    };
+
+    const initialTheme = localStorage.getItem('uml_studio_theme') || 'dark';
+    updateCheckmarks(initialTheme);
+
+    btnSettings?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      settingsDropdown?.classList.toggle('hidden');
+    });
+
+    menuDark?.addEventListener('click', () => {
+      localStorage.setItem('uml_studio_theme', 'dark');
+      updateCheckmarks('dark');
+      settingsDropdown?.classList.add('hidden');
+    });
+
+    menuLight?.addEventListener('click', () => {
+      localStorage.setItem('uml_studio_theme', 'light');
+      updateCheckmarks('light');
+      settingsDropdown?.classList.add('hidden');
+    });
+
+    document.addEventListener('click', () => {
+      settingsDropdown?.classList.add('hidden');
+    });
+
     // Add Node
     this.container.querySelector('#btn-add-node').addEventListener('click', () => {
       const panX = -this.store.panX + 250;

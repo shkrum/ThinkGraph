@@ -3124,7 +3124,6 @@ async function exportHTML() {
 document.getElementById('btn-format').addEventListener('click', () => {
   if (state.nodes.length === 0) return;
   autoFormat();
-  toast('Graph formatted ✓');
 });
 
 // Zoom controls
@@ -3143,68 +3142,187 @@ document.getElementById('zc-reset').addEventListener('click', () => {
 });
 
 // ══════════════════════════════════════════════════════════════
-// AUTO FORMAT LAYOUT (Sugiyama / Layered BFS)
+// AUTO FORMAT LAYOUT (DYNAMIC COLUMN-AWARE & ZERO OVERLAP)
 // ══════════════════════════════════════════════════════════════
-function autoFormat() {
+function autoFormat(silent = false) {
   const N = state.nodes.length;
   if (N === 0) return;
 
-  const idMap = {};
-  state.nodes.forEach((n,i) => idMap[n.id] = i);
+  function getNodeW(n) {
+    const el = typeof world !== 'undefined' && world ? world.querySelector(`[data-node-id="${n.id}"]`) : null;
+    return (el && el.offsetWidth) || n.w || 240;
+  }
 
-  // Build adjacency
-  const out = Array.from({length:N}, ()=>[]);
-  const inDeg = new Array(N).fill(0);
-  state.connections.forEach(c => {
-    const s = idMap[c.src], t = idMap[c.tgt];
-    if (s !== undefined && t !== undefined && s !== t) {
-      out[s].push(t);
-      inDeg[t]++;
+  function getNodeH(n) {
+    const el = typeof world !== 'undefined' && world ? world.querySelector(`[data-node-id="${n.id}"]`) : null;
+    return (el && el.offsetHeight) || n.h || nodeHeight(n);
+  }
+
+  const VERTICAL_GAP = 55;
+  const HORIZONTAL_GAP = 120;
+  const MARGIN_LEFT = 60;
+  const MARGIN_TOP = 60;
+
+  // 1. Check if the graph already has established horizontal columns
+  // Cluster nodes by X coordinate (nodes with similar X within threshold belong to the same column)
+  const sortedByX = [...state.nodes].sort((a, b) => a.x - b.x);
+  const colGroups = [];
+  const COL_CLUSTER_THRESHOLD = 180;
+
+  sortedByX.forEach(node => {
+    const existing = colGroups.find(g => Math.abs(g.avgX - node.x) < COL_CLUSTER_THRESHOLD);
+    if (existing) {
+      existing.nodes.push(node);
+      existing.avgX = existing.nodes.reduce((s, n) => s + n.x, 0) / existing.nodes.length;
+    } else {
+      colGroups.push({ avgX: node.x, nodes: [node] });
     }
   });
 
-  // Topological layers via BFS
-  const layer = new Array(N).fill(-1);
-  const queue = [];
-  state.nodes.forEach((n,i) => { if (inDeg[i]===0) { layer[i]=0; queue.push(i); }});
-  if (queue.length===0) { layer[0]=0; queue.push(0); }
+  // If we detected at least 2 distinct columns (like in multi-column architecture diagrams, Demo 2, etc.)
+  if (colGroups.length >= 2) {
+    // Sort columns from left to right
+    colGroups.sort((a, b) => a.avgX - b.avgX);
 
-  while (queue.length) {
-    const u = queue.shift();
-    out[u].forEach(v => {
-      if (layer[u]+1 > layer[v]) {
-        layer[v] = layer[u]+1;
-        queue.push(v);
+    let currentX = MARGIN_LEFT;
+    colGroups.forEach(col => {
+      // Sort nodes vertically by their existing Y position to preserve logical hierarchy
+      col.nodes.sort((a, b) => a.y - b.y);
+
+      let currentY = MARGIN_TOP;
+      let maxColW = 0;
+
+      col.nodes.forEach(node => {
+        const w = getNodeW(node);
+        const h = getNodeH(node);
+        if (w > maxColW) maxColW = w;
+
+        node.x = currentX;
+        node.y = currentY;
+        currentY += h + VERTICAL_GAP;
+      });
+
+      currentX += maxColW + HORIZONTAL_GAP;
+    });
+  } else {
+    // General hierarchical DAG layout (Sugiyama-style)
+    const idMap = {};
+    state.nodes.forEach((n, i) => idMap[n.id] = i);
+
+    const out = Array.from({ length: N }, () => []);
+    const inDeg = new Array(N).fill(0);
+    state.connections.forEach(c => {
+      const s = idMap[c.src], t = idMap[c.tgt];
+      if (s !== undefined && t !== undefined && s !== t) {
+        out[s].push(t);
+        inDeg[t]++;
       }
     });
-  }
-  // Assign remaining nodes
-  state.nodes.forEach((n,i) => { if (layer[i]===-1) layer[i] = 0; });
 
-  // Group by layer
-  const layers = {};
-  state.nodes.forEach((n,i) => {
-    const l = layer[i];
-    if (!layers[l]) layers[l]=[];
-    layers[l].push(i);
-  });
-
-  const GAP_X = 300, GAP_Y = 200;
-  const MARGIN = 80;
-
-  Object.entries(layers).sort(([a],[b])=>+a-+b).forEach(([lvl, nodeIdxs]) => {
-    const col = +lvl;
-    const count = nodeIdxs.length;
-    const totalH = (count-1) * GAP_Y;
-    nodeIdxs.forEach((ni, row) => {
-      state.nodes[ni].x = MARGIN + col * GAP_X;
-      state.nodes[ni].y = MARGIN + row * GAP_Y - totalH/2 + 300;
-      if (MARGIN > state.nodes[ni].y) state.nodes[ni].y = MARGIN;
+    const layer = new Array(N).fill(-1);
+    const queue = [];
+    state.nodes.forEach((n, i) => {
+      if (inDeg[i] === 0) {
+        layer[i] = 0;
+        queue.push(i);
+      }
     });
-  });
+    if (queue.length === 0) {
+      layer[0] = 0;
+      queue.push(0);
+    }
+
+    while (queue.length) {
+      const u = queue.shift();
+      out[u].forEach(v => {
+        if (layer[u] + 1 > layer[v]) {
+          layer[v] = layer[u] + 1;
+          queue.push(v);
+        }
+      });
+    }
+    state.nodes.forEach((n, i) => { if (layer[i] === -1) layer[i] = 0; });
+
+    const rawLayers = {};
+    state.nodes.forEach((n, i) => {
+      const l = layer[i];
+      if (!rawLayers[l]) rawLayers[l] = [];
+      rawLayers[l].push(n);
+    });
+
+    // Subdivide any layer with more than 8 nodes into multiple clean columns
+    const finalColumns = [];
+    const MAX_NODES_PER_COL = 8;
+    Object.keys(rawLayers).sort((a, b) => +a - +b).forEach(lvl => {
+      const nodesInLayer = rawLayers[lvl];
+      for (let i = 0; i < nodesInLayer.length; i += MAX_NODES_PER_COL) {
+        finalColumns.push(nodesInLayer.slice(i, i + MAX_NODES_PER_COL));
+      }
+    });
+
+    let currentX = MARGIN_LEFT;
+    finalColumns.forEach(colNodes => {
+      let currentY = MARGIN_TOP;
+      let maxColW = 0;
+
+      colNodes.forEach(node => {
+        const w = getNodeW(node);
+        const h = getNodeH(node);
+        if (w > maxColW) maxColW = w;
+
+        node.x = currentX;
+        node.y = currentY;
+        currentY += h + VERTICAL_GAP;
+      });
+
+      currentX += maxColW + HORIZONTAL_GAP;
+    });
+  }
+
+  // 2. Strict Collision & Overlap Elimination Pass
+  // In case of any overlaps, separate cards so there is always a clean gap
+  for (let pass = 0; pass < 6; pass++) {
+    let anyOverlap = false;
+    for (let i = 0; i < state.nodes.length; i++) {
+      for (let j = i + 1; j < state.nodes.length; j++) {
+        const a = state.nodes[i];
+        const b = state.nodes[j];
+        const aw = getNodeW(a);
+        const ah = getNodeH(a);
+        const bw = getNodeW(b);
+        const bh = getNodeH(b);
+
+        const GAP = 35;
+        const overlapX = (a.x < b.x + bw + GAP) && (a.x + aw + GAP > b.x);
+        const overlapY = (a.y < b.y + bh + GAP) && (a.y + ah + GAP > b.y);
+
+        if (overlapX && overlapY) {
+          anyOverlap = true;
+          // Determine separation direction
+          if (Math.abs(a.x - b.x) < Math.min(aw, bw) * 0.7) {
+            // Push vertically
+            if (a.y <= b.y) {
+              b.y = a.y + ah + GAP;
+            } else {
+              a.y = b.y + bh + GAP;
+            }
+          } else {
+            // Push horizontally
+            if (a.x <= b.x) {
+              b.x = a.x + aw + GAP;
+            } else {
+              a.x = b.x + bw + GAP;
+            }
+          }
+        }
+      }
+    }
+    if (!anyOverlap) break;
+  }
 
   snapshot();
   renderAll();
+  if (!silent) toast('✓ Graph formatted: all overlaps eliminated!');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -5627,6 +5745,8 @@ function loadDemo2() {
   state.priorityFilter = '';
   const pf = document.getElementById('prio-filter');
   if (pf) pf.value = '';
+  renderNodes();
+  autoFormat(true);
   snapshot();
   renderAll();
   toast('🧪 Demo 2: Food & Molecular Chemistry Graph loaded (Click Demo again for Springfield)');

@@ -2207,8 +2207,8 @@ function attachNodeEvents(el, nodeData) {
         const cur = screenToWorld(me.clientX, me.clientY);
         let nx = startNX + (cur.x - startWorld.x);
         let ny = startNY + (cur.y - startWorld.y);
-        nx = Math.max(0, Math.round(nx / 10) * 10);
-        ny = Math.max(0, Math.round(ny / 10) * 10);
+        nx = Math.round(nx / 10) * 10;
+        ny = Math.round(ny / 10) * 10;
         n.x = nx; n.y = ny;
         const fresh = world.querySelector('[data-node-id="' + nodeData.id + '"]');
         if (fresh) { fresh.style.left = nx + 'px'; fresh.style.top = ny + 'px'; }

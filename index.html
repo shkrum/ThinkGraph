@@ -402,6 +402,214 @@ body.light-theme .ai-help-header p{color:#64748b !important}
 body.light-theme .ai-help-actions{border-color:rgba(0,0,0,0.06)}
 body.light-theme .ai-help-content{color:#334155}
 
+/* ─── GLOBAL PROPERTIES MODAL ────────────────────────────── */
+.global-props-dialog {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  width: 760px;
+  max-width: 96vw;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(99, 102, 241, 0.2);
+  position: relative;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+.global-props-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.global-props-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+.global-props-footer {
+  padding: 14px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 16px 16px;
+}
+.gp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.gp-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.gp-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.gp-badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.gp-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+.gp-subtitle {
+  font-size: 11px;
+  color: #94a3b8;
+}
+.gp-shape-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.gp-shape-btn, .gp-line-btn, .gp-routing-btn {
+  padding: 10px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  color: #cbd5e1;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s;
+  text-align: center;
+}
+.gp-shape-btn:hover, .gp-line-btn:hover, .gp-routing-btn:hover {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+.gp-shape-btn.active, .gp-line-btn.active, .gp-routing-btn.active {
+  background: rgba(99, 102, 241, 0.22);
+  border-color: #6366f1;
+  color: #a5b4fc;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.35);
+}
+.gp-shape-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+.gp-shape-name {
+  font-size: 11px;
+  font-weight: 600;
+}
+.gp-shape-desc {
+  font-size: 9px;
+  color: #94a3b8;
+  line-height: 1.2;
+}
+.gp-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+.gp-colors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.gp-color-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.gp-color-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gp-color-picker {
+  width: 34px;
+  height: 28px;
+  padding: 1px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+}
+
+/* Light Theme Overrides for Global Properties */
+body.light-theme .global-props-dialog {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #0f172a;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15);
+}
+body.light-theme .global-props-header {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+body.light-theme .global-props-header h2 {
+  color: #0f172a !important;
+}
+body.light-theme .global-props-footer {
+  background: #f8fafc;
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+body.light-theme .gp-section {
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+body.light-theme .gp-title {
+  color: #0f172a;
+}
+body.light-theme .gp-shape-btn,
+body.light-theme .gp-line-btn,
+body.light-theme .gp-routing-btn {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+body.light-theme .gp-shape-btn:hover,
+body.light-theme .gp-line-btn:hover,
+body.light-theme .gp-routing-btn:hover {
+  background: #eff6ff;
+  border-color: #6366f1;
+  color: #4338ca;
+}
+body.light-theme .gp-shape-btn.active,
+body.light-theme .gp-line-btn.active,
+body.light-theme .gp-routing-btn.active {
+  background: #e0e7ff;
+  border-color: #4f46e5;
+  color: #4338ca;
+}
+body.light-theme .gp-color-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+body.light-theme .gp-checkbox-label {
+  color: #334155;
+}
+
 /* ─── DROPDOWN MENU & FILE NAME ───────────────────────────── */
 .dropdown { position:relative; display:inline-block; overflow:visible; }
 .dropdown-content {
@@ -760,6 +968,10 @@ body.light-theme #gdrive-client-modal > div {
         <span style="display:flex;align-items:center;gap:6px">☀️ White Theme</span>
         <span class="theme-check" id="check-theme-light" style="display:none;font-weight:700;color:#6366f1">✓</span>
       </div>
+      <div class="menu-sep"></div>
+      <div class="menu-item" id="menu-settings-global-props" style="cursor:pointer">
+        <span style="display:flex;align-items:center;gap:6px">🌐 Global Properties...</span>
+      </div>
     </div>
   </div>
 
@@ -779,6 +991,11 @@ body.light-theme #gdrive-client-modal > div {
     <button class="tb-btn amber" id="btn-format" title="Auto-arrange nodes to eliminate overlaps">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="5" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="8" y="16" width="8" height="5" rx="1"/><line x1="6.5" y1="8" x2="6.5" y2="14"/><line x1="17.5" y1="8" x2="17.5" y2="13"/><line x1="6.5" y1="14" x2="17.5" y2="14"/><line x1="12" y1="14" x2="12" y2="16"/></svg>
       Format
+    </button>
+
+    <button class="tb-btn" id="btn-global-props" title="Change global diagram properties (all node shapes, arrow types, routing, colors)" style="background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.35);color:#c7d2fe">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Global Properties
     </button>
 
     <div class="tb-sep"></div>
@@ -1075,6 +1292,220 @@ Common MIME types for attachments:
 6. Save with `.umlgraph` file extension
 7. Keep `attachments` as an empty array `[]` if no files are attached
 8. `imageUrl` should be `null` (not undefined) when no image is set</pre>
+  </div>
+</div>
+
+<!-- ─── GLOBAL PROPERTIES MODAL ──────────────────────────── -->
+<div id="global-props-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:100001;align-items:flex-start;justify-content:center;backdrop-filter:blur(8px);padding:24px;overflow-y:auto">
+  <div class="global-props-dialog">
+    <div class="global-props-header">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#38bdf8);display:flex;align-items:center;justify-content:center;font-size:18px">🌐</div>
+        <div>
+          <h2 style="margin:0;font-size:16px;font-weight:700;color:#f8fafc">Global Diagram Properties</h2>
+          <p style="margin:2px 0 0;font-size:11px;color:#94a3b8" id="gp-stats-label">Batch update shapes, arrows, routing, and styling across the entire diagram</p>
+        </div>
+      </div>
+      <button id="btn-close-global-props" style="background:transparent;border:none;color:#94a3b8;font-size:22px;cursor:pointer;padding:4px;line-height:1" title="Close">&times;</button>
+    </div>
+
+    <div class="global-props-body">
+      <!-- Section 1: All Node Shapes -->
+      <div class="gp-section">
+        <div class="gp-section-title">
+          <span class="gp-badge">1</span>
+          <div>
+            <div class="gp-title">Global Node Shape</div>
+            <div class="gp-subtitle">Batch transform the shape of all nodes across this diagram</div>
+          </div>
+        </div>
+        <div class="gp-shape-grid" id="gp-shapes-container">
+          <button class="gp-shape-btn" data-shape="rounded">
+            <span class="gp-shape-icon">○</span>
+            <span class="gp-shape-name">Rounded</span>
+            <span class="gp-shape-desc">Smooth modern card</span>
+          </button>
+          <button class="gp-shape-btn" data-shape="rectangle">
+            <span class="gp-shape-icon">▱</span>
+            <span class="gp-shape-name">Rectangle</span>
+            <span class="gp-shape-desc">Sharp 0px corners</span>
+          </button>
+          <button class="gp-shape-btn" data-shape="cylinder">
+            <span class="gp-shape-icon">🗄️</span>
+            <span class="gp-shape-name">Cylinder</span>
+            <span class="gp-shape-desc">Database storage</span>
+          </button>
+          <button class="gp-shape-btn" data-shape="diamond">
+            <span class="gp-shape-icon">◆</span>
+            <span class="gp-shape-name">Diamond</span>
+            <span class="gp-shape-desc">Decision / condition</span>
+          </button>
+          <button class="gp-shape-btn" data-shape="uml-class">
+            <span class="gp-shape-icon">« »</span>
+            <span class="gp-shape-name">UML Class</span>
+            <span class="gp-shape-desc">Class box with stereotype</span>
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <label class="gp-checkbox-label">
+              <input type="checkbox" id="gp-shape-apply-existing" checked />
+              Apply to all existing nodes (<span id="gp-node-count" style="font-weight:700">0</span> nodes)
+            </label>
+            <label class="gp-checkbox-label">
+              <input type="checkbox" id="gp-shape-set-default" checked />
+              Set as default for new nodes
+            </label>
+          </div>
+          <button class="tb-btn" id="gp-btn-apply-shape" style="font-size:11px;font-weight:600">Apply Shape Only</button>
+        </div>
+      </div>
+
+      <!-- Section 2: All Arrows & Lines -->
+      <div class="gp-section">
+        <div class="gp-section-title">
+          <span class="gp-badge">2</span>
+          <div>
+            <div class="gp-title">Global Arrow & Line Type</div>
+            <div class="gp-subtitle">Batch set arrowheads and line dash styles across all connections</div>
+          </div>
+        </div>
+        <div class="gp-shape-grid" id="gp-lines-container" style="grid-template-columns: repeat(4, 1fr);">
+          <button class="gp-line-btn" data-linetype="one-way">
+            <span class="gp-shape-icon">→</span>
+            <span class="gp-shape-name">One-Way Arrow</span>
+            <span class="gp-shape-desc">Directed dependency</span>
+          </button>
+          <button class="gp-line-btn" data-linetype="two-way">
+            <span class="gp-shape-icon">↔</span>
+            <span class="gp-shape-name">Bi-Directional</span>
+            <span class="gp-shape-desc">Mutual relation</span>
+          </button>
+          <button class="gp-line-btn" data-linetype="dotted">
+            <span class="gp-shape-icon">╌</span>
+            <span class="gp-shape-name">Dotted</span>
+            <span class="gp-shape-desc">Weak association</span>
+          </button>
+          <button class="gp-line-btn" data-linetype="solid">
+            <span class="gp-shape-icon">—</span>
+            <span class="gp-shape-name">Solid</span>
+            <span class="gp-shape-desc">Plain direct link</span>
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <label class="gp-checkbox-label">
+              <input type="checkbox" id="gp-line-apply-existing" checked />
+              Apply to all existing connections (<span id="gp-conn-count" style="font-weight:700">0</span> connections)
+            </label>
+            <label class="gp-checkbox-label">
+              <input type="checkbox" id="gp-line-set-default" checked />
+              Set as active line tool in toolbar
+            </label>
+          </div>
+          <button class="tb-btn" id="gp-btn-apply-line" style="font-size:11px;font-weight:600">Apply Line Type Only</button>
+        </div>
+      </div>
+
+      <!-- Section 3: Connection Routing Style -->
+      <div class="gp-section">
+        <div class="gp-section-title">
+          <span class="gp-badge">3</span>
+          <div>
+            <div class="gp-title">Global Connection Routing Style</div>
+            <div class="gp-subtitle">Set Bézier curved, orthogonal right-angles, or straight lines for all connection paths</div>
+          </div>
+        </div>
+        <div class="gp-shape-grid" id="gp-routing-container" style="grid-template-columns: repeat(3, 1fr);">
+          <button class="gp-routing-btn" data-style="curved">
+            <span class="gp-shape-icon">〰</span>
+            <span class="gp-shape-name">Curved Bézier</span>
+            <span class="gp-shape-desc">Smooth organic paths</span>
+          </button>
+          <button class="gp-routing-btn" data-style="ortho">
+            <span class="gp-shape-icon">⌐</span>
+            <span class="gp-shape-name">Orthogonal</span>
+            <span class="gp-shape-desc">Clean 90° Manhattan angles</span>
+          </button>
+          <button class="gp-routing-btn" data-style="straight">
+            <span class="gp-shape-icon">╱</span>
+            <span class="gp-shape-name">Straight</span>
+            <span class="gp-shape-desc">Direct point-to-point lines</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section 4: Colors & Strokes -->
+      <div class="gp-section">
+        <div class="gp-section-title">
+          <span class="gp-badge">4</span>
+          <div>
+            <div class="gp-title">Global Colors & Palettes</div>
+            <div class="gp-subtitle">Batch adjust node background, border, and connection stroke colors</div>
+          </div>
+        </div>
+        <div class="gp-colors-grid">
+          <div class="gp-color-card">
+            <label class="gp-subtitle" style="font-weight:600">Node Fill Color</label>
+            <div class="gp-color-wrap">
+              <input type="color" id="gp-color-node-fill" value="#1e293b" class="gp-color-picker" />
+              <button class="tb-btn" id="gp-btn-apply-fill" style="font-size:11px">Apply Fill</button>
+            </div>
+          </div>
+          <div class="gp-color-card">
+            <label class="gp-subtitle" style="font-weight:600">Node Border Color</label>
+            <div class="gp-color-wrap">
+              <input type="color" id="gp-color-node-border" value="#3b82f6" class="gp-color-picker" />
+              <button class="tb-btn" id="gp-btn-apply-border" style="font-size:11px">Apply Border</button>
+            </div>
+          </div>
+          <div class="gp-color-card">
+            <label class="gp-subtitle" style="font-weight:600">Connection Line Color</label>
+            <div class="gp-color-wrap">
+              <input type="color" id="gp-color-conn-stroke" value="#64748b" class="gp-color-picker" />
+              <button class="tb-btn" id="gp-btn-apply-conn-color" style="font-size:11px">Apply Stroke</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Node Scaling & Sizing -->
+      <div class="gp-section">
+        <div class="gp-section-title">
+          <span class="gp-badge">5</span>
+          <div>
+            <div class="gp-title">Uniform Node Sizing & Scaling</div>
+            <div class="gp-subtitle">Batch resize all nodes or scale them proportionately across the canvas</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="gp-subtitle" style="font-weight:600">Set Width:</span>
+            <input type="number" id="gp-node-width" min="140" max="600" step="10" value="240" style="width:70px;padding:4px 6px;border-radius:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:12px" />
+            <span style="font-size:11px;color:#94a3b8">px</span>
+            <button class="tb-btn" id="gp-btn-apply-width" style="font-size:11px">Apply Width</button>
+          </div>
+          <div class="tb-sep" style="height:20px"></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="gp-subtitle" style="font-weight:600">Scale All:</span>
+            <button class="tb-btn" id="gp-scale-down" title="Scale all nodes by -15%">- 15%</button>
+            <button class="tb-btn" id="gp-scale-reset" title="Reset all nodes to standard 240px">Reset (240px)</button>
+            <button class="tb-btn" id="gp-scale-up" title="Scale all nodes by +15%">+ 15%</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="global-props-footer">
+      <div style="font-size:11px;color:#94a3b8;display:flex;align-items:center;gap:6px">
+        <span>💡</span> Changes can be undone anytime with <b>Ctrl + Z</b>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="tb-btn" id="gp-btn-close-footer" style="padding:7px 14px">Close</button>
+        <button class="tb-btn primary" id="gp-btn-apply-all" style="padding:7px 18px;font-weight:700">✨ Apply All Selected</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1601,7 +2032,7 @@ function addNode(opts = {}) {
     priority: (opts.priority ?? '').slice(0,3).toUpperCase(),
     color: opts.color ?? '#1e293b',
     borderColor: opts.borderColor ?? '#3b82f6',
-    shape: opts.shape ?? 'rounded',
+    shape: opts.shape ?? (state.defaultShape || 'rounded'),
     imageUrl: opts.imageUrl ?? null,
     attributes: opts.attributes ?? [],
     methods: opts.methods ?? [],
@@ -2864,12 +3295,17 @@ function renderConnInspector(conn) {
 // ══════════════════════════════════════════════════════════════
 document.getElementById('btn-add-node').addEventListener('click', () => addNode());
 
+function setToolbarLineType(lt) {
+  state.lineType = lt;
+  document.querySelectorAll('#line-type-group .tb-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lt === lt);
+  });
+}
+
 // Line type buttons
 document.querySelectorAll('#line-type-group .tb-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    state.lineType = btn.dataset.lt;
-    document.querySelectorAll('#line-type-group .tb-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    setToolbarLineType(btn.dataset.lt);
   });
 });
 
@@ -6150,6 +6586,227 @@ document.getElementById('btn-copy-ai-prompt').addEventListener('click', () => {
     setTimeout(() => { status.style.display = 'none'; }, 2500);
     toast('📋 Instructions copied to clipboard!');
   });
+});
+
+// ══════════════════════════════════════════════════════════════
+// GLOBAL PROPERTIES MODAL
+// ══════════════════════════════════════════════════════════════
+const globalPropsModal = document.getElementById('global-props-modal');
+const btnGlobalProps = document.getElementById('btn-global-props');
+const menuSettingsGlobalProps = document.getElementById('menu-settings-global-props');
+const btnCloseGlobalProps = document.getElementById('btn-close-global-props');
+const btnCloseGlobalPropsFooter = document.getElementById('gp-btn-close-footer');
+
+let selectedGlobalShape = state.defaultShape || 'rounded';
+let selectedGlobalLineType = state.lineType || 'one-way';
+let selectedGlobalRouting = 'curved';
+
+function openGlobalPropsModal() {
+  const nodeCount = state.nodes ? state.nodes.length : 0;
+  const connCount = state.connections ? state.connections.length : 0;
+  const elNodeCount = document.getElementById('gp-node-count');
+  const elConnCount = document.getElementById('gp-conn-count');
+  const elStatsLabel = document.getElementById('gp-stats-label');
+  
+  if (elNodeCount) elNodeCount.textContent = nodeCount;
+  if (elConnCount) elConnCount.textContent = connCount;
+  if (elStatsLabel) elStatsLabel.textContent = `${nodeCount} nodes, ${connCount} connections currently in "${state.diagramName || 'Untitled Diagram'}"`;
+
+  // Sync active states on buttons
+  document.querySelectorAll('#gp-shapes-container .gp-shape-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.shape === selectedGlobalShape);
+  });
+  document.querySelectorAll('#gp-lines-container .gp-line-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.linetype === selectedGlobalLineType);
+  });
+  document.querySelectorAll('#gp-routing-container .gp-routing-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.style === selectedGlobalRouting);
+  });
+
+  // Close other dropdowns
+  const fm = document.getElementById('file-menu-wrap');
+  const sm = document.getElementById('settings-menu-wrap');
+  if (fm) fm.classList.remove('open');
+  if (sm) sm.classList.remove('open');
+
+  globalPropsModal.style.display = 'flex';
+}
+
+function closeGlobalPropsModal() {
+  globalPropsModal.style.display = 'none';
+}
+
+if (btnGlobalProps) btnGlobalProps.addEventListener('click', openGlobalPropsModal);
+if (menuSettingsGlobalProps) menuSettingsGlobalProps.addEventListener('click', openGlobalPropsModal);
+if (btnCloseGlobalProps) btnCloseGlobalProps.addEventListener('click', closeGlobalPropsModal);
+if (btnCloseGlobalPropsFooter) btnCloseGlobalPropsFooter.addEventListener('click', closeGlobalPropsModal);
+
+globalPropsModal.addEventListener('click', (e) => {
+  if (e.target === globalPropsModal) closeGlobalPropsModal();
+});
+
+// Shape selector buttons
+document.querySelectorAll('#gp-shapes-container .gp-shape-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedGlobalShape = btn.dataset.shape;
+    document.querySelectorAll('#gp-shapes-container .gp-shape-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// Line type selector buttons
+document.querySelectorAll('#gp-lines-container .gp-line-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedGlobalLineType = btn.dataset.linetype;
+    document.querySelectorAll('#gp-lines-container .gp-line-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// Routing selector buttons
+document.querySelectorAll('#gp-routing-container .gp-routing-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedGlobalRouting = btn.dataset.style;
+    document.querySelectorAll('#gp-routing-container .gp-routing-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Immediately apply routing to existing connections
+    if (state.connections && state.connections.length) {
+      state.connections.forEach(c => { c.style = selectedGlobalRouting; });
+      snapshot();
+      renderConnections();
+      toast(`✓ Connection routing set to ${selectedGlobalRouting}!`);
+    }
+  });
+});
+
+// Apply Shape Only
+document.getElementById('gp-btn-apply-shape').addEventListener('click', () => {
+  const applyExisting = document.getElementById('gp-shape-apply-existing').checked;
+  const setDefault = document.getElementById('gp-shape-set-default').checked;
+
+  if (setDefault) state.defaultShape = selectedGlobalShape;
+  if (applyExisting && state.nodes && state.nodes.length) {
+    state.nodes.forEach(n => { n.shape = selectedGlobalShape; });
+    snapshot();
+    renderNodes();
+    renderConnections();
+    toast(`✓ Transformed all ${state.nodes.length} nodes to ${selectedGlobalShape}!`);
+  } else if (setDefault) {
+    toast(`✓ Default shape set to ${selectedGlobalShape} for future nodes`);
+  }
+});
+
+// Apply Line Type Only
+document.getElementById('gp-btn-apply-line').addEventListener('click', () => {
+  const applyExisting = document.getElementById('gp-line-apply-existing').checked;
+  const setDefault = document.getElementById('gp-line-set-default').checked;
+
+  if (setDefault) setToolbarLineType(selectedGlobalLineType);
+  if (applyExisting && state.connections && state.connections.length) {
+    state.connections.forEach(c => { c.lineType = selectedGlobalLineType; });
+    snapshot();
+    renderConnections();
+    toast(`✓ Updated all ${state.connections.length} connections to ${selectedGlobalLineType}!`);
+  } else if (setDefault) {
+    toast(`✓ Line tool set to ${selectedGlobalLineType}`);
+  }
+});
+
+// Apply Node Fill Color
+document.getElementById('gp-btn-apply-fill').addEventListener('click', () => {
+  const color = document.getElementById('gp-color-node-fill').value;
+  if (!state.nodes || !state.nodes.length) return;
+  state.nodes.forEach(n => { n.color = color; });
+  snapshot();
+  renderNodes();
+  toast(`✓ Updated fill color across all ${state.nodes.length} nodes!`);
+});
+
+// Apply Node Border Color
+document.getElementById('gp-btn-apply-border').addEventListener('click', () => {
+  const color = document.getElementById('gp-color-node-border').value;
+  if (!state.nodes || !state.nodes.length) return;
+  state.nodes.forEach(n => { n.borderColor = color; });
+  snapshot();
+  renderNodes();
+  toast(`✓ Updated border color across all ${state.nodes.length} nodes!`);
+});
+
+// Apply Connection Stroke Color
+document.getElementById('gp-btn-apply-conn-color').addEventListener('click', () => {
+  const color = document.getElementById('gp-color-conn-stroke').value;
+  if (!state.connections || !state.connections.length) return;
+  state.connections.forEach(c => { c.color = color; });
+  snapshot();
+  renderConnections();
+  toast(`✓ Updated line color across all ${state.connections.length} connections!`);
+});
+
+// Apply Width
+document.getElementById('gp-btn-apply-width').addEventListener('click', () => {
+  const w = parseInt(document.getElementById('gp-node-width').value) || 240;
+  if (!state.nodes || !state.nodes.length) return;
+  state.nodes.forEach(n => { n.w = w; });
+  snapshot();
+  renderNodes();
+  renderConnections();
+  toast(`✓ Set width of all ${state.nodes.length} nodes to ${w}px!`);
+});
+
+// Scale Nodes (-15%, Reset, +15%)
+function scaleAllNodes(factor) {
+  if (!state.nodes || !state.nodes.length) return;
+  state.nodes.forEach(n => {
+    n.w = Math.max(140, Math.min(600, Math.round((n.w || 200) * factor)));
+    if (n.h) n.h = Math.max(80, Math.min(600, Math.round(n.h * factor)));
+  });
+  snapshot();
+  renderNodes();
+  renderConnections();
+  toast(`✓ Scaled all nodes by ${Math.round((factor - 1) * 100)}%!`);
+}
+
+document.getElementById('gp-scale-down').addEventListener('click', () => scaleAllNodes(0.85));
+document.getElementById('gp-scale-up').addEventListener('click', () => scaleAllNodes(1.15));
+document.getElementById('gp-scale-reset').addEventListener('click', () => {
+  if (!state.nodes || !state.nodes.length) return;
+  state.nodes.forEach(n => {
+    n.w = 240;
+    delete n.h;
+  });
+  snapshot();
+  renderNodes();
+  renderConnections();
+  toast('✓ Reset all nodes to standard 240px width!');
+});
+
+// ✨ Apply All Selected
+document.getElementById('gp-btn-apply-all').addEventListener('click', () => {
+  const applyShape = document.getElementById('gp-shape-apply-existing').checked;
+  const setDefShape = document.getElementById('gp-shape-set-default').checked;
+  const applyLine = document.getElementById('gp-line-apply-existing').checked;
+  const setDefLine = document.getElementById('gp-line-set-default').checked;
+
+  if (setDefShape) state.defaultShape = selectedGlobalShape;
+  if (setDefLine) setToolbarLineType(selectedGlobalLineType);
+
+  if (applyShape && state.nodes && state.nodes.length) {
+    state.nodes.forEach(n => { n.shape = selectedGlobalShape; });
+  }
+
+  if (applyLine && state.connections && state.connections.length) {
+    state.connections.forEach(c => {
+      c.lineType = selectedGlobalLineType;
+      c.style = selectedGlobalRouting;
+    });
+  }
+
+  snapshot();
+  renderNodes();
+  renderConnections();
+  closeGlobalPropsModal();
+  toast('✨ Global diagram properties applied successfully!');
 });
 
 applyTransform();

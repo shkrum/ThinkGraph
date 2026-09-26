@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="/demo2.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -223,6 +224,34 @@ body{
   color:#a5b4fc;line-height:1.6;
 }
 .node-uml-methods{color:#6ee7b7}
+
+/* ─── SHAPES ──────────────────────────────────────────────── */
+.gnode.shape-rectangle { border-radius: 0px !important; }
+.gnode.shape-rectangle .node-head { border-radius: 0 !important; }
+
+.gnode.shape-rounded { border-radius: 20px !important; }
+.gnode.shape-rounded .node-head { border-radius: 18px 18px 0 0 !important; }
+
+.gnode.shape-cylinder { border-radius: 22px / 11px !important; }
+.gnode.shape-cylinder .node-head {
+  border-radius: 20px 20px 0 0 !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%);
+  border-bottom: 2px solid rgba(255,255,255,0.16);
+}
+
+.gnode.shape-diamond { border-radius: 28px 4px 28px 4px !important; }
+.gnode.shape-diamond .node-head { border-radius: 24px 2px 0 0 !important; }
+
+.gnode.shape-uml-class { border-radius: 0px !important; }
+.gnode.shape-uml-class .node-head { border-radius: 0 !important; }
+
+.uml-stereotype {
+  font-size: 10px;
+  font-style: italic;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
 
 /* ─── INSPECTOR ───────────────────────────────────────────── */
 #inspector{
@@ -597,6 +626,30 @@ body.light-theme .node-inline-input {
   background: #ffffff;
   border-color: #6366f1;
   color: #0f172a;
+}
+body.light-theme .gnode .port {
+  border-color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+body.light-theme .gnode .resize-handle {
+  border-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+body.light-theme .node-edit-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #334155;
+}
+body.light-theme .node-edit-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #0f172a;
+}
+body.light-theme .gnode.shape-cylinder .node-head {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, transparent 100%);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+}
+body.light-theme .uml-stereotype {
+  color: #64748b;
 }
 body.light-theme #svg-layer text.conn-label {
   fill: #1e293b;
@@ -1583,10 +1636,23 @@ function liveUpdateNode(id, patch) {
   // update the node card visuals without full re-render
   const nodeEl = world.querySelector('[data-node-id="' + id + '"]');
   if (nodeEl) {
-    if (patch.color)       nodeEl.style.background   = patch.color;
-    if (patch.borderColor) nodeEl.style.borderColor   = patch.borderColor;
+    const isLight = document.body.classList.contains('light-theme');
+    if (patch.color) {
+      nodeEl.style.background = isLight && isColorDark(patch.color) ? getLightTintFromBorder(n.borderColor).bg : patch.color;
+    }
+    if (patch.borderColor) {
+      nodeEl.style.borderColor = isLight && isColorDark(patch.borderColor) ? '#cbd5e1' : patch.borderColor;
+    }
     if (patch.shape) {
-      const shapeRadius = { rectangle:'6px', rounded:'12px', cylinder:'10px/5px', diamond:'8px', 'uml-class':'4px' };
+      nodeEl.classList.remove('shape-rounded', 'shape-rectangle', 'shape-cylinder', 'shape-diamond', 'shape-uml-class');
+      nodeEl.classList.add('shape-' + patch.shape);
+      const shapeRadius = {
+        rectangle: '0px',
+        rounded: '20px',
+        cylinder: '22px / 11px',
+        diamond: '28px 4px 28px 4px',
+        'uml-class': '0px'
+      };
       nodeEl.style.borderRadius = shapeRadius[patch.shape] || '10px';
     }
     if (patch.priority !== undefined) {
@@ -1733,7 +1799,15 @@ function renderConnections() {
     const d = buildPath(sp, tp, conn.style || 'curved');
     const mid = { x:(sp.x+tp.x)/2, y:(sp.y+tp.y)/2 };
     const isSel = state.selectedConnId === conn.id;
-    const stroke = isSel ? '#ec4899' : conn.color;
+    const isLight = document.body.classList.contains('light-theme');
+    let stroke = isSel ? '#ec4899' : conn.color;
+    if (isLight && !isSel) {
+      if (!stroke || stroke === '#ffffff' || stroke === '#fff' || stroke === '#f1f5f9' || stroke === '#e2e8f0') {
+        stroke = '#475569';
+      } else if (stroke === '#6b7f9d' || stroke === '#64748b') {
+        stroke = '#475569';
+      }
+    }
     const sw = isSel ? 3 : 2;
     const isDotted = conn.lineType === 'dotted';
 
@@ -1803,12 +1877,72 @@ function renderConnections() {
   });
 })();
 
+// ── Theme & Color Helpers ─────────────────────────────────────
+function isColorDark(hexOrRgb) {
+  if (!hexOrRgb) return true;
+  let r = 0, g = 0, b = 0;
+  if (hexOrRgb.startsWith('#')) {
+    let hex = hexOrRgb.slice(1);
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    if (hex.length >= 6) {
+      r = parseInt(hex.slice(0, 2), 16) || 0;
+      g = parseInt(hex.slice(2, 4), 16) || 0;
+      b = parseInt(hex.slice(4, 6), 16) || 0;
+    }
+  } else if (hexOrRgb.startsWith('rgb')) {
+    const m = hexOrRgb.match(/\d+/g);
+    if (m && m.length >= 3) {
+      r = parseInt(m[0]); g = parseInt(m[1]); b = parseInt(m[2]);
+    }
+  }
+  return ((0.299 * r + 0.587 * g + 0.114 * b) / 255) < 0.45;
+}
+
+function getLightTintFromBorder(borderColor) {
+  if (!borderColor) return { bg: '#ffffff', border: '#cbd5e1' };
+  let hex = borderColor.toLowerCase();
+  if (hex.includes('facc15') || hex.includes('f59e0b') || hex.includes('fbbf24') || hex.includes('eab308') || hex.includes('ffd700')) {
+    return { bg: '#fffbeb', border: '#ca8a04' };
+  }
+  if (hex.includes('38bdf8') || hex.includes('06b6d4') || hex.includes('0ea5e9') || hex.includes('67e8f9')) {
+    return { bg: '#f0f9ff', border: '#0284c7' };
+  }
+  if (hex.includes('f97316') || hex.includes('fb923c') || hex.includes('ea580c')) {
+    return { bg: '#fff7ed', border: '#ea580c' };
+  }
+  if (hex.includes('dc2626') || hex.includes('ef4444') || hex.includes('f87171') || hex.includes('e11d48')) {
+    return { bg: '#fef2f2', border: '#dc2626' };
+  }
+  if (hex.includes('84cc16') || hex.includes('22c55e') || hex.includes('10b981') || hex.includes('a3e635')) {
+    return { bg: '#f7fee7', border: '#65a30d' };
+  }
+  if (hex.includes('8b5cf6') || hex.includes('a855f7') || hex.includes('c084fc') || hex.includes('7c3aed')) {
+    return { bg: '#faf5ff', border: '#7c3aed' };
+  }
+  if (hex.includes('6366f1') || hex.includes('3b82f6') || hex.includes('818cf8')) {
+    return { bg: '#eff6ff', border: '#4f46e5' };
+  }
+  return { bg: '#ffffff', border: isColorDark(borderColor) ? '#94a3b8' : borderColor };
+}
+
+function getEffectiveNodeColors(node, isLight) {
+  if (!isLight) {
+    return { bg: node.color || '#1e293b', border: node.borderColor || '#334155' };
+  }
+  if (isColorDark(node.color)) {
+    const tint = getLightTintFromBorder(node.borderColor);
+    return { bg: tint.bg, border: tint.border };
+  }
+  return { bg: node.color, border: node.borderColor };
+}
+
 // ── Nodes ─────────────────────────────────────────────────────
 function renderNodes() {
   // Remove old node elements
   world.querySelectorAll('.gnode').forEach(el => el.remove());
 
   const filter = state.priorityFilter.toUpperCase();
+  const isLight = document.body.classList.contains('light-theme');
 
   state.nodes.forEach(node => {
     const isSel = state.selectedNodeId === node.id;
@@ -1824,20 +1958,29 @@ function renderNodes() {
     const prioFontSize = Math.max(9, Math.round(10 * scale));
     const innerPadding = Math.max(6, Math.round(10 * scale));
 
+    const colors = getEffectiveNodeColors(node, isLight);
+
     const el = document.createElement('div');
-    el.className = 'gnode' + (isSel ? ' selected' : '');
+    const shapeClass = 'shape-' + (node.shape || 'rounded');
+    el.className = 'gnode ' + shapeClass + (isSel ? ' selected' : '');
     el.dataset.nodeId = node.id;
     el.style.left = node.x + 'px';
     el.style.top  = node.y + 'px';
     el.style.width = currentW + 'px';
     el.style.height = currentH + 'px';
-    el.style.background = node.color;
-    el.style.borderColor = node.borderColor;
+    el.style.background = isLight ? colors.bg : node.color;
+    el.style.borderColor = isLight ? colors.border : node.borderColor;
     el.style.opacity = dimmed ? '0.25' : '1';
     el.style.filter = dimmed ? 'grayscale(80%)' : '';
 
     // Border radius per shape
-    const shapeRadius = { rectangle:'6px', rounded:'12px', cylinder:'10px/5px', diamond:'8px', 'uml-class':'4px' };
+    const shapeRadius = {
+      rectangle: '0px',
+      rounded: '20px',
+      cylinder: '22px / 11px',
+      diamond: '28px 4px 28px 4px',
+      'uml-class': '0px'
+    };
     el.style.borderRadius = shapeRadius[node.shape] || '10px';
 
     el.innerHTML = `
@@ -1869,7 +2012,12 @@ function renderNodes() {
       </div>
 
       <div class="node-body" style="padding: ${innerPadding}px; display: flex; flex-direction: column; gap: 6px; height: calc(100% - ${Math.round(30 * scale)}px); overflow: auto;">
-        <div class="node-title" data-field="title" data-node-id="${node.id}" style="font-size: ${titleFontSize}px;">${esc(node.title)}</div>
+        <div class="node-title" data-field="title" data-node-id="${node.id}" style="font-size: ${titleFontSize}px;">
+          ${node.shape === 'uml-class' ? `<div class="uml-stereotype">&laquo;class&raquo;</div>` : ''}
+          ${node.shape === 'diamond' ? `<span style="color:#f59e0b;font-size:12px;margin-right:4px;" title="Decision Diamond">◆</span>` : ''}
+          ${node.shape === 'cylinder' ? `<span style="font-size:12px;margin-right:4px;" title="Database Cylinder">🗄️</span>` : ''}
+          ${esc(node.title)}
+        </div>
         ${node.imageUrl ? `
           <div class="node-img-wrap" style="max-height: ${mediaMaxH + 10}px;">
             ${(node.mediaType === 'video' || (node.imageUrl || '').startsWith('data:video')) ? `
@@ -2561,8 +2709,11 @@ function renderNodeInspector(node) {
   idesc.addEventListener('blur', () => snapshot());
 
   document.getElementById('ip-shape').addEventListener('change', e => {
+    node.shape = e.target.value;
     liveUpdateNode(node.id, { shape: e.target.value });
     snapshot();
+    renderNodes();
+    renderConnections();
   });
   document.getElementById('ip-color').addEventListener('input', e => liveUpdateNode(node.id, { color: e.target.value }));
   document.getElementById('ip-color').addEventListener('change', () => snapshot());
@@ -2734,8 +2885,7 @@ prioFilterInput.addEventListener('input', e => {
 
 // Demo
 document.getElementById('btn-demo').addEventListener('click', () => {
-  if (state.nodes.length > 0 && !confirm('Replace current diagram with demo?')) return;
-  loadDemo();
+  toggleDemo();
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -2910,6 +3060,10 @@ function applyTheme(theme) {
     document.body.classList.remove('light-theme');
     if (darkCheck) darkCheck.style.display = 'inline-block';
     if (lightCheck) lightCheck.style.display = 'none';
+  }
+
+  if (typeof renderAll === 'function' && state && state.nodes && state.nodes.length) {
+    renderAll();
   }
 }
 
@@ -3547,29 +3701,16 @@ function formatFileSize(bytes) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// DEMO DIAGRAM
+// DEMO DIAGRAMS (Demo 1: Springfield Systems | Demo 2: Food & Molecular Graph)
 // ══════════════════════════════════════════════════════════════
-function loadDemo() {
-  // ═══════════════════════════════════════════════════════════════
-  // 742 EVERGREEN TERRACE — Dysfunctional Systems Architecture v1.0
-  // Springfield, OR  |  Nuclear Hazard Level: MAXIMUM
-  //
-  // Layout: Wide pentagon — Homer at center, 4 characters orbiting.
-  // Zoom 0.85 — all nodes visible, comfortable breathing room.
-  // ═══════════════════════════════════════════════════════════════
-  state.diagramName = '742 Evergreen Terrace — Dysfunctional Systems Architecture';
-  document.getElementById('diagram-name').value = state.diagramName;
+let currentDemoId = 'demo1';
 
-  //  Pentagon positions (center ≈ 560, 360  |  orbit radius ≈ 330px)
-  //
-  //        [Bart]            [Marge]
-  //           \               /
-  //            \             /
-  //             ──[Homer]───
-  //            /             \
-  //           /               \
-  //       [Burns]          [Walter]
-  //
+function loadDemo1() {
+  currentDemoId = 'demo1';
+  state.diagramName = '742 Evergreen Terrace — Dysfunctional Systems Architecture';
+  const nameEl = document.getElementById('diagram-name');
+  if (nameEl) nameEl.value = state.diagramName;
+
   state.nodes = [
     {
       id:'homer', x:460, y:320, w:260,
@@ -3619,7 +3760,6 @@ function loadDemo() {
   ];
 
   state.connections = [
-    // ── Core family bonds ────────────────────────────────────────
     {
       id:'c01', src:'homer', tgt:'marge',
       lineType:'two-way', style:'curved',
@@ -3635,8 +3775,6 @@ function loadDemo() {
       lineType:'one-way', style:'ortho',
       label:'Employs (loosely)', color:'#dc2626'
     },
-
-    // ── Shocking crossover connections ───────────────────────────
     {
       id:'c04', src:'walter', tgt:'homer',
       lineType:'dotted', style:'curved',
@@ -3656,11 +3794,73 @@ function loadDemo() {
 
   state.selectedNodeId = null;
   state.selectedConnId = null;
+  state.priorityFilter = '';
+  const pf = document.getElementById('prio-filter');
+  if (pf) pf.value = '';
   state.zoom = 0.85; state.panX = 60; state.panY = 30;
   applyTransform();
   snapshot();
   renderAll();
-  toast('🍩 Springfield Systems loaded — D\'oh!');
+  toast('🍩 Demo 1: Springfield Systems Architecture loaded (Click Demo again for Food & Molecules)');
+}
+
+function loadDemo2() {
+  currentDemoId = 'demo2';
+
+  const applyData = (data) => {
+    state.diagramName = data.diagramName || data.name || 'Food Products → Molecules → Elements';
+    const nameEl = document.getElementById('diagram-name');
+    if (nameEl) nameEl.value = state.diagramName;
+
+    state.zoom = data.canvas?.zoom || 0.42;
+    state.panX = data.canvas?.panX !== undefined ? data.canvas.panX : 160;
+    state.panY = data.canvas?.panY !== undefined ? data.canvas.panY : 80;
+    applyTransform();
+
+    state.nodes = (data.nodes || []).map(n => ({
+      ...n,
+      attributes: n.attributes || [],
+      methods: n.methods || [],
+      attachments: n.attachments || []
+    }));
+    state.connections = data.connections || [];
+
+    state.selectedNodeId = null;
+    state.selectedConnId = null;
+    state.priorityFilter = '';
+    const pf = document.getElementById('prio-filter');
+    if (pf) pf.value = '';
+    snapshot();
+    renderAll();
+    toast('🧪 Demo 2: Food & Molecular Chemistry Graph loaded (Click Demo again for Springfield)');
+  };
+
+  if (window.DEMO_2_DATA) {
+    applyData(window.DEMO_2_DATA);
+  } else {
+    fetch('demo2.umlgraph')
+      .then(res => res.json())
+      .then(data => {
+        window.DEMO_2_DATA = data;
+        applyData(data);
+      })
+      .catch(err => {
+        console.error('Failed to load demo2 diagram:', err);
+        toast('❌ Error loading demo2 diagram');
+      });
+  }
+}
+
+function toggleDemo() {
+  if (currentDemoId === 'demo1') {
+    loadDemo2();
+  } else {
+    loadDemo1();
+  }
+}
+
+function loadDemo() {
+  loadDemo1();
 }
 
 // ══════════════════════════════════════════════════════════════

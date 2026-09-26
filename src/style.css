@@ -270,3 +270,18 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 100;
 }
+
+/* Full Node Description Visibility (No Scrollbars/Truncation) */
+.node-body {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+.node-desc {
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  overflow: visible !important;
+  max-height: none !important;
+  flex: none !important;
+}

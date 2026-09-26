@@ -184,7 +184,12 @@ body{
 .node-id-tag{font-size:9px;color:#475569;font-family:'Fira Code',monospace}
 
 /* Node body */
-.node-body{padding:8px 10px 10px}
+.node-body{
+  padding:8px 10px 10px;
+  overflow:visible !important;
+  height:auto !important;
+  flex:1 1 auto;
+}
 
 .node-title{
   font-weight:700;font-size:13px;color:#f1f5f9;
@@ -196,6 +201,10 @@ body{
   font-size:11px;color:#94a3b8;line-height:1.45;
   border-radius:4px;
   word-wrap:break-word;overflow-wrap:anywhere;
+  white-space:pre-wrap;
+  overflow:visible !important;
+  max-height:none !important;
+  flex:none !important;
 }
 
 /* Editable state for title/desc */
@@ -2100,6 +2109,7 @@ function liveUpdateNode(id, patch) {
     if (patch.desc !== undefined) {
       const d = nodeEl.querySelector('.node-desc');
       if (d && d.contentEditable !== 'true') d.textContent = patch.desc;
+      renderConnections();
     }
   }
 }
@@ -2152,19 +2162,38 @@ function deleteConn(id) {
 // ══════════════════════════════════════════════════════════════
 // PATH CALCULATION
 // ══════════════════════════════════════════════════════════════
-function nodeCenter(n) { return { x: n.x + n.w/2, y: n.y + nodeHeight(n)/2 }; }
+function nodeCenter(n) {
+  const el = typeof world !== 'undefined' && world ? world.querySelector('[data-node-id="' + n.id + '"]') : null;
+  const h = (el && el.offsetHeight) || n.h || nodeHeight(n);
+  return { x: n.x + n.w/2, y: n.y + h/2 };
+}
 
 function nodeHeight(n) {
   if (n.h) return n.h;
-  let h = 90;
+  if (typeof world !== 'undefined' && world) {
+    const el = world.querySelector('[data-node-id="' + n.id + '"]');
+    if (el && el.offsetHeight) return el.offsetHeight;
+  }
+  let h = 50;
+  if (n.title) {
+    const charsPerLine = Math.max(15, Math.floor((n.w || 200) / 8));
+    const titleLines = Math.ceil(n.title.length / charsPerLine) || 1;
+    h += titleLines * 18;
+  }
+  if (n.desc) {
+    const charsPerLine = Math.max(18, Math.floor((n.w || 200) / 7.2));
+    const descLines = Math.ceil(n.desc.length / charsPerLine) || 1;
+    h += descLines * 16 + 8;
+  }
   if (n.imageUrl) h += 148;
   if (n.attributes?.length || n.methods?.length) h += (n.attributes.length + n.methods.length) * 18 + 14;
   if (n.attachments?.length) h += 24;
-  return h;
+  return Math.max(90, h);
 }
 
 function anchorPoint(n, side) {
-  const h = nodeHeight(n);
+  const el = typeof world !== 'undefined' && world ? world.querySelector('[data-node-id="' + n.id + '"]') : null;
+  const h = (el && el.offsetHeight) || n.h || nodeHeight(n);
   switch(side) {
     case 'top':    return { x: n.x + n.w/2, y: n.y,     dx: 0,  dy:-1 };
     case 'bottom': return { x: n.x + n.w/2, y: n.y + h, dx: 0,  dy: 1 };
@@ -2207,8 +2236,8 @@ function buildPath(sp, tp, style) {
 // RENDERING
 // ══════════════════════════════════════════════════════════════
 function renderAll() {
-  renderConnections();
   renderNodes();
+  renderConnections();
   renderInspector();
 }
 
@@ -2397,7 +2426,13 @@ function renderNodes() {
     el.style.left = node.x + 'px';
     el.style.top  = node.y + 'px';
     el.style.width = currentW + 'px';
-    el.style.height = currentH + 'px';
+    if (node.h) {
+      el.style.minHeight = node.h + 'px';
+      el.style.height = 'auto';
+    } else {
+      el.style.minHeight = currentH + 'px';
+      el.style.height = 'auto';
+    }
     el.style.background = isLight ? colors.bg : node.color;
     el.style.borderColor = isLight ? colors.border : node.borderColor;
     el.style.opacity = dimmed ? '0.25' : '1';
@@ -2441,7 +2476,7 @@ function renderNodes() {
         </div>
       </div>
 
-      <div class="node-body" style="padding: ${innerPadding}px; display: flex; flex-direction: column; gap: 6px; height: calc(100% - ${Math.round(30 * scale)}px); overflow: auto;">
+      <div class="node-body" style="padding: ${innerPadding}px; display: flex; flex-direction: column; gap: 6px; overflow: visible;">
         <div class="node-title" data-field="title" data-node-id="${node.id}" style="font-size: ${titleFontSize}px;">
           ${node.shape === 'uml-class' ? `<div class="uml-stereotype">&laquo;class&raquo;</div>` : ''}
           ${node.shape === 'diamond' ? `<span style="color:#f59e0b;font-size:12px;margin-right:4px;" title="Decision Diamond">◆</span>` : ''}
@@ -2457,7 +2492,7 @@ function renderNodes() {
             `}
           </div>
         ` : ''}
-        <div class="node-desc" data-field="desc" data-node-id="${node.id}" style="font-size: ${descFontSize}px; flex: 1; overflow: auto;">${esc(node.desc)}</div>
+        <div class="node-desc" data-field="desc" data-node-id="${node.id}" style="font-size: ${descFontSize}px; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; overflow: visible;">${esc(node.desc)}</div>
         ${(node.attributes?.length || node.methods?.length) ? `
           <div class="node-uml-attrs" style="font-size: ${descFontSize - 1}px;">
             ${node.attributes.map(a=>`<div>${esc(a)}</div>`).join('')}
@@ -2526,6 +2561,7 @@ function startInlineEdit(node, fieldName, fieldEl) {
       renderInspector();
     }
     renderNodes();
+    renderConnections();
   }
 
   input.addEventListener('blur', commit);
@@ -2534,6 +2570,7 @@ function startInlineEdit(node, fieldName, fieldEl) {
     if (e.key === 'Escape') {
       committed = true;
       renderNodes();
+      renderConnections();
     } else if (e.key === 'Enter' && (isTitle || (!e.shiftKey && !e.ctrlKey))) {
       e.preventDefault();
       commit();
@@ -2648,7 +2685,8 @@ function attachNodeEvents(el, nodeData) {
             fresh.style.left = newX + 'px';
             fresh.style.top = newY + 'px';
             fresh.style.width = newW + 'px';
-            fresh.style.height = newH + 'px';
+            fresh.style.minHeight = newH + 'px';
+            fresh.style.height = 'auto';
 
             const scale = Math.max(0.65, Math.min(3.5, newW / 200));
             const t = fresh.querySelector('.node-title');

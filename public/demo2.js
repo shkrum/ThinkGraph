@@ -1,20 +1,20 @@
 window.DEMO_2_DATA = {
-  "diagramId": "diag_food_molecular_commonality_005",
-  "diagramName": "Food Products → Molecules → Elements — Sensitivity Highlighted",
+  "diagramId": "diag_food_molecular_commonality_010",
+  "diagramName": "Food → Molecules → Elements — No-Overlap Layout",
   "canvas": {
-    "zoom": 0.42,
-    "panX": 160,
-    "panY": 80
+    "zoom": 0.18,
+    "panX": 40,
+    "panY": 40
   },
   "nodes": [
     {
       "id": "node_wine",
-      "x": 0,
-      "y": 0,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 610,
+      "w": 760,
+      "h": 620,
       "title": "Wine",
-      "desc": "Fermented grape beverage. Representative chemistry; exact composition varies by grape, style, fermentation and aging.",
+      "desc": "Fermented grape beverage. Representative chemistry; exact composition varies by grape, style, fermenta…",
       "priority": "13",
       "color": "#1e293b",
       "borderColor": "#8b5cf6",
@@ -27,12 +27,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_vinegar",
-      "x": 0,
-      "y": 520,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 1590,
+      "w": 760,
+      "h": 620,
       "title": "Vinegar",
-      "desc": "Fermented acidic condiment. Primarily water + acetic acid, with variable trace alcohols and phenolics depending on source.",
+      "desc": "Fermented acidic condiment. Primarily water + acetic acid, with variable trace alcohols and phenolics…",
       "priority": "5",
       "color": "#1e293b",
       "borderColor": "#8b5cf6",
@@ -45,12 +45,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_soy_sauce",
-      "x": 0,
-      "y": 1040,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 2570,
+      "w": 760,
+      "h": 620,
       "title": "Soy Sauce",
-      "desc": "Fermented soy/wheat seasoning. Representative salt, amino-acid, sugar, organic-acid and nucleotide chemistry.",
+      "desc": "Fermented soy/wheat seasoning. Representative salt, amino-acid, sugar, organic-acid and nucleotide che…",
       "priority": "11",
       "color": "#1e293b",
       "borderColor": "#8b5cf6",
@@ -63,10 +63,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_ketchup",
-      "x": 0,
-      "y": 1560,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 3550,
+      "w": 760,
+      "h": 620,
       "title": "Ketchup",
       "desc": "Tomato-based condiment. Generic formulation modeled as tomato solids + vinegar + sugar + salt.",
       "priority": "12",
@@ -81,12 +81,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_eggplant",
-      "x": 0,
-      "y": 2080,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 4530,
+      "w": 760,
+      "h": 620,
       "title": "Fried Eggplant + Salt",
-      "desc": "Eggplant after frying and salting. Includes native eggplant phytochemicals plus representative absorbed frying-oil lipids.",
+      "desc": "Eggplant after frying and salting. Includes native eggplant phytochemicals plus representative absorbe…",
       "priority": "11",
       "color": "#1e293b",
       "borderColor": "#8b5cf6",
@@ -99,10 +99,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_tomato",
-      "x": 0,
-      "y": 2600,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 5510,
+      "w": 760,
+      "h": 620,
       "title": "Tomatoes",
       "desc": "Fresh ripe tomato. Representative water, sugars, organic acids, amino acids, carotenoids and vitamin C.",
       "priority": "10",
@@ -117,10 +117,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_water",
-      "x": 620,
-      "y": 0,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 120,
+      "w": 760,
+      "h": 620,
       "title": "Water",
       "desc": "H₂O • Major solvent/moisture component.",
       "priority": "8",
@@ -135,12 +135,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_ethanol",
-      "x": 620,
-      "y": 340,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 1100,
+      "w": 760,
+      "h": 620,
       "title": "Ethanol",
-      "desc": "C₂H₆O • Primary alcohol of wine; may remain in small amounts in fermented condiments.\nPotential sensitivity: Alcohol intolerance/sensitivity.",
+      "desc": "C₂H₆O • Primary alcohol of wine; may remain in small amounts in fermented condiments.\n⚠ Potential sensitivity/intolerance",
       "priority": "6",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -153,10 +153,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_glycerol",
-      "x": 1120,
-      "y": 0,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 5020,
+      "w": 760,
+      "h": 620,
       "title": "Glycerol",
       "desc": "C₃H₈O₃ • Major wine fermentation by-product contributing body.",
       "priority": "4",
@@ -171,10 +171,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_glucose",
-      "x": 620,
-      "y": 680,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "Glucose",
       "desc": "C₆H₁₂O₆ • Simple reducing sugar.",
       "priority": "7",
@@ -189,12 +189,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_fructose",
-      "x": 620,
-      "y": 1020,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "Fructose",
-      "desc": "C₆H₁₂O₆ • Simple fruit sugar.\nPotential sensitivity: Fructose malabsorption / FODMAP sensitivity.",
+      "desc": "C₆H₁₂O₆ • Simple fruit sugar.\n⚠ Potential sensitivity/intolerance",
       "priority": "6",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -207,10 +207,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_sucrose",
-      "x": 1120,
-      "y": 340,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 6000,
+      "w": 760,
+      "h": 620,
       "title": "Sucrose",
       "desc": "C₁₂H₂₂O₁₁ • Disaccharide used as a common ketchup sweetener.",
       "priority": "4",
@@ -225,12 +225,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_acetic",
-      "x": 620,
-      "y": 1700,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "Acetic Acid",
-      "desc": "C₂H₄O₂ • Defining acid of vinegar; also occurs in wine and soy-sauce fermentation.\nPotential sensitivity: Acid-sensitive GI/reflux symptoms in some people.",
+      "desc": "C₂H₄O₂ • Defining acid of vinegar; also occurs in wine and soy-sauce fermentation.\n⚠ Potential sensitivity/intolerance",
       "priority": "7",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -243,12 +243,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_lactic",
-      "x": 620,
-      "y": 3060,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 120,
+      "w": 760,
+      "h": 620,
       "title": "Lactic Acid",
-      "desc": "C₃H₆O₃ • Fermentation acid, important in soy sauce and malolactic wine.\nPotential sensitivity: Acid-sensitive GI symptoms in some people.",
+      "desc": "C₃H₆O₃ • Fermentation acid, important in soy sauce and malolactic wine.\n⚠ Potential sensitivity/intolerance",
       "priority": "5",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -261,12 +261,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_citric",
-      "x": 620,
-      "y": 2380,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 1100,
+      "w": 760,
+      "h": 620,
       "title": "Citric Acid",
-      "desc": "C₆H₈O₇ • Major tomato organic acid; also occurs in wine.\nPotential sensitivity: Acid-sensitive oral/GI symptoms in some people.",
+      "desc": "C₆H₈O₇ • Major tomato organic acid; also occurs in wine.\n⚠ Potential sensitivity/intolerance",
       "priority": "6",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -279,12 +279,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_malic",
-      "x": 620,
-      "y": 2720,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "Malic Acid",
-      "desc": "C₄H₆O₅ • Important grape/tomato organic acid.\nPotential sensitivity: Acid-sensitive oral/GI symptoms in some people.",
+      "desc": "C₄H₆O₅ • Important grape/tomato organic acid.\n⚠ Potential sensitivity/intolerance",
       "priority": "6",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -297,12 +297,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_tartaric",
-      "x": 1120,
-      "y": 680,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "Tartaric Acid",
-      "desc": "C₄H₆O₆ • Signature major grape/wine acid.\nPotential sensitivity: Acid-sensitive oral/GI symptoms in some people.",
+      "desc": "C₄H₆O₆ • Signature major grape/wine acid.\n⚠ Potential sensitivity/intolerance",
       "priority": "4",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -315,10 +315,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_succinic",
-      "x": 620,
-      "y": 3400,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "Succinic Acid",
       "desc": "C₄H₆O₄ • Fermentation-derived organic acid found in wine and soy sauce.",
       "priority": "5",
@@ -333,12 +333,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_glutamic",
-      "x": 620,
-      "y": 2040,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 6000,
+      "w": 760,
+      "h": 620,
       "title": "Glutamic Acid / Glutamate",
-      "desc": "C₅H₉NO₄ • Key umami amino-acid system in tomato and soy sauce.\nPotential sensitivity: Some people report sensitivity to glutamate/MSG-type exposures.",
+      "desc": "C₅H₉NO₄ • Key umami amino-acid system in tomato and soy sauce.\n⚠ Potential sensitivity/intolerance",
       "priority": "7",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -351,10 +351,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_aspartic",
-      "x": 1120,
-      "y": 1020,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 120,
+      "w": 760,
+      "h": 620,
       "title": "Aspartic Acid / Aspartate",
       "desc": "C₄H₇NO₄ • Taste-active amino acid found in tomato and soy sauce.",
       "priority": "6",
@@ -369,10 +369,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_proline",
-      "x": 1120,
-      "y": 1360,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 1100,
+      "w": 760,
+      "h": 620,
       "title": "Proline",
       "desc": "C₅H₉NO₂ • Prominent wine amino acid.",
       "priority": "5",
@@ -387,12 +387,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_salt",
-      "x": 620,
-      "y": 1360,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 5020,
+      "w": 760,
+      "h": 620,
       "title": "Sodium Chloride",
-      "desc": "NaCl • Table salt / major salinity source.\nPotential sensitivity: Salt sensitivity in some people.",
+      "desc": "NaCl • Table salt / major salinity source.\n⚠ Potential sensitivity/intolerance",
       "priority": "5",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -405,10 +405,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_lycopene",
-      "x": 1120,
-      "y": 1700,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "Lycopene",
       "desc": "C₄₀H₅₆ • Red tomato carotenoid pigment.",
       "priority": "4",
@@ -423,10 +423,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_beta_carotene",
-      "x": 1120,
-      "y": 2040,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "β-Carotene",
       "desc": "C₄₀H₅₆ • Orange-red provitamin-A carotenoid in tomato products.",
       "priority": "4",
@@ -441,10 +441,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_ascorbic",
-      "x": 1120,
-      "y": 2380,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "Ascorbic Acid (Vitamin C)",
       "desc": "C₆H₈O₆ • Water-soluble antioxidant present in tomatoes and tomato products.",
       "priority": "5",
@@ -459,10 +459,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_chlorogenic",
-      "x": 1120,
-      "y": 3060,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 6000,
+      "w": 760,
+      "h": 620,
       "title": "Chlorogenic Acid",
       "desc": "C₁₆H₁₈O₉ • Predominant eggplant phenolic; also reported among vinegar bioactives.",
       "priority": "5",
@@ -477,10 +477,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_nasunin",
-      "x": 1620,
-      "y": 0,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 120,
+      "w": 760,
+      "h": 620,
       "title": "Nasunin",
       "desc": "C₄₂H₄₇O₂₃⁺ • Characteristic purple eggplant-peel anthocyanin.",
       "priority": "4",
@@ -495,10 +495,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_rutin",
-      "x": 1620,
-      "y": 340,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 1100,
+      "w": 760,
+      "h": 620,
       "title": "Rutin",
       "desc": "C₂₇H₃₀O₁₆ • Flavonoid reported in eggplant.",
       "priority": "4",
@@ -513,12 +513,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_solasonine",
-      "x": 1620,
-      "y": 680,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "α-Solasonine",
-      "desc": "C₄₅H₇₃NO₁₆ • Eggplant steroidal glycoalkaloid.\nPotential sensitivity: Nightshade glycoalkaloid; can be irritating at sufficient exposure.",
+      "desc": "C₄₅H₇₃NO₁₆ • Eggplant steroidal glycoalkaloid.\n⚠ Potential sensitivity/intolerance",
       "priority": "5",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -531,12 +531,12 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_solamargine",
-      "x": 1620,
-      "y": 1020,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "α-Solamargine",
-      "desc": "C₄₅H₇₃NO₁₅ • Eggplant steroidal glycoalkaloid.\nPotential sensitivity: Nightshade glycoalkaloid; can be irritating at sufficient exposure.",
+      "desc": "C₄₅H₇₃NO₁₅ • Eggplant steroidal glycoalkaloid.\n⚠ Potential sensitivity/intolerance",
       "priority": "5",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -549,10 +549,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_triolein",
-      "x": 1620,
-      "y": 1360,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "Triolein (Triglyceride)",
       "desc": "C₅₇H₁₀₄O₆ • Representative triacylglycerol in absorbed frying oil.",
       "priority": "4",
@@ -567,10 +567,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_oleic",
-      "x": 1620,
-      "y": 1700,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 5020,
+      "w": 760,
+      "h": 620,
       "title": "Oleic Acid",
       "desc": "C₁₈H₃₄O₂ • Common monounsaturated fatty acid in cooking oils.",
       "priority": "4",
@@ -585,10 +585,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_linoleic",
-      "x": 1620,
-      "y": 2040,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 6000,
+      "w": 760,
+      "h": 620,
       "title": "Linoleic Acid",
       "desc": "C₁₈H₃₂O₂ • Common polyunsaturated fatty acid in cooking oils.",
       "priority": "4",
@@ -603,10 +603,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_palmitic",
-      "x": 1620,
-      "y": 2380,
-      "w": 420,
-      "h": 300,
+      "x": 8120,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "Palmitic Acid",
       "desc": "C₁₆H₃₂O₂ • Common saturated fatty acid in cooking oils.",
       "priority": "4",
@@ -621,10 +621,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_caffeic",
-      "x": 1120,
-      "y": 2720,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 5020,
+      "w": 760,
+      "h": 620,
       "title": "Caffeic Acid",
       "desc": "C₉H₈O₄ • Phenolic acid reported in wine and some vinegars.",
       "priority": "5",
@@ -639,10 +639,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_gmp",
-      "x": 1620,
-      "y": 2720,
-      "w": 420,
-      "h": 300,
+      "x": 8120,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "5′-GMP",
       "desc": "C₁₀H₁₄N₅O₈P • Guanosine monophosphate; nucleotide contributing to umami in some soy sauces.",
       "priority": "6",
@@ -657,10 +657,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_imp",
-      "x": 1620,
-      "y": 3060,
-      "w": 420,
-      "h": 300,
+      "x": 8120,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "5′-IMP",
       "desc": "C₁₀H₁₃N₄O₈P • Inosine monophosphate; taste-active nucleotide reported in some soy sauces.",
       "priority": "6",
@@ -675,10 +675,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_H",
-      "x": 2260,
-      "y": 180,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 120,
+      "w": 760,
+      "h": 620,
       "title": "Hydrogen (H)",
       "desc": "Element shared by water and essentially all organic compounds.",
       "priority": "30",
@@ -693,10 +693,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_O",
-      "x": 2260,
-      "y": 680,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "Oxygen (O)",
       "desc": "Element shared by water, sugars, alcohols, acids and many phytochemicals.",
       "priority": "28",
@@ -711,10 +711,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_C",
-      "x": 2260,
-      "y": 1180,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 1100,
+      "w": 760,
+      "h": 620,
       "title": "Carbon (C)",
       "desc": "Core element of every organic molecule shown.",
       "priority": "29",
@@ -729,10 +729,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_N",
-      "x": 2260,
-      "y": 1680,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "Nitrogen (N)",
       "desc": "Present in amino acids, glycoalkaloids and nucleotides.",
       "priority": "7",
@@ -747,10 +747,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_Na",
-      "x": 2260,
-      "y": 2180,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "Sodium (Na)",
       "desc": "Element in sodium chloride.",
       "priority": "1",
@@ -765,10 +765,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_Cl",
-      "x": 2260,
-      "y": 2680,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 5020,
+      "w": 760,
+      "h": 620,
       "title": "Chlorine (Cl)",
       "desc": "Present as chloride in sodium chloride.",
       "priority": "1",
@@ -783,10 +783,10 @@ window.DEMO_2_DATA = {
     },
     {
       "id": "node_P",
-      "x": 2260,
-      "y": 3180,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 6000,
+      "w": 760,
+      "h": 620,
       "title": "Phosphorus (P)",
       "desc": "Present in nucleotide phosphate groups.",
       "priority": "2",
@@ -807,8 +807,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_002",
@@ -816,8 +816,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_ethanol",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_003",
@@ -825,8 +825,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_glycerol",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_004",
@@ -834,8 +834,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_glucose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_005",
@@ -843,8 +843,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_fructose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_006",
@@ -852,8 +852,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_acetic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_007",
@@ -861,8 +861,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_lactic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_008",
@@ -870,8 +870,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_citric",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_009",
@@ -879,8 +879,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_malic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_010",
@@ -888,8 +888,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_tartaric",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_011",
@@ -897,8 +897,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_succinic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_012",
@@ -906,8 +906,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_proline",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_013",
@@ -915,8 +915,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_caffeic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_014",
@@ -924,8 +924,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_015",
@@ -933,8 +933,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_acetic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_016",
@@ -942,8 +942,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_ethanol",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_017",
@@ -951,8 +951,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_caffeic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_018",
@@ -960,8 +960,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_chlorogenic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_019",
@@ -969,8 +969,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_020",
@@ -978,8 +978,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_salt",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_021",
@@ -987,8 +987,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_glutamic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_022",
@@ -996,8 +996,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_aspartic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_023",
@@ -1005,8 +1005,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_glucose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_024",
@@ -1014,8 +1014,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_lactic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_025",
@@ -1023,8 +1023,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_acetic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_026",
@@ -1032,8 +1032,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_succinic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_027",
@@ -1041,8 +1041,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_ethanol",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_028",
@@ -1050,8 +1050,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_gmp",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_029",
@@ -1059,8 +1059,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_imp",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_030",
@@ -1068,8 +1068,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_031",
@@ -1077,8 +1077,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_acetic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_032",
@@ -1086,8 +1086,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_salt",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_033",
@@ -1095,8 +1095,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_glucose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_034",
@@ -1104,8 +1104,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_fructose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_035",
@@ -1113,8 +1113,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_sucrose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_036",
@@ -1122,8 +1122,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_citric",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_037",
@@ -1131,8 +1131,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_malic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_038",
@@ -1140,8 +1140,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_glutamic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_039",
@@ -1149,8 +1149,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_lycopene",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_040",
@@ -1158,8 +1158,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_beta_carotene",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_041",
@@ -1167,8 +1167,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_ascorbic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_042",
@@ -1176,8 +1176,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_043",
@@ -1185,8 +1185,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_salt",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_044",
@@ -1194,8 +1194,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_chlorogenic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_045",
@@ -1203,8 +1203,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_nasunin",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_046",
@@ -1212,8 +1212,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_rutin",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_047",
@@ -1221,8 +1221,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_solasonine",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_048",
@@ -1230,8 +1230,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_solamargine",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_049",
@@ -1239,8 +1239,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_triolein",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_050",
@@ -1248,8 +1248,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_oleic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_051",
@@ -1257,8 +1257,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_linoleic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_052",
@@ -1266,8 +1266,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_palmitic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_053",
@@ -1275,8 +1275,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_054",
@@ -1284,8 +1284,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_glucose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_055",
@@ -1293,8 +1293,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_fructose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_056",
@@ -1302,8 +1302,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_citric",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_057",
@@ -1311,8 +1311,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_malic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_058",
@@ -1320,8 +1320,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_glutamic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_059",
@@ -1329,8 +1329,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_aspartic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_060",
@@ -1338,8 +1338,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_lycopene",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_061",
@@ -1347,8 +1347,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_beta_carotene",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_062",
@@ -1356,8 +1356,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_ascorbic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_063",
@@ -1365,8 +1365,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_064",
@@ -1374,8 +1374,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_065",
@@ -1383,8 +1383,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_066",
@@ -1392,8 +1392,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_067",
@@ -1401,8 +1401,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_068",
@@ -1410,8 +1410,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_069",
@@ -1419,8 +1419,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_070",
@@ -1428,8 +1428,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_071",
@@ -1437,8 +1437,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_072",
@@ -1446,8 +1446,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_073",
@@ -1455,8 +1455,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_074",
@@ -1464,8 +1464,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_075",
@@ -1473,8 +1473,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_076",
@@ -1482,8 +1482,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_077",
@@ -1491,8 +1491,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_078",
@@ -1500,8 +1500,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_079",
@@ -1509,8 +1509,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_080",
@@ -1518,8 +1518,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_081",
@@ -1527,8 +1527,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_082",
@@ -1536,8 +1536,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_083",
@@ -1545,8 +1545,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_084",
@@ -1554,8 +1554,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_085",
@@ -1563,8 +1563,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_086",
@@ -1572,8 +1572,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_087",
@@ -1581,8 +1581,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_088",
@@ -1590,8 +1590,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_089",
@@ -1599,8 +1599,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_090",
@@ -1608,8 +1608,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_091",
@@ -1617,8 +1617,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_092",
@@ -1626,8 +1626,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_093",
@@ -1635,8 +1635,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_094",
@@ -1644,8 +1644,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_095",
@@ -1653,8 +1653,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_096",
@@ -1662,8 +1662,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_097",
@@ -1671,8 +1671,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_098",
@@ -1680,8 +1680,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_099",
@@ -1689,8 +1689,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_100",
@@ -1698,8 +1698,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_101",
@@ -1707,8 +1707,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_102",
@@ -1716,8 +1716,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_103",
@@ -1725,8 +1725,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_104",
@@ -1734,8 +1734,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_105",
@@ -1743,8 +1743,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_106",
@@ -1752,8 +1752,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_107",
@@ -1761,8 +1761,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_108",
@@ -1770,8 +1770,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_109",
@@ -1779,8 +1779,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_110",
@@ -1788,8 +1788,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_Na",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_111",
@@ -1797,8 +1797,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_Cl",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_112",
@@ -1806,8 +1806,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_113",
@@ -1815,8 +1815,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_114",
@@ -1824,8 +1824,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_115",
@@ -1833,8 +1833,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_116",
@@ -1842,8 +1842,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_117",
@@ -1851,8 +1851,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_118",
@@ -1860,8 +1860,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_119",
@@ -1869,8 +1869,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_120",
@@ -1878,8 +1878,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_121",
@@ -1887,8 +1887,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_122",
@@ -1896,8 +1896,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_123",
@@ -1905,8 +1905,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_124",
@@ -1914,8 +1914,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_125",
@@ -1923,8 +1923,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_126",
@@ -1932,8 +1932,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_127",
@@ -1941,8 +1941,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_128",
@@ -1950,8 +1950,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_129",
@@ -1959,8 +1959,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_130",
@@ -1968,8 +1968,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_131",
@@ -1977,8 +1977,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_132",
@@ -1986,8 +1986,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_133",
@@ -1995,8 +1995,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_134",
@@ -2004,8 +2004,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_135",
@@ -2013,8 +2013,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_136",
@@ -2022,8 +2022,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_137",
@@ -2031,8 +2031,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_138",
@@ -2040,8 +2040,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_139",
@@ -2049,8 +2049,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_140",
@@ -2058,8 +2058,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_141",
@@ -2067,8 +2067,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_142",
@@ -2076,8 +2076,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_143",
@@ -2085,8 +2085,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_144",
@@ -2094,8 +2094,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_145",
@@ -2103,8 +2103,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_146",
@@ -2112,8 +2112,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_147",
@@ -2121,8 +2121,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_148",
@@ -2130,8 +2130,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_149",
@@ -2139,8 +2139,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_150",
@@ -2148,8 +2148,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_151",
@@ -2157,8 +2157,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_152",
@@ -2166,8 +2166,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_153",
@@ -2175,8 +2175,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_154",
@@ -2184,8 +2184,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_155",
@@ -2193,8 +2193,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_P",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_156",
@@ -2202,8 +2202,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_157",
@@ -2211,8 +2211,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_158",
@@ -2220,8 +2220,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_159",
@@ -2229,8 +2229,8 @@ window.DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_160",
@@ -2238,9 +2238,9 @@ window.DEMO_2_DATA = {
       "tgt": "node_P",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     }
   ],
-  "updatedAt": 1790404920000
+  "updatedAt": 1790990400000
 };

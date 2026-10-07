@@ -163,6 +163,39 @@ body{
 .resize-se { bottom: -7px; right: -7px; cursor: nwse-resize; }
 .resize-sw { bottom: -7px; left: -7px; cursor: nesw-resize; }
 
+/* ─── GROUP NODES (background frames) ─────────────────────── */
+.gnode.ggroup{
+  min-width:0;
+  border:2px dashed #818cf8;
+  border-radius:16px;
+  box-shadow:none;
+  overflow:visible;
+  transition:border-color 0.15s, box-shadow 0.15s;
+}
+.gnode.ggroup:hover{box-shadow:0 0 0 1px rgba(129,140,248,0.25)}
+.gnode.ggroup.selected{border-style:solid;box-shadow:0 0 0 3px rgba(99,102,241,0.3)}
+.ggroup .group-bg{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;border-radius:14px;pointer-events:none;user-select:none;-webkit-user-drag:none;
+}
+.ggroup .group-head{
+  position:relative;display:inline-flex;align-items:center;gap:8px;
+  margin:10px;padding:5px 14px 5px 10px;border-radius:10px;border:1px solid;
+  max-width:calc(100% - 20px);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.ggroup .group-icon{font-size:13px;opacity:0.85}
+.ggroup .group-title{
+  font-family:'Inter',sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em;
+  color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:40px;
+}
+.ggroup .group-count{
+  font-size:10px;font-weight:600;color:#a5b4fc;background:rgba(99,102,241,0.18);
+  border-radius:999px;padding:1px 7px;white-space:nowrap;
+}
+body.light-theme .gnode.ggroup{box-shadow:none}
+body.light-theme .ggroup .group-title{color:#1e293b}
+body.light-theme .ggroup .group-count{color:#4338ca}
+
 /* Node header bar with priority */
 .node-head{
   display:flex;align-items:center;justify-content:space-between;
@@ -997,6 +1030,11 @@ body.light-theme #gdrive-client-modal > div {
       Add Node
     </button>
 
+    <button class="tb-btn" id="btn-add-group" title="Add a Group frame: nodes placed inside move together with it" style="background:rgba(129,140,248,0.12);border-color:rgba(129,140,248,0.45);border-style:dashed;color:#c7d2fe">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2"><rect x="2" y="3" width="20" height="18" rx="3"/></svg>
+      Add Group
+    </button>
+
     <button class="tb-btn amber" id="btn-format" title="Auto-arrange nodes to eliminate overlaps">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="5" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="8" y="16" width="8" height="5" rx="1"/><line x1="6.5" y1="8" x2="6.5" y2="14"/><line x1="17.5" y1="8" x2="17.5" y2="13"/><line x1="6.5" y1="14" x2="17.5" y2="14"/><line x1="12" y1="14" x2="12" y2="16"/></svg>
       Format
@@ -1123,7 +1161,7 @@ Each node in the `nodes` array has these fields:
   "h": 160,                  // Height in pixels (min 90, optional — auto-calculated if omitted)
   "title": "Node Title",     // Short title displayed on the card
   "desc": "Description text here...",  // Multi-line description
-  "priority": "P01",         // 1-3 character priority badge (e.g. P01, VIP, HI)
+  "priority": "P01",         // Optional 1-3 character priority badge (e.g. P01, VIP, HI). Default is empty ""
   "color": "#1e293b",        // Fill/background color (hex)
   "borderColor": "#3b82f6",  // Border color (hex)
   "shape": "rounded",        // Shape: "rounded" | "rectangle" | "diamond" | "cylinder" | "uml-class"
@@ -1142,6 +1180,27 @@ Each node in the `nodes` array has these fields:
 - `"diamond"` — Decision/condition diamond
 - `"cylinder"` — Database cylinder
 - `"uml-class"` — UML class box (uses attributes + methods arrays)
+
+### Group Node (background frame)
+
+A group is a node with `"type": "group"`. It is drawn behind connections and regular nodes.
+Any node whose center lies inside the group rectangle belongs to it and moves with it
+(nested groups must lie fully inside). Groups have no connection ports.
+
+```json
+{
+  "id": "node_grp1",
+  "type": "group",
+  "x": 40, "y": 40, "w": 600, "h": 400,   // Explicit size is required
+  "title": "Backend Services",
+  "color": "#6366f1",        // Fill tint (hex)
+  "fillOpacity": 0.08,       // 0..1 fill transparency
+  "borderColor": "#818cf8",
+  "imageUrl": null,          // Optional background image (data URL or path)
+  "imageOpacity": 0.35,      // 0..1 background image transparency
+  "priority": ""
+}
+```
 
 ### Connection Object
 
@@ -2088,6 +2147,208 @@ function addNode(opts = {}) {
   return node;
 }
 
+// ══════════════════════════════════════════════════════════════
+// GROUP NODES (background frames that carry contained nodes)
+// ══════════════════════════════════════════════════════════════
+function isGroup(n) { return !!n && n.type === 'group'; }
+
+function addGroup(opts = {}) {
+  const w = opts.w ?? 520, h = opts.h ?? 340;
+  const cx = (-state.panX + (canvasRoot.clientWidth / 2)) / state.zoom;
+  const cy = (-state.panY + (canvasRoot.clientHeight / 2)) / state.zoom;
+  const g = {
+    id: uid('node'),
+    type: 'group',
+    x: opts.x ?? Math.round((cx - w / 2) / 10) * 10,
+    y: opts.y ?? Math.round((cy - h / 2) / 10) * 10,
+    w, h,
+    title: opts.title ?? 'Group',
+    desc: '',
+    priority: '',
+    color: opts.color ?? '#6366f1',
+    fillOpacity: opts.fillOpacity ?? 0.08,
+    borderColor: opts.borderColor ?? '#818cf8',
+    imageUrl: opts.imageUrl ?? null,
+    imageOpacity: opts.imageOpacity ?? 0.35,
+    attributes: [], methods: [], attachments: [],
+  };
+  state.nodes.push(g);
+  state.selectedNodeId = g.id;
+  state.selectedConnId = null;
+  snapshot();
+  renderAll();
+  return g;
+}
+
+// Nodes geometrically inside a group: regular nodes by center point,
+// nested (smaller) groups only when fully contained.
+function getGroupMembers(g) {
+  const gx = g.x, gy = g.y, gw = g.w || 400, gh = g.h || nodeHeight(g);
+  return state.nodes.filter(n => {
+    if (n.id === g.id) return false;
+    const w = n.w || 200, h = n.h || nodeHeight(n);
+    if (isGroup(n)) {
+      if (w * h >= gw * gh) return false;
+      return n.x >= gx && n.y >= gy && n.x + w <= gx + gw && n.y + h <= gy + gh;
+    }
+    const cx = n.x + w / 2, cy = n.y + h / 2;
+    return cx >= gx && cx <= gx + gw && cy >= gy && cy <= gy + gh;
+  });
+}
+
+function hexToRgba(hex, alpha) {
+  let h = String(hex || '#6366f1').replace('#', '');
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const r = parseInt(h.slice(0, 2), 16) || 0, g = parseInt(h.slice(2, 4), 16) || 0, b = parseInt(h.slice(4, 6), 16) || 0;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function buildGroupEl(node) {
+  const isSel = state.selectedNodeId === node.id;
+  const w = node.w || 520, h = node.h || 340;
+  const border = node.borderColor || '#818cf8';
+  const memberCount = getGroupMembers(node).length;
+
+  const el = document.createElement('div');
+  el.className = 'gnode ggroup' + (isSel ? ' selected' : '');
+  el.dataset.nodeId = node.id;
+  el.style.left = node.x + 'px';
+  el.style.top = node.y + 'px';
+  el.style.width = w + 'px';
+  el.style.minHeight = h + 'px';
+  el.style.height = 'auto';
+  el.style.borderColor = border;
+  el.style.background = hexToRgba(node.color || '#6366f1', node.fillOpacity ?? 0.08);
+
+  el.innerHTML = `
+    ${node.imageUrl ? `<img class="group-bg" src="${esc(resolveImgUrl(node.imageUrl))}" alt="" draggable="false" style="opacity:${node.imageOpacity ?? 0.35}" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}"/>` : ''}
+    <div class="resize-handle resize-nw" data-corner="nw" data-node-id="${node.id}" title="Resize group"></div>
+    <div class="resize-handle resize-ne" data-corner="ne" data-node-id="${node.id}" title="Resize group"></div>
+    <div class="resize-handle resize-se" data-corner="se" data-node-id="${node.id}" title="Resize group"></div>
+    <div class="resize-handle resize-sw" data-corner="sw" data-node-id="${node.id}" title="Resize group"></div>
+    <div class="group-head" style="border-color:${hexToRgba(border, 0.55)};background:${hexToRgba(border, 0.16)}">
+      <span class="group-icon" style="color:${esc(border)}">▣</span>
+      <div class="group-title" data-field="title" data-node-id="${node.id}">${esc(node.title)}</div>
+      ${memberCount ? `<span class="group-count" title="Nodes inside this group">${memberCount}</span>` : ''}
+    </div>
+  `;
+  attachNodeEvents(el, node);
+  return el;
+}
+
+function renderGroupInspector(node) {
+  const members = getGroupMembers(node);
+  inspector.innerHTML = `
+    <div class="insp-section">
+      <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;margin-bottom:8px">
+        <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+      </div>
+      <div class="insp-title"><span style="background:#818cf8"></span>Group Properties</div>
+
+      <div class="insp-row">
+        <label class="insp-label">Title</label>
+        <input class="insp-input" id="gp-title" type="text" value="${esc(node.title)}"
+               inputmode="text" enterkeyhint="done" autocapitalize="sentences" spellcheck="true"/>
+      </div>
+
+      <div class="insp-row insp-row-2">
+        <div>
+          <label class="insp-label">Border Color</label>
+          <input class="insp-input" id="gp-border" type="color" value="${node.borderColor || '#818cf8'}"/>
+        </div>
+        <div>
+          <label class="insp-label">Fill Tint</label>
+          <input class="insp-input" id="gp-fill" type="color" value="${node.color || '#6366f1'}"/>
+        </div>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Fill Opacity <span id="gp-fill-op-val">${Math.round((node.fillOpacity ?? 0.08) * 100)}%</span></label>
+        <input id="gp-fill-op" type="range" min="0" max="60" value="${Math.round((node.fillOpacity ?? 0.08) * 100)}" style="width:100%"/>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Background Image</label>
+        ${node.imageUrl ? `
+          <div class="img-preview">
+            <img src="${esc(resolveImgUrl(node.imageUrl))}" alt=""/>
+            <button class="img-preview-del" id="gp-img-del">✕ Remove</button>
+          </div>
+          <label class="insp-label" style="margin-top:8px">Image Opacity <span id="gp-img-op-val">${Math.round((node.imageOpacity ?? 0.35) * 100)}%</span></label>
+          <input id="gp-img-op" type="range" min="5" max="100" value="${Math.round((node.imageOpacity ?? 0.35) * 100)}" style="width:100%"/>
+        ` : `
+          <div class="img-upload-area" id="gp-img-upload">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 4px;display:block"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Click to upload background image
+            <input type="file" id="gp-img-file" accept="image/*" style="display:none"/>
+          </div>`}
+      </div>
+
+      <div class="insp-row" style="font-size:11px;color:#94a3b8;line-height:1.5">
+        📦 <strong style="color:#c7d2fe">${members.length}</strong> node${members.length === 1 ? '' : 's'} inside.
+        Drop a node inside the frame to group it; drag it out to ungroup. Moving the group moves everything inside.
+      </div>
+
+      <button class="insp-del-btn" id="gp-delete">🗑 Delete Group (keep nodes)</button>
+      ${members.length ? `<button class="insp-del-btn" id="gp-delete-all" style="margin-top:6px;opacity:.85">🗑 Delete Group + ${members.length} node${members.length === 1 ? '' : 's'}</button>` : ''}
+    </div>
+  `;
+
+  const stop = e => e.stopPropagation();
+  const t = document.getElementById('gp-title');
+  t.addEventListener('keydown', stop);
+  t.addEventListener('input', e => liveUpdateNode(node.id, { title: e.target.value }));
+  t.addEventListener('blur', () => snapshot());
+
+  const bindColor = (id, key) => {
+    const inp = document.getElementById(id);
+    inp.addEventListener('input', e => liveUpdateNode(node.id, { [key]: e.target.value }));
+    inp.addEventListener('change', () => snapshot());
+  };
+  bindColor('gp-border', 'borderColor');
+  bindColor('gp-fill', 'color');
+
+  const bindRange = (id, key) => {
+    const inp = document.getElementById(id);
+    if (!inp) return;
+    inp.addEventListener('input', e => {
+      const v = (+e.target.value) / 100;
+      const lbl = document.getElementById(id + '-val');
+      if (lbl) lbl.textContent = e.target.value + '%';
+      liveUpdateNode(node.id, { [key]: v });
+    });
+    inp.addEventListener('change', () => snapshot());
+  };
+  bindRange('gp-fill-op', 'fillOpacity');
+  bindRange('gp-img-op', 'imageOpacity');
+
+  const up = document.getElementById('gp-img-upload');
+  if (up) {
+    const fileIn = document.getElementById('gp-img-file');
+    up.addEventListener('click', e => { if (e.target !== fileIn) fileIn.click(); });
+    fileIn.addEventListener('click', stop);
+    fileIn.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      updateNode(node.id, { imageUrl: await fileToBase64(file) });
+    });
+  }
+  const del = document.getElementById('gp-img-del');
+  if (del) del.addEventListener('click', () => updateNode(node.id, { imageUrl: null }));
+
+  document.getElementById('gp-delete').addEventListener('click', () => deleteNode(node.id));
+  const delAll = document.getElementById('gp-delete-all');
+  if (delAll) delAll.addEventListener('click', () => {
+    if (!confirm(`Delete group "${node.title}" and the ${members.length} node(s) inside it?`)) return;
+    const ids = new Set([node.id, ...members.map(m => m.id)]);
+    state.nodes = state.nodes.filter(n => !ids.has(n.id));
+    state.connections = state.connections.filter(c => !ids.has(c.src) && !ids.has(c.tgt));
+    state.selectedNodeId = null;
+    snapshot();
+    renderAll();
+  });
+}
+
 function updateNode(id, patch, hist = true) {
   const n = state.nodes.find(n => n.id === id);
   if (!n) return;
@@ -2104,6 +2365,12 @@ function liveUpdateNode(id, patch) {
   if (!n) return;
   if (patch.priority !== undefined) patch.priority = String(patch.priority).slice(0,3).toUpperCase();
   Object.assign(n, patch);
+  if (isGroup(n)) {
+    // Groups are cheap to rebuild: swap only this element (keeps inspector focus)
+    const old = world.querySelector('[data-node-id="' + id + '"]');
+    if (old) old.replaceWith(buildGroupEl(n));
+    return;
+  }
   renderConnections(); // only update SVG lines (positions may have changed for cylinder/class)
   // update the node card visuals without full re-render
   const nodeEl = world.querySelector('[data-node-id="' + id + '"]');
@@ -2285,7 +2552,7 @@ function renderConnections() {
     if (!src || !tgt) return;
 
     // Dim if priority filter active and neither node matches
-    const dimmed = filter && !src.priority.includes(filter) && !tgt.priority.includes(filter);
+    const dimmed = filter && !(src.priority || '').includes(filter) && !(tgt.priority || '').includes(filter);
 
     const {sp, tp} = bestAnchors(src, tgt);
     const d = buildPath(sp, tp, conn.style || 'curved');
@@ -2436,9 +2703,16 @@ function renderNodes() {
   const filter = state.priorityFilter.toUpperCase();
   const isLight = document.body.classList.contains('light-theme');
 
+  // Groups first, inserted BEFORE the SVG layer so they sit beneath connections
+  // and regular nodes. Larger groups go first so nested groups stay on top.
+  state.nodes.filter(isGroup)
+    .sort((a, b) => ((b.w || 0) * (b.h || 0)) - ((a.w || 0) * (a.h || 0)))
+    .forEach(g => world.insertBefore(buildGroupEl(g), svgLayer));
+
   state.nodes.forEach(node => {
+    if (isGroup(node)) return;
     const isSel = state.selectedNodeId === node.id;
-    const dimmed = filter && !node.priority.includes(filter);
+    const dimmed = filter && !(node.priority || '').includes(filter);
 
     const currentW = node.w || 200;
     const currentH = node.h || nodeHeight(node);
@@ -2755,6 +3029,7 @@ function attachNodeEvents(el, nodeData) {
 
   // ── Priority input ───────────────────────────────────────
   const prioInput = el.querySelector('.node-prio-input');
+  if (prioInput) {
   prioInput.addEventListener('pointerdown', e => e.stopPropagation());
   prioInput.addEventListener('mousedown',   e => e.stopPropagation());
   prioInput.addEventListener('click',       e => e.stopPropagation());
@@ -2767,6 +3042,7 @@ function attachNodeEvents(el, nodeData) {
     if (n) { n.priority = val; renderConnections(); renderInspector(); }
   });
   prioInput.addEventListener('blur', () => snapshot());
+  }
 
   // ── ✏️ Edit button – single-tap calls virtual keyboard ────
   const editBtn = el.querySelector('.node-edit-btn');
@@ -2786,7 +3062,7 @@ function attachNodeEvents(el, nodeData) {
   }
 
   // ── Editable title / desc ─────────────────────────────────
-  el.querySelectorAll('.node-title,.node-desc').forEach(field => {
+  el.querySelectorAll('.node-title,.node-desc,.group-title').forEach(field => {
     const key = field.dataset.field;
 
     // Desktop double-click to edit
@@ -2841,6 +3117,10 @@ function attachNodeEvents(el, nodeData) {
     const n = state.nodes.find(item => item.id === nodeData.id);
     if (!n) return;
     const startNX = n.x, startNY = n.y;
+    // Dragging a group carries every node currently inside it
+    const carried = isGroup(n)
+      ? getGroupMembers(n).map(m => ({ m, x: m.x, y: m.y, el: world.querySelector('[data-node-id="' + m.id + '"]') }))
+      : [];
     let moved = false;
     let rafId = null;
 
@@ -2861,6 +3141,13 @@ function attachNodeEvents(el, nodeData) {
         n.x = nx; n.y = ny;
         const fresh = world.querySelector('[data-node-id="' + nodeData.id + '"]');
         if (fresh) { fresh.style.left = nx + 'px'; fresh.style.top = ny + 'px'; }
+        if (carried.length) {
+          const ddx = nx - startNX, ddy = ny - startNY;
+          carried.forEach(c => {
+            c.m.x = c.x + ddx; c.m.y = c.y + ddy;
+            if (c.el) { c.el.style.left = c.m.x + 'px'; c.el.style.top = c.m.y + 'px'; }
+          });
+        }
         renderConnections();
       });
     }
@@ -2922,7 +3209,7 @@ function startConnectionDrag(srcNodeId, e, startPortEl) {
     const els = document.elementsFromPoint(me.clientX, me.clientY);
     let tgtId = null;
     for (const item of els) {
-      const nodeEl = item.closest?.('.gnode');
+      const nodeEl = item.closest?.('.gnode:not(.ggroup)');
       if (nodeEl && nodeEl.dataset.nodeId && nodeEl.dataset.nodeId !== src) {
         tgtId = nodeEl.dataset.nodeId;
         break;
@@ -3060,7 +3347,8 @@ function renderInspector() {
   const conn = state.connections.find(c => c.id === state.selectedConnId);
 
   if (node) {
-    renderNodeInspector(node);
+    if (isGroup(node)) renderGroupInspector(node);
+    else renderNodeInspector(node);
   } else if (conn) {
     renderConnInspector(conn);
   } else {
@@ -3365,6 +3653,7 @@ function renderConnInspector(conn) {
 // TOOLBAR EVENTS
 // ══════════════════════════════════════════════════════════════
 document.getElementById('btn-add-node').addEventListener('click', () => addNode());
+document.getElementById('btn-add-group').addEventListener('click', () => addGroup());
 
 function setToolbarLineType(lt) {
   state.lineType = lt;
@@ -4100,8 +4389,11 @@ document.getElementById('zc-reset').addEventListener('click', () => {
 // AUTO FORMAT LAYOUT (DYNAMIC COLUMN-AWARE & ZERO OVERLAP)
 // ══════════════════════════════════════════════════════════════
 function autoFormat(silent = false) {
+  // Groups are background frames: keep them where they are, arrange only regular nodes
+  const _allNodes = state.nodes;
+  state.nodes = _allNodes.filter(n => !isGroup(n));
   const N = state.nodes.length;
-  if (N === 0) return;
+  if (N === 0) { state.nodes = _allNodes; return; }
 
   function getNodeW(n) {
     const el = typeof world !== 'undefined' && world ? world.querySelector(`[data-node-id="${n.id}"]`) : null;
@@ -4275,6 +4567,7 @@ function autoFormat(silent = false) {
     if (!anyOverlap) break;
   }
 
+  state.nodes = _allNodes;
   snapshot();
   renderAll();
   if (!silent) toast('✓ Graph formatted: all overlaps eliminated!');
@@ -6878,7 +7171,7 @@ document.getElementById('gp-btn-apply-shape').addEventListener('click', () => {
 
   if (setDefault) state.defaultShape = selectedGlobalShape;
   if (applyExisting && state.nodes && state.nodes.length) {
-    state.nodes.forEach(n => { n.shape = selectedGlobalShape; });
+    state.nodes.filter(n => !isGroup(n)).forEach(n => { n.shape = selectedGlobalShape; });
     snapshot();
     renderNodes();
     renderConnections();
@@ -6908,7 +7201,7 @@ document.getElementById('gp-btn-apply-line').addEventListener('click', () => {
 document.getElementById('gp-btn-apply-fill').addEventListener('click', () => {
   const color = document.getElementById('gp-color-node-fill').value;
   if (!state.nodes || !state.nodes.length) return;
-  state.nodes.forEach(n => { n.color = color; });
+  state.nodes.filter(n => !isGroup(n)).forEach(n => { n.color = color; });
   snapshot();
   renderNodes();
   toast(`✓ Updated fill color across all ${state.nodes.length} nodes!`);
@@ -6918,7 +7211,7 @@ document.getElementById('gp-btn-apply-fill').addEventListener('click', () => {
 document.getElementById('gp-btn-apply-border').addEventListener('click', () => {
   const color = document.getElementById('gp-color-node-border').value;
   if (!state.nodes || !state.nodes.length) return;
-  state.nodes.forEach(n => { n.borderColor = color; });
+  state.nodes.filter(n => !isGroup(n)).forEach(n => { n.borderColor = color; });
   snapshot();
   renderNodes();
   toast(`✓ Updated border color across all ${state.nodes.length} nodes!`);
@@ -6938,7 +7231,7 @@ document.getElementById('gp-btn-apply-conn-color').addEventListener('click', () 
 document.getElementById('gp-btn-apply-width').addEventListener('click', () => {
   const w = parseInt(document.getElementById('gp-node-width').value) || 240;
   if (!state.nodes || !state.nodes.length) return;
-  state.nodes.forEach(n => { n.w = w; });
+  state.nodes.filter(n => !isGroup(n)).forEach(n => { n.w = w; });
   snapshot();
   renderNodes();
   renderConnections();
@@ -6948,7 +7241,7 @@ document.getElementById('gp-btn-apply-width').addEventListener('click', () => {
 // Scale Nodes (-15%, Reset, +15%)
 function scaleAllNodes(factor) {
   if (!state.nodes || !state.nodes.length) return;
-  state.nodes.forEach(n => {
+  state.nodes.filter(n => !isGroup(n)).forEach(n => {
     n.w = Math.max(140, Math.min(600, Math.round((n.w || 200) * factor)));
     if (n.h) n.h = Math.max(80, Math.min(600, Math.round(n.h * factor)));
   });
@@ -6962,7 +7255,7 @@ document.getElementById('gp-scale-down').addEventListener('click', () => scaleAl
 document.getElementById('gp-scale-up').addEventListener('click', () => scaleAllNodes(1.15));
 document.getElementById('gp-scale-reset').addEventListener('click', () => {
   if (!state.nodes || !state.nodes.length) return;
-  state.nodes.forEach(n => {
+  state.nodes.filter(n => !isGroup(n)).forEach(n => {
     n.w = 240;
     delete n.h;
   });
@@ -6983,7 +7276,7 @@ document.getElementById('gp-btn-apply-all').addEventListener('click', () => {
   if (setDefLine) setToolbarLineType(selectedGlobalLineType);
 
   if (applyShape && state.nodes && state.nodes.length) {
-    state.nodes.forEach(n => { n.shape = selectedGlobalShape; });
+    state.nodes.filter(n => !isGroup(n)).forEach(n => { n.shape = selectedGlobalShape; });
   }
 
   if (applyLine && state.connections && state.connections.length) {

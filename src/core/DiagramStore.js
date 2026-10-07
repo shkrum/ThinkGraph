@@ -128,7 +128,7 @@ export class DiagramStore {
       height: options.height || 140,
       title: options.title || 'New Node',
       description: options.description || 'Add details here...',
-      priority: (options.priority || 'P01').substring(0, 3).toUpperCase(),
+      priority: (options.priority || '').substring(0, 3).toUpperCase(),
       shape: options.shape || 'rounded', // 'rectangle' | 'rounded' | 'diamond' | 'cylinder' | 'uml-class'
       color: options.color || '#1e293b',
       borderColor: options.borderColor || '#3b82f6',
@@ -280,7 +280,7 @@ export class DiagramStore {
       }
       return {
         ...n,
-        priority: String(n.priority || 'P01').substring(0, 3).toUpperCase(),
+        priority: String(n.priority || '').substring(0, 3).toUpperCase(),
         x: typeof n.x === 'number' ? n.x : 100,
         y: typeof n.y === 'number' ? n.y : 100,
         width: typeof n.width === 'number' ? n.width : 220,

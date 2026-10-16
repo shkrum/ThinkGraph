@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - ThinkGraph</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --primary: #3b82f6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 48px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    .header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .date {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-top: 32px;
+      margin-bottom: 12px;
+    }
+    p, li {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    ul {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    li { margin-bottom: 6px; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .callout {
+      background: rgba(59, 130, 246, 0.08);
+      border-left: 3px solid var(--primary);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+      font-size: 13px;
+    }
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-badge">⚡ ThinkGraph</div>
+      <h1>Privacy Policy</h1>
+      <div class="date">Last updated: October 16, 2026</div>
+    </div>
+
+    <h2>1. Overview</h2>
+    <p>ThinkGraph ("we", "our", or "the application") is a web-based interactive visual modeling and diagramming tool. We respect your privacy and are committed to protecting it. This Privacy Policy outlines how your data is handled when using ThinkGraph.</p>
+
+    <h2>2. Data Collection and Usage</h2>
+    <p>ThinkGraph operates primarily as a client-side web application in your browser. We do not collect, harvest, or sell personal information.</p>
+    <ul>
+      <li><strong>Local Storage:</strong> Diagrams you create, user interface preferences, and configuration settings are saved locally in your browser's LocalStorage and SessionStorage.</li>
+      <li><strong>No Server-Side Tracking:</strong> We do not operate external database servers that log, store, or profile your private diagrams or usage data.</li>
+    </ul>
+
+    <h2>3. Google OAuth & Google Drive Integration</h2>
+    <p>ThinkGraph offers an optional feature allowing users to sign in with their Google account to save and open diagrams directly to/from their personal Google Drive storage.</p>
+    <ul>
+      <li><strong>Requested Scopes:</strong> ThinkGraph requests limited permissions (including <code>https://www.googleapis.com/auth/drive.file</code>, <code>https://www.googleapis.com/auth/drive.appdata</code>, openid, email, and profile).</li>
+      <li><strong>File Access:</strong> ThinkGraph ONLY accesses files that were specifically created or opened by ThinkGraph itself. ThinkGraph cannot and does not read, modify, or delete any of your other personal files or folders in Google Drive.</li>
+      <li><strong>Authentication Tokens:</strong> Temporary Google access tokens are kept solely in your browser's temporary session storage to communicate directly with Google's APIs. These tokens are never transmitted to any third-party server.</li>
+    </ul>
+
+    <div class="callout">
+      <strong>Google API Limited Use Disclosure:</strong><br>
+      ThinkGraph's use and transfer to any other app of information received from Google APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements.
+    </div>
+
+    <h2>4. Data Sharing and Third Parties</h2>
+    <p>We do not share, sell, rent, or trade your personal data or diagram files with any third parties or advertisers.</p>
+
+    <h2>5. Security</h2>
+    <p>Communication between your browser and Google Drive occurs directly through secure encrypted HTTPS connections managed by Google's official identity and API endpoints.</p>
+
+    <h2>6. Contact Us</h2>
+    <p>If you have any questions or concerns regarding this Privacy Policy, please contact us at:</p>
+    <p><strong>Email:</strong> <a href="mailto:varyag.llc.nj@gmail.com">varyag.llc.nj@gmail.com</a><br>
+    <strong>Project Repository:</strong> <a href="https://github.com/shkrum/ThinkGraph" target="_blank" rel="noopener">https://github.com/shkrum/ThinkGraph</a></p>
+
+    <div class="footer">
+      <span>© 2026 ThinkGraph. All rights reserved.</span>
+      <a href="https://shkrum.github.io/ThinkGraph/">Return to ThinkGraph</a>
+    </div>
+  </div>
+</body>
+</html>

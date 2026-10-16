@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<style>*,:before,:after{box-sizing:border-box;margin:0;padding:0}body{color:#f1f5f9;-webkit-user-select:none;user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent;background:#0a0f1e;width:100vw;height:100vh;font-family:Inter,system-ui,sans-serif;overflow:hidden}#toolbar{-webkit-backdrop-filter:blur(16px);z-index:9999;background:#0a0f1eeb;border-bottom:1px solid #ffffff14;flex-shrink:0;align-items:center;gap:8px;height:56px;padding:0 14px;display:flex;position:fixed;top:0;left:0;right:0;overflow:visible!important}#tb-tools-scroll{-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-shrink:1;align-items:center;gap:8px;min-width:0;display:flex;overflow-x:auto}#tb-tools-scroll::-webkit-scrollbar{display:none}#toolbar .logo{color:#fff;background:linear-gradient(135deg,#6366f1,#06b6d4);-webkit-text-fill-color:transparent;white-space:nowrap;-webkit-background-clip:text;margin-right:4px;font-size:14px;font-weight:700}.tb-sep{background:#ffffff1a;flex-shrink:0;width:1px;height:28px}.tb-btn{color:#cbd5e1;cursor:pointer;white-space:nowrap;touch-action:manipulation;background:#ffffff0d;border:1px solid #ffffff1f;border-radius:7px;flex-shrink:0;align-items:center;gap:5px;padding:6px 10px;font-size:12px;font-weight:500;transition:all .15s;display:flex}.tb-btn:hover{color:#fff;background:#ffffff1f;border-color:#fff3}.tb-btn.active{color:#a5b4fc;background:#6366f140;border-color:#6366f1}.tb-btn.primary{color:#fff;background:linear-gradient(135deg,#4f46e5,#6366f1);border-color:#6366f1}.tb-btn.primary:hover{background:linear-gradient(135deg,#6366f1,#818cf8)}.tb-btn.danger{color:#fca5a5;background:#ef444426;border-color:#ef444466}.tb-btn.danger:hover{background:#ef44444d}.tb-btn.green{color:#6ee7b7;background:#10b98126;border-color:#10b98166}.tb-btn.amber{color:#fcd34d;background:#f59e0b26;border-color:#f59e0b66}.tb-btn svg{flex-shrink:0}#line-type-group{background:#0000004d;border:1px solid #ffffff0f;border-radius:8px;gap:3px;padding:3px;display:flex}#canvas-root{cursor:default;touch-action:none;background:#0a0f1e radial-gradient(#ffffff12 1.2px,#0000 1.2px) 0 0/24px 24px;position:fixed;inset:56px 320px 0 0;overflow:hidden}#canvas-root.panning{cursor:grabbing}#world{transform-origin:0 0;touch-action:none;position:absolute;top:0;left:0}#svg-layer{pointer-events:none;touch-action:none;width:6000px;height:6000px;position:absolute;top:0;left:0;overflow:visible}#svg-layer path.hit{stroke:#0000;stroke-width:24px;fill:none;cursor:pointer;pointer-events:stroke;touch-action:none}#svg-layer path.vis{fill:none;pointer-events:none}#svg-layer path.vis.selected{stroke:#ec4899!important}#svg-layer text.conn-label{fill:#e2e8f0;pointer-events:none;font-family:Inter,sans-serif;font-size:10px;font-weight:600}#svg-layer rect.conn-label-bg{fill:#0f172a;pointer-events:none}#draft-line{pointer-events:none;fill:none;stroke:#38bdf8;stroke-width:2px;stroke-dasharray:6 4}.gnode{cursor:grab;touch-action:none;background:#1e293b;border:2px solid #334155;border-radius:10px;min-width:180px;transition:box-shadow .15s,border-color .15s;position:absolute;overflow:visible;box-shadow:0 4px 24px #00000080}.gnode.selected{border-color:#6366f1;box-shadow:0 0 0 2px #6366f166,0 4px 24px #0009}.gnode:active{cursor:grabbing}.gnode .port{cursor:crosshair;opacity:0;z-index:10;touch-action:none;background:#06b6d4;border:2px solid #0a0f1e;border-radius:50%;width:12px;height:12px;transition:opacity .15s,transform .15s;position:absolute}.gnode .port:after{content:"";border-radius:50%;position:absolute;inset:-14px}.gnode:hover .port,.gnode.selected .port{opacity:1;pointer-events:auto}.gnode .port:hover,.gnode .port:active{background:#38bdf8;transform:scale(1.5);box-shadow:0 0 8px #38bdf8}.port[data-anchor=top]{top:-6px;left:calc(50% - 6px)}.port[data-anchor=right]{top:calc(50% - 6px);right:-6px}.port[data-anchor=bottom]{bottom:-6px;left:calc(50% - 6px)}.port[data-anchor=left]{top:calc(50% - 6px);left:-6px}.gnode .resize-handle{opacity:0;z-index:30;touch-action:none;background:#6366f1;border:2px solid #fff;border-radius:4px;width:14px;height:14px;transition:opacity .15s,transform .15s,background-color .15s;position:absolute}.gnode .resize-handle:after{content:"";border-radius:50%;position:absolute;inset:-14px}.gnode:hover .resize-handle,.gnode.selected .resize-handle{opacity:1;pointer-events:auto}.gnode .resize-handle:hover,.gnode .resize-handle:active{background:#818cf8;transform:scale(1.5);box-shadow:0 0 10px #6366f1e6}.resize-nw{cursor:nwse-resize;top:-7px;left:-7px}.resize-ne{cursor:nesw-resize;top:-7px;right:-7px}.resize-se{cursor:nwse-resize;bottom:-7px;right:-7px}.resize-sw{cursor:nesw-resize;bottom:-7px;left:-7px}.node-head{border-bottom:1px solid #ffffff12;justify-content:space-between;align-items:center;gap:8px;padding:7px 10px 6px;display:flex}.node-head .prio-wrap{align-items:center;gap:4px;display:flex}.node-head .prio-label{color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;font-size:10px;font-weight:600}.node-prio-input{color:#fbbf24;text-align:center;text-transform:uppercase;letter-spacing:.05em;cursor:text;background:#0006;border:1px solid #fbbf2459;border-radius:5px;outline:none;width:38px;padding:2px 5px;font-family:Fira Code,monospace;font-size:11px;font-weight:700}.node-prio-input:focus{border-color:#fbbf24;box-shadow:0 0 0 2px #fbbf2433}.node-id-tag{color:#475569;font-family:Fira Code,monospace;font-size:9px}.node-body{flex:auto;padding:8px 10px 10px;height:auto!important;overflow:visible!important}.node-title{color:#f1f5f9;word-wrap:break-word;overflow-wrap:anywhere;border-radius:4px;margin-bottom:4px;font-size:13px;font-weight:700;line-height:1.3}.node-desc{color:#94a3b8;word-wrap:break-word;overflow-wrap:anywhere;white-space:pre-wrap;border-radius:4px;font-size:11px;line-height:1.45;flex:none!important;max-height:none!important;overflow:visible!important}.node-title[contenteditable=true],.node-desc[contenteditable=true]{cursor:text;-webkit-user-select:text;user-select:text;background:#6366f114;outline:1px solid #6366f1;padding:2px 4px}.node-img-wrap{background:#0f172a;border:1px solid #ffffff14;border-radius:7px;justify-content:center;align-items:center;max-height:140px;margin:6px 0 0;display:flex;overflow:hidden}.node-img-wrap img{object-fit:contain;width:100%;height:100%;max-height:136px;display:block}.node-uml-attrs{color:#a5b4fc;border-top:1px solid #ffffff12;margin-top:6px;padding-top:6px;font-family:Fira Code,monospace;font-size:10px;line-height:1.6}.node-uml-methods{color:#6ee7b7}.gnode.shape-rectangle,.gnode.shape-rectangle .node-head{border-radius:0!important}.gnode.shape-rounded{border-radius:20px!important}.gnode.shape-rounded .node-head{border-radius:18px 18px 0 0!important}.gnode.shape-cylinder{border-radius:22px/11px!important}.gnode.shape-cylinder .node-head{background:linear-gradient(#ffffff1f 0%,#ffffff05 100%);border-bottom:2px solid #ffffff29;border-radius:20px 20px 0 0!important}.gnode.shape-diamond{border-radius:28px 4px!important}.gnode.shape-diamond .node-head{border-radius:24px 2px 0 0!important}.gnode.shape-uml-class,.gnode.shape-uml-class .node-head{border-radius:0!important}.uml-stereotype{color:#94a3b8;letter-spacing:.05em;margin-bottom:2px;font-size:10px;font-style:italic}#inspector{-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);z-index:100;background:#0a0f1ef0;border-left:1px solid #ffffff12;flex-direction:column;width:320px;display:flex;position:fixed;top:56px;bottom:0;right:0;overflow-y:auto}.insp-section{border-bottom:1px solid #ffffff0f;padding:14px}.insp-title{color:#64748b;text-transform:uppercase;letter-spacing:.08em;align-items:center;gap:6px;margin-bottom:10px;font-size:10px;font-weight:700;display:flex}.insp-title span{background:#6366f1;border-radius:50%;width:6px;height:6px;display:inline-block}.insp-row{margin-bottom:10px}.insp-label{color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;font-size:10px;font-weight:600;display:block}.insp-input{color:#e2e8f0;background:#ffffff0d;border:1px solid #ffffff1a;border-radius:7px;outline:none;width:100%;padding:6px 9px;font-family:inherit;font-size:12px;transition:border-color .15s}.insp-input:focus{background:#6366f114;border-color:#6366f1}textarea.insp-input{resize:vertical;min-height:60px}select.insp-input option{background:#1e293b}.insp-input[type=color]{cursor:pointer;height:32px;padding:2px 4px}.insp-row-2{grid-template-columns:1fr 1fr;gap:8px;display:grid}.insp-del-btn{color:#fca5a5;cursor:pointer;background:#ef44441a;border:1px solid #ef44444d;border-radius:7px;width:100%;margin-top:4px;padding:7px;font-size:12px;font-weight:600;transition:all .15s}.insp-del-btn:hover{background:#ef444440;border-color:#ef444499}.insp-empty{text-align:center;color:#475569;padding:40px 20px}.insp-empty h3{color:#64748b;margin:8px 0 4px;font-size:13px;font-weight:600}.insp-empty p{font-size:11px;line-height:1.5}.insp-hints{padding:14px}.hint-row{color:#64748b;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:11px;display:flex}.hint-dot{border-radius:50%;flex-shrink:0;width:5px;height:5px;margin-top:4px}.img-upload-area{text-align:center;cursor:pointer;color:#64748b;border:2px dashed #ffffff1a;border-radius:8px;padding:14px;font-size:11px;transition:border-color .15s}.img-upload-area:hover{color:#a5b4fc;border-color:#6366f1}.img-preview{border:1px solid #ffffff1a;border-radius:8px;margin-top:6px;position:relative;overflow:hidden}.img-preview img{object-fit:contain;background:#0f172a;width:100%;max-height:120px;display:block}.img-preview-del{color:#fff;cursor:pointer;background:#ef4444cc;border:none;border-radius:4px;padding:2px 6px;font-size:10px;position:absolute;top:4px;right:4px}.att-badge{color:#a5b4fc;cursor:default;white-space:nowrap;background:#6366f126;border:1px solid #6366f14d;border-radius:5px;align-items:center;gap:3px;padding:2px 6px;font-size:9px;font-weight:600;display:inline-flex}.att-list{flex-direction:column;gap:4px;margin-top:6px;display:flex}.att-item{color:#e2e8f0;background:#ffffff0a;border:1px solid #ffffff14;border-radius:6px;align-items:center;gap:6px;padding:5px 8px;font-size:11px;transition:background .15s;display:flex}.att-item:hover{background:#ffffff14}.att-icon{text-transform:uppercase;border-radius:5px;flex-shrink:0;justify-content:center;align-items:center;width:26px;height:26px;font-size:12px;font-weight:700;display:flex}.att-icon.img{color:#6ee7b7;background:#10b98133}.att-icon.vid{color:#f9a8d4;background:#ec489933}.att-icon.pdf{color:#fca5a5;background:#ef444433}.att-icon.doc{color:#93c5fd;background:#3b82f633}.att-icon.sht{color:#86efac;background:#22c55e33}.att-icon.gen{color:#cbd5e1;background:#94a3b833}.att-name{text-overflow:ellipsis;white-space:nowrap;flex:1;font-weight:500;overflow:hidden}.att-size{color:#64748b;flex-shrink:0;font-size:9px}.att-dl,.att-rm{cursor:pointer;border:none;border-radius:4px;flex-shrink:0;padding:2px 5px;font-size:9px;font-weight:600;transition:all .15s}.att-dl{color:#a5b4fc;background:#6366f126}.att-dl:hover{background:#6366f14d}.att-rm{color:#fca5a5;background:#ef444426}.att-rm:hover{background:#ef44444d}.att-upload-btn{color:#a5b4fc;cursor:pointer;text-align:center;background:#6366f11a;border:1.5px dashed #6366f159;border-radius:7px;width:100%;padding:6px;font-size:11px;font-weight:600;transition:all .15s}.att-upload-btn:hover{color:#c7d2fe;background:#6366f133;border-color:#6366f1}body.light-theme .att-badge{color:#4338ca;background:#6366f11a;border-color:#6366f140}body.light-theme .att-item{color:#1e293b;background:#00000008;border-color:#00000014}body.light-theme .att-item:hover{background:#0000000f}body.light-theme .att-size{color:#94a3b8}body.light-theme .att-upload-btn{color:#4338ca;background:#6366f10f;border-color:#6366f14d}body.light-theme .att-upload-btn:hover{background:#6366f11f}.ai-help-dialog{background:#0f172a;border:1px solid #ffffff1f;border-radius:16px;flex-direction:column;width:720px;max-width:96vw;max-height:90vh;display:flex;position:relative;box-shadow:0 32px 64px #000000b3}.ai-help-header{border-bottom:1px solid #ffffff14;justify-content:space-between;align-items:center;padding:20px 24px 14px;display:flex}.ai-help-actions{border-bottom:1px solid #ffffff0f;align-items:center;gap:12px;padding:12px 24px;display:flex}.ai-help-copy-btn{color:#fff;cursor:pointer;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;transition:all .2s;box-shadow:0 4px 12px #6366f14d}.ai-help-copy-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px #6366f173}.ai-help-copy-btn:active{transform:translateY(0)}.ai-help-content{color:#cbd5e1;white-space:pre-wrap;word-wrap:break-word;tab-size:2;background:0 0;border:none;flex:1;margin:0;padding:20px 24px;font-family:Fira Code,Cascadia Code,JetBrains Mono,monospace;font-size:12px;line-height:1.7;overflow-y:auto}body.light-theme .ai-help-dialog{background:#fff;border-color:#0000001a;box-shadow:0 32px 64px #00000026}body.light-theme .ai-help-header{border-color:#00000014}body.light-theme .ai-help-header h2{color:#0f172a!important}body.light-theme .ai-help-header p{color:#64748b!important}body.light-theme .ai-help-actions{border-color:#0000000f}body.light-theme .ai-help-content{color:#334155}.global-props-dialog{background:#0f172a;border:1px solid #ffffff26;border-radius:16px;flex-direction:column;width:760px;max-width:96vw;max-height:90vh;display:flex;position:relative;box-shadow:0 32px 64px #000c,0 0 0 1px #6366f133}.global-props-header{border-bottom:1px solid #ffffff14;justify-content:space-between;align-items:center;padding:18px 24px 14px;display:flex}.global-props-body{flex-direction:column;flex:1;gap:20px;padding:20px 24px;display:flex;overflow-y:auto}.global-props-footer{background:#00000026;border-top:1px solid #ffffff14;border-radius:0 0 16px 16px;justify-content:space-between;align-items:center;padding:14px 24px;display:flex}.gp-section{border-bottom:1px solid #ffffff0f;flex-direction:column;gap:10px;padding-bottom:16px;display:flex}.gp-section:last-child{border-bottom:none;padding-bottom:0}.gp-section-title{align-items:center;gap:10px;display:flex}.gp-badge{color:#a5b4fc;background:#6366f133;border-radius:50%;flex-shrink:0;justify-content:center;align-items:center;width:22px;height:22px;font-size:11px;font-weight:700;display:flex}.gp-title{color:#f1f5f9;font-size:13px;font-weight:700}.gp-subtitle{color:#94a3b8;font-size:11px}.gp-shape-grid{grid-template-columns:repeat(5,1fr);gap:8px;display:grid}.gp-shape-btn,.gp-line-btn,.gp-routing-btn{color:#cbd5e1;cursor:pointer;text-align:center;background:#ffffff0a;border:1px solid #ffffff1a;border-radius:9px;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;transition:all .15s;display:flex}.gp-shape-btn:hover,.gp-line-btn:hover,.gp-routing-btn:hover{color:#fff;background:#6366f11f;border-color:#6366f166;transform:translateY(-1px)}.gp-shape-btn.active,.gp-line-btn.active,.gp-routing-btn.active{color:#a5b4fc;background:#6366f138;border-color:#6366f1;box-shadow:0 0 0 2px #6366f159}.gp-shape-icon{font-size:16px;line-height:1}.gp-shape-name{font-size:11px;font-weight:600}.gp-shape-desc{color:#94a3b8;font-size:9px;line-height:1.2}.gp-checkbox-label{color:#cbd5e1;cursor:pointer;align-items:center;gap:6px;font-size:11px;display:flex}.gp-colors-grid{grid-template-columns:repeat(3,1fr);gap:10px;display:grid}.gp-color-card{background:#ffffff08;border:1px solid #ffffff14;border-radius:8px;flex-direction:column;gap:6px;padding:10px 12px;display:flex}.gp-color-wrap{align-items:center;gap:8px;display:flex}.gp-color-picker{cursor:pointer;background:0 0;border:1px solid #fff3;border-radius:6px;width:34px;height:28px;padding:1px}body.light-theme .global-props-dialog{color:#0f172a;background:#fff;border-color:#0000001f;box-shadow:0 32px 64px #00000026}body.light-theme .global-props-header{border-bottom-color:#00000014}body.light-theme .global-props-header h2{color:#0f172a!important}body.light-theme .global-props-footer{background:#f8fafc;border-top-color:#00000014}body.light-theme .gp-section{border-bottom-color:#0000000f}body.light-theme .gp-title{color:#0f172a}body.light-theme .gp-shape-btn,body.light-theme .gp-line-btn,body.light-theme .gp-routing-btn{color:#334155;background:#f8fafc;border-color:#e2e8f0}body.light-theme .gp-shape-btn:hover,body.light-theme .gp-line-btn:hover,body.light-theme .gp-routing-btn:hover{color:#4338ca;background:#eff6ff;border-color:#6366f1}body.light-theme .gp-shape-btn.active,body.light-theme .gp-line-btn.active,body.light-theme .gp-routing-btn.active{color:#4338ca;background:#e0e7ff;border-color:#4f46e5}body.light-theme .gp-color-card{background:#f8fafc;border-color:#e2e8f0}body.light-theme .gp-checkbox-label{color:#334155}.dropdown{display:inline-block;position:relative;overflow:visible}.dropdown-content{z-index:100000;-webkit-backdrop-filter:blur(20px);background:#0f172afa;border:1px solid #ffffff26;border-radius:10px;min-width:190px;padding:6px 0;display:none;position:absolute;top:calc(100% + 6px);left:0;box-shadow:0 16px 36px #000000a6,0 0 0 1px #ffffff0f}.dropdown.open>.dropdown-content{display:block}#user-profile-menu{min-width:240px;left:auto;right:0}.menu-item{color:#e2e8f0;cursor:pointer;justify-content:space-between;align-items:center;padding:8px 16px;font-size:12px;display:flex}.menu-item:hover{color:#fff;background:#6366f133}.menu-sep{background:#ffffff1a;height:1px;margin:4px 0}.menu-item.has-sub{position:relative}.submenu{background:#0f172af2;border:1px solid #ffffff1a;border-radius:8px;min-width:200px;max-height:300px;margin-left:4px;padding:6px 0;display:none;position:absolute;top:-6px;left:100%;overflow-y:auto;box-shadow:0 10px 25px #00000080}.menu-item.has-sub:hover .submenu{display:block}.submenu-empty{color:#64748b;padding:8px 16px;font-size:11px;font-style:italic}#diagram-name{color:#f1f5f9;background:0 0;border:none;border-bottom:1px solid #0000;border-radius:4px;outline:none;width:160px;padding:4px 8px;font-family:Inter,sans-serif;font-size:13px;font-weight:600;transition:all .2s}#diagram-name:hover,#diagram-name:focus{background:#ffffff0d;border-bottom:1px solid #fff3}#zoom-controls{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);z-index:200;background:#0a0f1ee6;border:1px solid #ffffff1a;border-radius:10px;align-items:center;gap:4px;padding:5px 8px;display:flex;position:fixed;bottom:16px;left:16px}.zc-btn{color:#94a3b8;cursor:pointer;background:0 0;border:none;border-radius:5px;justify-content:center;align-items:center;width:26px;height:26px;font-size:16px;font-weight:700;transition:all .15s;display:flex}.zc-btn:hover{color:#fff;background:#ffffff1a}#zoom-label{color:#64748b;text-align:center;min-width:38px;font-family:Fira Code,monospace;font-size:11px}.zc-sep{background:#ffffff1a;width:1px;height:16px}#toast{color:#e2e8f0;opacity:0;pointer-events:none;z-index:9999;background:#1e293b;border:1px solid #ffffff1f;border-radius:8px;padding:8px 16px;font-size:12px;transition:opacity .2s,transform .2s;position:fixed;bottom:60px;left:50%;transform:translate(-50%)translateY(16px);box-shadow:0 4px 20px #00000080}#toast.show{opacity:1;transform:translate(-50%)translateY(0)}.node-edit-btn{color:#cbd5e1;cursor:pointer;touch-action:manipulation;background:#ffffff14;border:1px solid #ffffff26;border-radius:4px;align-items:center;gap:3px;padding:2px 5px;font-size:10px;line-height:1;transition:all .15s;display:inline-flex}.node-edit-btn:hover,.node-edit-btn:active{color:#fff;background:#6366f14d;border-color:#6366f1}.node-inline-input{color:#f1f5f9;box-sizing:border-box;background:#0f172af2;border:1.5px solid #6366f1;border-radius:5px;outline:none;width:100%;padding:4px 6px;font-family:inherit;font-size:13px;font-weight:600;box-shadow:0 0 0 3px #6366f140}textarea.node-inline-input{resize:vertical;min-height:54px;font-size:11px;font-weight:400;line-height:1.4}@media (width<=768px){#canvas-root{right:0}#inspector{width:100%;max-width:340px;transition:transform .25s cubic-bezier(.16,1,.3,1);transform:translate(100%);box-shadow:-4px 0 24px #0009}#inspector.open{transform:translate(0)}.insp-mobile-close-bar{display:flex!important}}body.light-theme{color:#0f172a;background:#f8fafc}body.light-theme #toolbar{background:#fffffff2;border-bottom-color:#00000014;box-shadow:0 1px 3px #0000000d}body.light-theme #toolbar .logo{color:#0f172a}body.light-theme .tb-btn{color:#334155;background:#0000000a;border-color:#0000001f}body.light-theme .tb-btn:hover{color:#0f172a;background:#00000014;border-color:#0003}body.light-theme .tb-btn.active{color:#4f46e5;background:#6366f126;border-color:#6366f1}body.light-theme .tb-btn.primary{color:#fff;background:linear-gradient(135deg,#4f46e5,#6366f1);border-color:#6366f1}body.light-theme .tb-btn.primary:hover{background:linear-gradient(135deg,#6366f1,#818cf8)}body.light-theme .tb-sep{background:#0000001a}body.light-theme #line-type-group{background:#0000000d;border-color:#00000014}body.light-theme #diagram-name{color:#0f172a}body.light-theme #diagram-name:hover,body.light-theme #diagram-name:focus{background:#0000000a;border-bottom-color:#0003}body.light-theme #prio-filter,body.light-theme #input-priority-filter{color:#d97706;background:#fff;border-color:#d9770666}body.light-theme .dropdown-content,body.light-theme .submenu{color:#0f172a;background:#fff;border-color:#0000001f;box-shadow:0 16px 36px #0000001f}body.light-theme .menu-item{color:#334155}body.light-theme .menu-item:hover{color:#4338ca;background:#6366f11a}body.light-theme .menu-sep{background:#00000014}body.light-theme .submenu-empty{color:#94a3b8}body.light-theme #canvas-root{background:#f8fafc radial-gradient(#00000026 1.2px,#0000 1.2px)}body.light-theme .gnode,body.light-theme .uml-node{background:#fff;border-color:#cbd5e1;box-shadow:0 4px 20px #0000000f}body.light-theme .gnode.selected,body.light-theme .uml-node.selected{box-shadow:0 0 0 2px #6366f159,0 4px 20px #0000001a;border-color:#6366f1!important}body.light-theme .node-head{border-bottom-color:#00000014}body.light-theme .node-head .prio-label{color:#64748b}body.light-theme .node-id-tag{color:#94a3b8}body.light-theme .node-title{color:#0f172a}body.light-theme .node-desc{color:#475569}body.light-theme .node-prio-input{color:#b45309;background:#fbbf2426;border-color:#d9770666}body.light-theme .node-img-wrap{background:#f8fafc;border-color:#00000014}body.light-theme .node-uml-attrs{color:#4338ca;border-top-color:#00000014}body.light-theme .node-uml-methods{color:#047857}body.light-theme .node-title[contenteditable=true],body.light-theme .node-desc[contenteditable=true]{background:#6366f114;outline-color:#6366f1}body.light-theme .node-inline-input{color:#0f172a;background:#fff;border-color:#6366f1}body.light-theme .gnode .port{border-color:#fff;box-shadow:0 1px 4px #00000040}body.light-theme .gnode .resize-handle{border-color:#fff;box-shadow:0 1px 3px #0000002e}body.light-theme .node-edit-btn{color:#334155;background:#0000000d;border:1px solid #0000001a}body.light-theme .node-edit-btn:hover{color:#0f172a;background:#0000001a}body.light-theme .gnode.shape-cylinder .node-head{background:linear-gradient(#0000000d 0%,#0000 100%);border-bottom:2px solid #00000014}body.light-theme .uml-stereotype{color:#64748b}body.light-theme #svg-layer text.conn-label{fill:#1e293b}body.light-theme #svg-layer rect.conn-label-bg{fill:#fff;stroke:#cbd5e1}body.light-theme #inspector{color:#0f172a;background:#fffffff5;border-left-color:#00000014}body.light-theme .insp-section{border-bottom-color:#0000000f}body.light-theme .insp-title{color:#475569}body.light-theme .insp-label{color:#64748b}body.light-theme .insp-input{color:#0f172a;background:#fff;border-color:#cbd5e1}body.light-theme .insp-input:focus{background:#fff;border-color:#6366f1}body.light-theme select.insp-input option{color:#0f172a;background:#fff}body.light-theme #zoom-controls{background:#fffffff2;border-color:#0000001f;box-shadow:0 2px 10px #0000000f}body.light-theme .zc-btn{color:#475569}body.light-theme .zc-btn:hover{color:#0f172a;background:#0000000f}body.light-theme #zoom-label{color:#64748b}body.light-theme .zc-sep{background:#0000001a}body.light-theme #toast{color:#fff;background:#0f172a;border-color:#0003}body.light-theme #gdrive-client-modal>div{color:#0f172a;background:#fff;border-color:#0000001f}</style>
+<style>*,:before,:after{box-sizing:border-box;margin:0;padding:0}body{color:#f1f5f9;-webkit-user-select:none;user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent;background:#0a0f1e;width:100vw;height:100vh;font-family:Inter,system-ui,sans-serif;overflow:hidden}#toolbar{-webkit-backdrop-filter:blur(16px);z-index:9999;background:#0a0f1eeb;border-bottom:1px solid #ffffff14;flex-shrink:0;align-items:center;gap:8px;height:56px;padding:0 14px;display:flex;position:fixed;top:0;left:0;right:0;overflow:visible!important}#tb-tools-scroll{-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-shrink:1;align-items:center;gap:8px;min-width:0;display:flex;overflow-x:auto}#tb-tools-scroll::-webkit-scrollbar{display:none}#toolbar .logo{color:#fff;background:linear-gradient(135deg,#6366f1,#06b6d4);-webkit-text-fill-color:transparent;white-space:nowrap;-webkit-background-clip:text;margin-right:4px;font-size:14px;font-weight:700}.tb-sep{background:#ffffff1a;flex-shrink:0;width:1px;height:28px}.tb-btn{color:#cbd5e1;cursor:pointer;white-space:nowrap;touch-action:manipulation;background:#ffffff0d;border:1px solid #ffffff1f;border-radius:7px;flex-shrink:0;align-items:center;gap:5px;padding:6px 10px;font-size:12px;font-weight:500;transition:all .15s;display:flex}.tb-btn:hover{color:#fff;background:#ffffff1f;border-color:#fff3}.tb-btn.active{color:#a5b4fc;background:#6366f140;border-color:#6366f1}.tb-btn.primary{color:#fff;background:linear-gradient(135deg,#4f46e5,#6366f1);border-color:#6366f1}.tb-btn.primary:hover{background:linear-gradient(135deg,#6366f1,#818cf8)}.tb-btn.danger{color:#fca5a5;background:#ef444426;border-color:#ef444466}.tb-btn.danger:hover{background:#ef44444d}.tb-btn.green{color:#6ee7b7;background:#10b98126;border-color:#10b98166}.tb-btn.amber{color:#fcd34d;background:#f59e0b26;border-color:#f59e0b66}.tb-btn svg{flex-shrink:0}#line-type-group{background:#0000004d;border:1px solid #ffffff0f;border-radius:8px;gap:3px;padding:3px;display:flex}#canvas-root{cursor:default;touch-action:none;background:#0a0f1e radial-gradient(#ffffff12 1.2px,#0000 1.2px) 0 0/24px 24px;position:fixed;inset:56px 320px 0 0;overflow:hidden}#canvas-root.panning{cursor:grabbing}#world{transform-origin:0 0;touch-action:none;position:absolute;top:0;left:0}#svg-layer{pointer-events:none;touch-action:none;width:6000px;height:6000px;position:absolute;top:0;left:0;overflow:visible}#svg-layer path.hit{stroke:#0000;stroke-width:24px;fill:none;cursor:pointer;pointer-events:stroke;touch-action:none}#svg-layer path.vis{fill:none;pointer-events:none}#svg-layer path.vis.selected{stroke:#ec4899!important}#svg-layer text.conn-label{fill:#e2e8f0;pointer-events:none;font-family:Inter,sans-serif;font-size:10px;font-weight:600}#svg-layer rect.conn-label-bg{fill:#0f172a;pointer-events:none}#draft-line{pointer-events:none;fill:none;stroke:#38bdf8;stroke-width:2px;stroke-dasharray:6 4}.gnode{cursor:grab;touch-action:none;background:#1e293b;border:2px solid #334155;border-radius:10px;min-width:180px;transition:box-shadow .15s,border-color .15s;position:absolute;overflow:visible;box-shadow:0 4px 24px #00000080}.gnode.selected{border-color:#6366f1;box-shadow:0 0 0 2px #6366f166,0 4px 24px #0009}.gnode:active{cursor:grabbing}.gnode .port{cursor:crosshair;opacity:0;z-index:10;touch-action:none;background:#06b6d4;border:2px solid #0a0f1e;border-radius:50%;width:12px;height:12px;transition:opacity .15s,transform .15s;position:absolute}.gnode .port:after{content:"";border-radius:50%;position:absolute;inset:-14px}.gnode:hover .port,.gnode.selected .port{opacity:1;pointer-events:auto}.gnode .port:hover,.gnode .port:active{background:#38bdf8;transform:scale(1.5);box-shadow:0 0 8px #38bdf8}.port[data-anchor=top]{top:-6px;left:calc(50% - 6px)}.port[data-anchor=right]{top:calc(50% - 6px);right:-6px}.port[data-anchor=bottom]{bottom:-6px;left:calc(50% - 6px)}.port[data-anchor=left]{top:calc(50% - 6px);left:-6px}.gnode .resize-handle{opacity:0;z-index:30;touch-action:none;background:#6366f1;border:2px solid #fff;border-radius:4px;width:14px;height:14px;transition:opacity .15s,transform .15s,background-color .15s;position:absolute}.gnode .resize-handle:after{content:"";border-radius:50%;position:absolute;inset:-14px}.gnode:hover .resize-handle,.gnode.selected .resize-handle{opacity:1;pointer-events:auto}.gnode .resize-handle:hover,.gnode .resize-handle:active{background:#818cf8;transform:scale(1.5);box-shadow:0 0 10px #6366f1e6}.resize-nw{cursor:nwse-resize;top:-7px;left:-7px}.resize-ne{cursor:nesw-resize;top:-7px;right:-7px}.resize-se{cursor:nwse-resize;bottom:-7px;right:-7px}.resize-sw{cursor:nesw-resize;bottom:-7px;left:-7px}.gnode.ggroup{min-width:0;box-shadow:none;border:2px dashed #818cf8;border-radius:16px;transition:border-color .15s,box-shadow .15s;overflow:visible}.gnode.ggroup:hover{box-shadow:0 0 0 1px #818cf840}.gnode.ggroup.selected{border-style:solid;box-shadow:0 0 0 3px #6366f14d}.ggroup .group-bg{object-fit:cover;pointer-events:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none;border-radius:14px;width:100%;height:100%;position:absolute;inset:0}.ggroup .group-head{-webkit-backdrop-filter:blur(6px);border:1px solid;border-radius:10px;align-items:center;gap:8px;max-width:calc(100% - 20px);margin:10px;padding:5px 14px 5px 10px;display:inline-flex;position:relative}.ggroup .group-icon{opacity:.85;font-size:13px}.ggroup .group-title{letter-spacing:.02em;color:#e2e8f0;white-space:nowrap;text-overflow:ellipsis;min-width:40px;font-family:Inter,sans-serif;font-size:15px;font-weight:700;overflow:hidden}.ggroup .group-count{color:#a5b4fc;white-space:nowrap;background:#6366f12e;border-radius:999px;padding:1px 7px;font-size:10px;font-weight:600}body.light-theme .gnode.ggroup{box-shadow:none}body.light-theme .ggroup .group-title{color:#1e293b}body.light-theme .ggroup .group-count{color:#4338ca}.node-head{border-bottom:1px solid #ffffff12;justify-content:space-between;align-items:center;gap:8px;padding:7px 10px 6px;display:flex}.node-head .prio-wrap{align-items:center;gap:4px;display:flex}.node-head .prio-label{color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;font-size:10px;font-weight:600}.node-prio-input{color:#fbbf24;text-align:center;text-transform:uppercase;letter-spacing:.05em;cursor:text;background:#0006;border:1px solid #fbbf2459;border-radius:5px;outline:none;width:38px;padding:2px 5px;font-family:Fira Code,monospace;font-size:11px;font-weight:700}.node-prio-input:focus{border-color:#fbbf24;box-shadow:0 0 0 2px #fbbf2433}.node-id-tag{color:#475569;font-family:Fira Code,monospace;font-size:9px}.node-body{flex:auto;padding:8px 10px 10px;height:auto!important;overflow:visible!important}.node-title{color:#f1f5f9;word-wrap:break-word;overflow-wrap:anywhere;border-radius:4px;margin-bottom:4px;font-size:13px;font-weight:700;line-height:1.3}.node-desc{color:#94a3b8;word-wrap:break-word;overflow-wrap:anywhere;white-space:pre-wrap;border-radius:4px;font-size:11px;line-height:1.45;flex:none!important;max-height:none!important;overflow:visible!important}.node-title[contenteditable=true],.node-desc[contenteditable=true]{cursor:text;-webkit-user-select:text;user-select:text;background:#6366f114;outline:1px solid #6366f1;padding:2px 4px}.node-img-wrap{background:#0f172a;border:1px solid #ffffff14;border-radius:7px;justify-content:center;align-items:center;max-height:140px;margin:6px 0 0;display:flex;overflow:hidden}.node-img-wrap img{object-fit:contain;width:100%;height:100%;max-height:136px;display:block}.node-uml-attrs{color:#a5b4fc;border-top:1px solid #ffffff12;margin-top:6px;padding-top:6px;font-family:Fira Code,monospace;font-size:10px;line-height:1.6}.node-uml-methods{color:#6ee7b7}.gnode.shape-rectangle,.gnode.shape-rectangle .node-head{border-radius:0!important}.gnode.shape-rounded{border-radius:20px!important}.gnode.shape-rounded .node-head{border-radius:18px 18px 0 0!important}.gnode.shape-cylinder{border-radius:22px/11px!important}.gnode.shape-cylinder .node-head{background:linear-gradient(#ffffff1f 0%,#ffffff05 100%);border-bottom:2px solid #ffffff29;border-radius:20px 20px 0 0!important}.gnode.shape-diamond{border-radius:28px 4px!important}.gnode.shape-diamond .node-head{border-radius:24px 2px 0 0!important}.gnode.shape-uml-class,.gnode.shape-uml-class .node-head{border-radius:0!important}.uml-stereotype{color:#94a3b8;letter-spacing:.05em;margin-bottom:2px;font-size:10px;font-style:italic}#inspector{-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);z-index:100;background:#0a0f1ef0;border-left:1px solid #ffffff12;flex-direction:column;width:320px;display:flex;position:fixed;top:56px;bottom:0;right:0;overflow-y:auto}.insp-section{border-bottom:1px solid #ffffff0f;padding:14px}.insp-title{color:#64748b;text-transform:uppercase;letter-spacing:.08em;align-items:center;gap:6px;margin-bottom:10px;font-size:10px;font-weight:700;display:flex}.insp-title span{background:#6366f1;border-radius:50%;width:6px;height:6px;display:inline-block}.insp-row{margin-bottom:10px}.insp-label{color:#64748b;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;font-size:10px;font-weight:600;display:block}.insp-input{color:#e2e8f0;background:#ffffff0d;border:1px solid #ffffff1a;border-radius:7px;outline:none;width:100%;padding:6px 9px;font-family:inherit;font-size:12px;transition:border-color .15s}.insp-input:focus{background:#6366f114;border-color:#6366f1}textarea.insp-input{resize:vertical;min-height:60px}select.insp-input option{background:#1e293b}.insp-input[type=color]{cursor:pointer;height:32px;padding:2px 4px}.insp-row-2{grid-template-columns:1fr 1fr;gap:8px;display:grid}.insp-del-btn{color:#fca5a5;cursor:pointer;background:#ef44441a;border:1px solid #ef44444d;border-radius:7px;width:100%;margin-top:4px;padding:7px;font-size:12px;font-weight:600;transition:all .15s}.insp-del-btn:hover{background:#ef444440;border-color:#ef444499}.insp-empty{text-align:center;color:#475569;padding:40px 20px}.insp-empty h3{color:#64748b;margin:8px 0 4px;font-size:13px;font-weight:600}.insp-empty p{font-size:11px;line-height:1.5}.insp-hints{padding:14px}.hint-row{color:#64748b;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:11px;display:flex}.hint-dot{border-radius:50%;flex-shrink:0;width:5px;height:5px;margin-top:4px}.img-upload-area{text-align:center;cursor:pointer;color:#64748b;border:2px dashed #ffffff1a;border-radius:8px;padding:14px;font-size:11px;transition:border-color .15s}.img-upload-area:hover{color:#a5b4fc;border-color:#6366f1}.img-preview{border:1px solid #ffffff1a;border-radius:8px;margin-top:6px;position:relative;overflow:hidden}.img-preview img{object-fit:contain;background:#0f172a;width:100%;max-height:120px;display:block}.img-preview-del{color:#fff;cursor:pointer;background:#ef4444cc;border:none;border-radius:4px;padding:2px 6px;font-size:10px;position:absolute;top:4px;right:4px}.att-badge{color:#a5b4fc;cursor:default;white-space:nowrap;background:#6366f126;border:1px solid #6366f14d;border-radius:5px;align-items:center;gap:3px;padding:2px 6px;font-size:9px;font-weight:600;display:inline-flex}.att-list{flex-direction:column;gap:4px;margin-top:6px;display:flex}.att-item{color:#e2e8f0;background:#ffffff0a;border:1px solid #ffffff14;border-radius:6px;align-items:center;gap:6px;padding:5px 8px;font-size:11px;transition:background .15s;display:flex}.att-item:hover{background:#ffffff14}.att-icon{text-transform:uppercase;border-radius:5px;flex-shrink:0;justify-content:center;align-items:center;width:26px;height:26px;font-size:12px;font-weight:700;display:flex}.att-icon.img{color:#6ee7b7;background:#10b98133}.att-icon.vid{color:#f9a8d4;background:#ec489933}.att-icon.pdf{color:#fca5a5;background:#ef444433}.att-icon.doc{color:#93c5fd;background:#3b82f633}.att-icon.sht{color:#86efac;background:#22c55e33}.att-icon.gen{color:#cbd5e1;background:#94a3b833}.att-name{text-overflow:ellipsis;white-space:nowrap;flex:1;font-weight:500;overflow:hidden}.att-size{color:#64748b;flex-shrink:0;font-size:9px}.att-dl,.att-rm{cursor:pointer;border:none;border-radius:4px;flex-shrink:0;padding:2px 5px;font-size:9px;font-weight:600;transition:all .15s}.att-dl{color:#a5b4fc;background:#6366f126}.att-dl:hover{background:#6366f14d}.att-rm{color:#fca5a5;background:#ef444426}.att-rm:hover{background:#ef44444d}.att-upload-btn{color:#a5b4fc;cursor:pointer;text-align:center;background:#6366f11a;border:1.5px dashed #6366f159;border-radius:7px;width:100%;padding:6px;font-size:11px;font-weight:600;transition:all .15s}.att-upload-btn:hover{color:#c7d2fe;background:#6366f133;border-color:#6366f1}body.light-theme .att-badge{color:#4338ca;background:#6366f11a;border-color:#6366f140}body.light-theme .att-item{color:#1e293b;background:#00000008;border-color:#00000014}body.light-theme .att-item:hover{background:#0000000f}body.light-theme .att-size{color:#94a3b8}body.light-theme .att-upload-btn{color:#4338ca;background:#6366f10f;border-color:#6366f14d}body.light-theme .att-upload-btn:hover{background:#6366f11f}.ai-help-dialog{background:#0f172a;border:1px solid #ffffff1f;border-radius:16px;flex-direction:column;width:720px;max-width:96vw;max-height:90vh;display:flex;position:relative;box-shadow:0 32px 64px #000000b3}.ai-help-header{border-bottom:1px solid #ffffff14;justify-content:space-between;align-items:center;padding:20px 24px 14px;display:flex}.ai-help-actions{border-bottom:1px solid #ffffff0f;align-items:center;gap:12px;padding:12px 24px;display:flex}.ai-help-copy-btn{color:#fff;cursor:pointer;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;transition:all .2s;box-shadow:0 4px 12px #6366f14d}.ai-help-copy-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px #6366f173}.ai-help-copy-btn:active{transform:translateY(0)}.ai-help-content{color:#cbd5e1;white-space:pre-wrap;word-wrap:break-word;tab-size:2;background:0 0;border:none;flex:1;margin:0;padding:20px 24px;font-family:Fira Code,Cascadia Code,JetBrains Mono,monospace;font-size:12px;line-height:1.7;overflow-y:auto}body.light-theme .ai-help-dialog{background:#fff;border-color:#0000001a;box-shadow:0 32px 64px #00000026}body.light-theme .ai-help-header{border-color:#00000014}body.light-theme .ai-help-header h2{color:#0f172a!important}body.light-theme .ai-help-header p{color:#64748b!important}body.light-theme .ai-help-actions{border-color:#0000000f}body.light-theme .ai-help-content{color:#334155}.global-props-dialog{background:#0f172a;border:1px solid #ffffff26;border-radius:16px;flex-direction:column;width:760px;max-width:96vw;max-height:90vh;display:flex;position:relative;box-shadow:0 32px 64px #000c,0 0 0 1px #6366f133}.global-props-header{border-bottom:1px solid #ffffff14;justify-content:space-between;align-items:center;padding:18px 24px 14px;display:flex}.global-props-body{flex-direction:column;flex:1;gap:20px;padding:20px 24px;display:flex;overflow-y:auto}.global-props-footer{background:#00000026;border-top:1px solid #ffffff14;border-radius:0 0 16px 16px;justify-content:space-between;align-items:center;padding:14px 24px;display:flex}.gp-section{border-bottom:1px solid #ffffff0f;flex-direction:column;gap:10px;padding-bottom:16px;display:flex}.gp-section:last-child{border-bottom:none;padding-bottom:0}.gp-section-title{align-items:center;gap:10px;display:flex}.gp-badge{color:#a5b4fc;background:#6366f133;border-radius:50%;flex-shrink:0;justify-content:center;align-items:center;width:22px;height:22px;font-size:11px;font-weight:700;display:flex}.gp-title{color:#f1f5f9;font-size:13px;font-weight:700}.gp-subtitle{color:#94a3b8;font-size:11px}.gp-shape-grid{grid-template-columns:repeat(5,1fr);gap:8px;display:grid}.gp-shape-btn,.gp-line-btn,.gp-routing-btn{color:#cbd5e1;cursor:pointer;text-align:center;background:#ffffff0a;border:1px solid #ffffff1a;border-radius:9px;flex-direction:column;align-items:center;gap:4px;padding:10px 8px;transition:all .15s;display:flex}.gp-shape-btn:hover,.gp-line-btn:hover,.gp-routing-btn:hover{color:#fff;background:#6366f11f;border-color:#6366f166;transform:translateY(-1px)}.gp-shape-btn.active,.gp-line-btn.active,.gp-routing-btn.active{color:#a5b4fc;background:#6366f138;border-color:#6366f1;box-shadow:0 0 0 2px #6366f159}.gp-shape-icon{font-size:16px;line-height:1}.gp-shape-name{font-size:11px;font-weight:600}.gp-shape-desc{color:#94a3b8;font-size:9px;line-height:1.2}.gp-checkbox-label{color:#cbd5e1;cursor:pointer;align-items:center;gap:6px;font-size:11px;display:flex}.gp-colors-grid{grid-template-columns:repeat(3,1fr);gap:10px;display:grid}.gp-color-card{background:#ffffff08;border:1px solid #ffffff14;border-radius:8px;flex-direction:column;gap:6px;padding:10px 12px;display:flex}.gp-color-wrap{align-items:center;gap:8px;display:flex}.gp-color-picker{cursor:pointer;background:0 0;border:1px solid #fff3;border-radius:6px;width:34px;height:28px;padding:1px}body.light-theme .global-props-dialog{color:#0f172a;background:#fff;border-color:#0000001f;box-shadow:0 32px 64px #00000026}body.light-theme .global-props-header{border-bottom-color:#00000014}body.light-theme .global-props-header h2{color:#0f172a!important}body.light-theme .global-props-footer{background:#f8fafc;border-top-color:#00000014}body.light-theme .gp-section{border-bottom-color:#0000000f}body.light-theme .gp-title{color:#0f172a}body.light-theme .gp-shape-btn,body.light-theme .gp-line-btn,body.light-theme .gp-routing-btn{color:#334155;background:#f8fafc;border-color:#e2e8f0}body.light-theme .gp-shape-btn:hover,body.light-theme .gp-line-btn:hover,body.light-theme .gp-routing-btn:hover{color:#4338ca;background:#eff6ff;border-color:#6366f1}body.light-theme .gp-shape-btn.active,body.light-theme .gp-line-btn.active,body.light-theme .gp-routing-btn.active{color:#4338ca;background:#e0e7ff;border-color:#4f46e5}body.light-theme .gp-color-card{background:#f8fafc;border-color:#e2e8f0}body.light-theme .gp-checkbox-label{color:#334155}.dropdown{display:inline-block;position:relative;overflow:visible}.dropdown-content{z-index:100000;-webkit-backdrop-filter:blur(20px);background:#0f172afa;border:1px solid #ffffff26;border-radius:10px;min-width:190px;padding:6px 0;display:none;position:absolute;top:calc(100% + 6px);left:0;box-shadow:0 16px 36px #000000a6,0 0 0 1px #ffffff0f}.dropdown.open>.dropdown-content{display:block}#user-profile-menu{min-width:240px;left:auto;right:0}.menu-item{color:#e2e8f0;cursor:pointer;justify-content:space-between;align-items:center;padding:8px 16px;font-size:12px;display:flex}.menu-item:hover{color:#fff;background:#6366f133}.menu-sep{background:#ffffff1a;height:1px;margin:4px 0}.menu-item.has-sub{position:relative}.submenu{background:#0f172af2;border:1px solid #ffffff1a;border-radius:8px;min-width:200px;max-height:300px;margin-left:4px;padding:6px 0;display:none;position:absolute;top:-6px;left:100%;overflow-y:auto;box-shadow:0 10px 25px #00000080}.menu-item.has-sub:hover .submenu{display:block}.submenu-empty{color:#64748b;padding:8px 16px;font-size:11px;font-style:italic}#diagram-name{color:#f1f5f9;background:0 0;border:none;border-bottom:1px solid #0000;border-radius:4px;outline:none;width:160px;padding:4px 8px;font-family:Inter,sans-serif;font-size:13px;font-weight:600;transition:all .2s}#diagram-name:hover,#diagram-name:focus{background:#ffffff0d;border-bottom:1px solid #fff3}#zoom-controls{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);z-index:200;background:#0a0f1ee6;border:1px solid #ffffff1a;border-radius:10px;align-items:center;gap:4px;padding:5px 8px;display:flex;position:fixed;bottom:16px;left:16px}.zc-btn{color:#94a3b8;cursor:pointer;background:0 0;border:none;border-radius:5px;justify-content:center;align-items:center;width:26px;height:26px;font-size:16px;font-weight:700;transition:all .15s;display:flex}.zc-btn:hover{color:#fff;background:#ffffff1a}#zoom-label{color:#64748b;text-align:center;min-width:38px;font-family:Fira Code,monospace;font-size:11px}.zc-sep{background:#ffffff1a;width:1px;height:16px}#toast{color:#e2e8f0;opacity:0;pointer-events:none;z-index:9999;background:#1e293b;border:1px solid #ffffff1f;border-radius:8px;padding:8px 16px;font-size:12px;transition:opacity .2s,transform .2s;position:fixed;bottom:60px;left:50%;transform:translate(-50%)translateY(16px);box-shadow:0 4px 20px #00000080}#toast.show{opacity:1;transform:translate(-50%)translateY(0)}.node-edit-btn{color:#cbd5e1;cursor:pointer;touch-action:manipulation;background:#ffffff14;border:1px solid #ffffff26;border-radius:4px;align-items:center;gap:3px;padding:2px 5px;font-size:10px;line-height:1;transition:all .15s;display:inline-flex}.node-edit-btn:hover,.node-edit-btn:active{color:#fff;background:#6366f14d;border-color:#6366f1}.node-inline-input{color:#f1f5f9;box-sizing:border-box;background:#0f172af2;border:1.5px solid #6366f1;border-radius:5px;outline:none;width:100%;padding:4px 6px;font-family:inherit;font-size:13px;font-weight:600;box-shadow:0 0 0 3px #6366f140}textarea.node-inline-input{resize:vertical;min-height:54px;font-size:11px;font-weight:400;line-height:1.4}@media (width<=768px){#canvas-root{right:0}#inspector{width:100%;max-width:340px;transition:transform .25s cubic-bezier(.16,1,.3,1);transform:translate(100%);box-shadow:-4px 0 24px #0009}#inspector.open{transform:translate(0)}.insp-mobile-close-bar{display:flex!important}}body.light-theme{color:#0f172a;background:#f8fafc}body.light-theme #toolbar{background:#fffffff2;border-bottom-color:#00000014;box-shadow:0 1px 3px #0000000d}body.light-theme #toolbar .logo{color:#0f172a}body.light-theme .tb-btn{color:#334155;background:#0000000a;border-color:#0000001f}body.light-theme .tb-btn:hover{color:#0f172a;background:#00000014;border-color:#0003}body.light-theme .tb-btn.active{color:#4f46e5;background:#6366f126;border-color:#6366f1}body.light-theme .tb-btn.primary{color:#fff;background:linear-gradient(135deg,#4f46e5,#6366f1);border-color:#6366f1}body.light-theme .tb-btn.primary:hover{background:linear-gradient(135deg,#6366f1,#818cf8)}body.light-theme .tb-sep{background:#0000001a}body.light-theme #line-type-group{background:#0000000d;border-color:#00000014}body.light-theme #diagram-name{color:#0f172a}body.light-theme #diagram-name:hover,body.light-theme #diagram-name:focus{background:#0000000a;border-bottom-color:#0003}body.light-theme #prio-filter,body.light-theme #input-priority-filter{color:#d97706;background:#fff;border-color:#d9770666}body.light-theme .dropdown-content,body.light-theme .submenu{color:#0f172a;background:#fff;border-color:#0000001f;box-shadow:0 16px 36px #0000001f}body.light-theme .menu-item{color:#334155}body.light-theme .menu-item:hover{color:#4338ca;background:#6366f11a}body.light-theme .menu-sep{background:#00000014}body.light-theme .submenu-empty{color:#94a3b8}body.light-theme #canvas-root{background:#f8fafc radial-gradient(#00000026 1.2px,#0000 1.2px)}body.light-theme .gnode,body.light-theme .uml-node{background:#fff;border-color:#cbd5e1;box-shadow:0 4px 20px #0000000f}body.light-theme .gnode.selected,body.light-theme .uml-node.selected{box-shadow:0 0 0 2px #6366f159,0 4px 20px #0000001a;border-color:#6366f1!important}body.light-theme .node-head{border-bottom-color:#00000014}body.light-theme .node-head .prio-label{color:#64748b}body.light-theme .node-id-tag{color:#94a3b8}body.light-theme .node-title{color:#0f172a}body.light-theme .node-desc{color:#475569}body.light-theme .node-prio-input{color:#b45309;background:#fbbf2426;border-color:#d9770666}body.light-theme .node-img-wrap{background:#f8fafc;border-color:#00000014}body.light-theme .node-uml-attrs{color:#4338ca;border-top-color:#00000014}body.light-theme .node-uml-methods{color:#047857}body.light-theme .node-title[contenteditable=true],body.light-theme .node-desc[contenteditable=true]{background:#6366f114;outline-color:#6366f1}body.light-theme .node-inline-input{color:#0f172a;background:#fff;border-color:#6366f1}body.light-theme .gnode .port{border-color:#fff;box-shadow:0 1px 4px #00000040}body.light-theme .gnode .resize-handle{border-color:#fff;box-shadow:0 1px 3px #0000002e}body.light-theme .node-edit-btn{color:#334155;background:#0000000d;border:1px solid #0000001a}body.light-theme .node-edit-btn:hover{color:#0f172a;background:#0000001a}body.light-theme .gnode.shape-cylinder .node-head{background:linear-gradient(#0000000d 0%,#0000 100%);border-bottom:2px solid #00000014}body.light-theme .uml-stereotype{color:#64748b}body.light-theme #svg-layer text.conn-label{fill:#1e293b}body.light-theme #svg-layer rect.conn-label-bg{fill:#fff;stroke:#cbd5e1}body.light-theme #inspector{color:#0f172a;background:#fffffff5;border-left-color:#00000014}body.light-theme .insp-section{border-bottom-color:#0000000f}body.light-theme .insp-title{color:#475569}body.light-theme .insp-label{color:#64748b}body.light-theme .insp-input{color:#0f172a;background:#fff;border-color:#cbd5e1}body.light-theme .insp-input:focus{background:#fff;border-color:#6366f1}body.light-theme select.insp-input option{color:#0f172a;background:#fff}body.light-theme #zoom-controls{background:#fffffff2;border-color:#0000001f;box-shadow:0 2px 10px #0000000f}body.light-theme .zc-btn{color:#475569}body.light-theme .zc-btn:hover{color:#0f172a;background:#0000000f}body.light-theme #zoom-label{color:#64748b}body.light-theme .zc-sep{background:#0000001a}body.light-theme #toast{color:#fff;background:#0f172a;border-color:#0003}body.light-theme #gdrive-client-modal>div{color:#0f172a;background:#fff;border-color:#0000001f}</style>
 </head>
 <body>
 
@@ -73,6 +73,11 @@
     <button class="tb-btn primary" id="btn-add-node" title="Add new node to canvas">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Add Node
+    </button>
+
+    <button class="tb-btn" id="btn-add-group" title="Add a Group frame: nodes placed inside move together with it" style="background:rgba(129,140,248,0.12);border-color:rgba(129,140,248,0.45);border-style:dashed;color:#c7d2fe">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2"><rect x="2" y="3" width="20" height="18" rx="3"/></svg>
+      Add Group
     </button>
 
     <button class="tb-btn amber" id="btn-format" title="Auto-arrange nodes to eliminate overlaps">
@@ -201,7 +206,7 @@ Each node in the `nodes` array has these fields:
   "h": 160,                  // Height in pixels (min 90, optional — auto-calculated if omitted)
   "title": "Node Title",     // Short title displayed on the card
   "desc": "Description text here...",  // Multi-line description
-  "priority": "P01",         // 1-3 character priority badge (e.g. P01, VIP, HI)
+  "priority": "P01",         // Optional 1-3 character priority badge (e.g. P01, VIP, HI). Default is empty ""
   "color": "#1e293b",        // Fill/background color (hex)
   "borderColor": "#3b82f6",  // Border color (hex)
   "shape": "rounded",        // Shape: "rounded" | "rectangle" | "diamond" | "cylinder" | "uml-class"
@@ -220,6 +225,27 @@ Each node in the `nodes` array has these fields:
 - `"diamond"` — Decision/condition diamond
 - `"cylinder"` — Database cylinder
 - `"uml-class"` — UML class box (uses attributes + methods arrays)
+
+### Group Node (background frame)
+
+A group is a node with `"type": "group"`. It is drawn behind connections and regular nodes.
+Any node whose center lies inside the group rectangle belongs to it and moves with it
+(nested groups must lie fully inside). Groups have no connection ports.
+
+```json
+{
+  "id": "node_grp1",
+  "type": "group",
+  "x": 40, "y": 40, "w": 600, "h": 400,   // Explicit size is required
+  "title": "Backend Services",
+  "color": "#6366f1",        // Fill tint (hex)
+  "fillOpacity": 0.08,       // 0..1 fill transparency
+  "borderColor": "#818cf8",
+  "imageUrl": null,          // Optional background image (data URL or path)
+  "imageOpacity": 0.35,      // 0..1 background image transparency
+  "priority": ""
+}
+```
 
 ### Connection Object
 
@@ -666,7 +692,7 @@ To guarantee that **all description text is completely visible without being hid
     </div>
 
     <label style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;display:block;margin-bottom:4px">Google OAuth Client ID</label>
-    <input type="text" id="input-client-id" placeholder="e.g. 123456789-abc.apps.googleusercontent.com"
+    <input type="text" id="input-client-id" placeholder="1049811661590-voon35gj4vbhn9l0hr53qcau2gpcbfkd.apps.googleusercontent.com"
            style="width:100%;padding:9px 12px;font-size:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);color:#fff;border-radius:8px;outline:none;margin-bottom:16px;font-family:'Fira Code',monospace" />
 
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
@@ -731,9 +757,11 @@ To guarantee that **all description text is completely visible without being hid
 // ══════════════════════════════════════════════════════════════
 // GOOGLE DRIVE SERVICE & OAUTH MANAGER
 // ══════════════════════════════════════════════════════════════
+const DEFAULT_GOOGLE_CLIENT_ID = '1049811661590-voon35gj4vbhn9l0hr53qcau2gpcbfkd.apps.googleusercontent.com';
+
 class GoogleDriveService {
   constructor() {
-    this.clientId = localStorage.getItem('gdrive_client_id') || '';
+    this.clientId = localStorage.getItem('gdrive_client_id') || DEFAULT_GOOGLE_CLIENT_ID;
     this.accessToken = sessionStorage.getItem('gdrive_token') || null;
     this.userProfile = JSON.parse(sessionStorage.getItem('gdrive_user') || 'null');
     this.tokenClient = null;
@@ -759,9 +787,13 @@ class GoogleDriveService {
   }
 
   setClientId(clientId) {
-    this.clientId = (clientId || '').trim();
-    if (this.clientId) localStorage.setItem('gdrive_client_id', this.clientId);
-    else localStorage.removeItem('gdrive_client_id');
+    const trimmed = (clientId || '').trim();
+    this.clientId = trimmed || DEFAULT_GOOGLE_CLIENT_ID;
+    if (trimmed && trimmed !== DEFAULT_GOOGLE_CLIENT_ID) {
+      localStorage.setItem('gdrive_client_id', trimmed);
+    } else {
+      localStorage.removeItem('gdrive_client_id');
+    }
     this.tokenClient = null;
     this.notify();
   }
@@ -771,7 +803,7 @@ class GoogleDriveService {
       isSignedIn: !!(this.accessToken || (this.isDemoMode && this.userProfile)),
       user: this.userProfile,
       isDemoMode: this.isDemoMode,
-      clientId: this.clientId
+      clientId: this.clientId || DEFAULT_GOOGLE_CLIENT_ID
     };
   }
 
@@ -1166,6 +1198,208 @@ function addNode(opts = {}) {
   return node;
 }
 
+// ══════════════════════════════════════════════════════════════
+// GROUP NODES (background frames that carry contained nodes)
+// ══════════════════════════════════════════════════════════════
+function isGroup(n) { return !!n && n.type === 'group'; }
+
+function addGroup(opts = {}) {
+  const w = opts.w ?? 520, h = opts.h ?? 340;
+  const cx = (-state.panX + (canvasRoot.clientWidth / 2)) / state.zoom;
+  const cy = (-state.panY + (canvasRoot.clientHeight / 2)) / state.zoom;
+  const g = {
+    id: uid('node'),
+    type: 'group',
+    x: opts.x ?? Math.round((cx - w / 2) / 10) * 10,
+    y: opts.y ?? Math.round((cy - h / 2) / 10) * 10,
+    w, h,
+    title: opts.title ?? 'Group',
+    desc: '',
+    priority: '',
+    color: opts.color ?? '#6366f1',
+    fillOpacity: opts.fillOpacity ?? 0.08,
+    borderColor: opts.borderColor ?? '#818cf8',
+    imageUrl: opts.imageUrl ?? null,
+    imageOpacity: opts.imageOpacity ?? 0.35,
+    attributes: [], methods: [], attachments: [],
+  };
+  state.nodes.push(g);
+  state.selectedNodeId = g.id;
+  state.selectedConnId = null;
+  snapshot();
+  renderAll();
+  return g;
+}
+
+// Nodes geometrically inside a group: regular nodes by center point,
+// nested (smaller) groups only when fully contained.
+function getGroupMembers(g) {
+  const gx = g.x, gy = g.y, gw = g.w || 400, gh = g.h || nodeHeight(g);
+  return state.nodes.filter(n => {
+    if (n.id === g.id) return false;
+    const w = n.w || 200, h = n.h || nodeHeight(n);
+    if (isGroup(n)) {
+      if (w * h >= gw * gh) return false;
+      return n.x >= gx && n.y >= gy && n.x + w <= gx + gw && n.y + h <= gy + gh;
+    }
+    const cx = n.x + w / 2, cy = n.y + h / 2;
+    return cx >= gx && cx <= gx + gw && cy >= gy && cy <= gy + gh;
+  });
+}
+
+function hexToRgba(hex, alpha) {
+  let h = String(hex || '#6366f1').replace('#', '');
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const r = parseInt(h.slice(0, 2), 16) || 0, g = parseInt(h.slice(2, 4), 16) || 0, b = parseInt(h.slice(4, 6), 16) || 0;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function buildGroupEl(node) {
+  const isSel = state.selectedNodeId === node.id;
+  const w = node.w || 520, h = node.h || 340;
+  const border = node.borderColor || '#818cf8';
+  const memberCount = getGroupMembers(node).length;
+
+  const el = document.createElement('div');
+  el.className = 'gnode ggroup' + (isSel ? ' selected' : '');
+  el.dataset.nodeId = node.id;
+  el.style.left = node.x + 'px';
+  el.style.top = node.y + 'px';
+  el.style.width = w + 'px';
+  el.style.minHeight = h + 'px';
+  el.style.height = 'auto';
+  el.style.borderColor = border;
+  el.style.background = hexToRgba(node.color || '#6366f1', node.fillOpacity ?? 0.08);
+
+  el.innerHTML = `
+    ${node.imageUrl ? `<img class="group-bg" src="${esc(resolveImgUrl(node.imageUrl))}" alt="" draggable="false" style="opacity:${node.imageOpacity ?? 0.35}" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}"/>` : ''}
+    <div class="resize-handle resize-nw" data-corner="nw" data-node-id="${node.id}" title="Resize group"></div>
+    <div class="resize-handle resize-ne" data-corner="ne" data-node-id="${node.id}" title="Resize group"></div>
+    <div class="resize-handle resize-se" data-corner="se" data-node-id="${node.id}" title="Resize group"></div>
+    <div class="resize-handle resize-sw" data-corner="sw" data-node-id="${node.id}" title="Resize group"></div>
+    <div class="group-head" style="border-color:${hexToRgba(border, 0.55)};background:${hexToRgba(border, 0.16)}">
+      <span class="group-icon" style="color:${esc(border)}">▣</span>
+      <div class="group-title" data-field="title" data-node-id="${node.id}">${esc(node.title)}</div>
+      ${memberCount ? `<span class="group-count" title="Nodes inside this group">${memberCount}</span>` : ''}
+    </div>
+  `;
+  attachNodeEvents(el, node);
+  return el;
+}
+
+function renderGroupInspector(node) {
+  const members = getGroupMembers(node);
+  inspector.innerHTML = `
+    <div class="insp-section">
+      <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;margin-bottom:8px">
+        <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+      </div>
+      <div class="insp-title"><span style="background:#818cf8"></span>Group Properties</div>
+
+      <div class="insp-row">
+        <label class="insp-label">Title</label>
+        <input class="insp-input" id="gp-title" type="text" value="${esc(node.title)}"
+               inputmode="text" enterkeyhint="done" autocapitalize="sentences" spellcheck="true"/>
+      </div>
+
+      <div class="insp-row insp-row-2">
+        <div>
+          <label class="insp-label">Border Color</label>
+          <input class="insp-input" id="gp-border" type="color" value="${node.borderColor || '#818cf8'}"/>
+        </div>
+        <div>
+          <label class="insp-label">Fill Tint</label>
+          <input class="insp-input" id="gp-fill" type="color" value="${node.color || '#6366f1'}"/>
+        </div>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Fill Opacity <span id="gp-fill-op-val">${Math.round((node.fillOpacity ?? 0.08) * 100)}%</span></label>
+        <input id="gp-fill-op" type="range" min="0" max="60" value="${Math.round((node.fillOpacity ?? 0.08) * 100)}" style="width:100%"/>
+      </div>
+
+      <div class="insp-row">
+        <label class="insp-label">Background Image</label>
+        ${node.imageUrl ? `
+          <div class="img-preview">
+            <img src="${esc(resolveImgUrl(node.imageUrl))}" alt=""/>
+            <button class="img-preview-del" id="gp-img-del">✕ Remove</button>
+          </div>
+          <label class="insp-label" style="margin-top:8px">Image Opacity <span id="gp-img-op-val">${Math.round((node.imageOpacity ?? 0.35) * 100)}%</span></label>
+          <input id="gp-img-op" type="range" min="5" max="100" value="${Math.round((node.imageOpacity ?? 0.35) * 100)}" style="width:100%"/>
+        ` : `
+          <div class="img-upload-area" id="gp-img-upload">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 4px;display:block"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Click to upload background image
+            <input type="file" id="gp-img-file" accept="image/*" style="display:none"/>
+          </div>`}
+      </div>
+
+      <div class="insp-row" style="font-size:11px;color:#94a3b8;line-height:1.5">
+        📦 <strong style="color:#c7d2fe">${members.length}</strong> node${members.length === 1 ? '' : 's'} inside.
+        Drop a node inside the frame to group it; drag it out to ungroup. Moving the group moves everything inside.
+      </div>
+
+      <button class="insp-del-btn" id="gp-delete">🗑 Delete Group (keep nodes)</button>
+      ${members.length ? `<button class="insp-del-btn" id="gp-delete-all" style="margin-top:6px;opacity:.85">🗑 Delete Group + ${members.length} node${members.length === 1 ? '' : 's'}</button>` : ''}
+    </div>
+  `;
+
+  const stop = e => e.stopPropagation();
+  const t = document.getElementById('gp-title');
+  t.addEventListener('keydown', stop);
+  t.addEventListener('input', e => liveUpdateNode(node.id, { title: e.target.value }));
+  t.addEventListener('blur', () => snapshot());
+
+  const bindColor = (id, key) => {
+    const inp = document.getElementById(id);
+    inp.addEventListener('input', e => liveUpdateNode(node.id, { [key]: e.target.value }));
+    inp.addEventListener('change', () => snapshot());
+  };
+  bindColor('gp-border', 'borderColor');
+  bindColor('gp-fill', 'color');
+
+  const bindRange = (id, key) => {
+    const inp = document.getElementById(id);
+    if (!inp) return;
+    inp.addEventListener('input', e => {
+      const v = (+e.target.value) / 100;
+      const lbl = document.getElementById(id + '-val');
+      if (lbl) lbl.textContent = e.target.value + '%';
+      liveUpdateNode(node.id, { [key]: v });
+    });
+    inp.addEventListener('change', () => snapshot());
+  };
+  bindRange('gp-fill-op', 'fillOpacity');
+  bindRange('gp-img-op', 'imageOpacity');
+
+  const up = document.getElementById('gp-img-upload');
+  if (up) {
+    const fileIn = document.getElementById('gp-img-file');
+    up.addEventListener('click', e => { if (e.target !== fileIn) fileIn.click(); });
+    fileIn.addEventListener('click', stop);
+    fileIn.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      updateNode(node.id, { imageUrl: await fileToBase64(file) });
+    });
+  }
+  const del = document.getElementById('gp-img-del');
+  if (del) del.addEventListener('click', () => updateNode(node.id, { imageUrl: null }));
+
+  document.getElementById('gp-delete').addEventListener('click', () => deleteNode(node.id));
+  const delAll = document.getElementById('gp-delete-all');
+  if (delAll) delAll.addEventListener('click', () => {
+    if (!confirm(`Delete group "${node.title}" and the ${members.length} node(s) inside it?`)) return;
+    const ids = new Set([node.id, ...members.map(m => m.id)]);
+    state.nodes = state.nodes.filter(n => !ids.has(n.id));
+    state.connections = state.connections.filter(c => !ids.has(c.src) && !ids.has(c.tgt));
+    state.selectedNodeId = null;
+    snapshot();
+    renderAll();
+  });
+}
+
 function updateNode(id, patch, hist = true) {
   const n = state.nodes.find(n => n.id === id);
   if (!n) return;
@@ -1182,6 +1416,12 @@ function liveUpdateNode(id, patch) {
   if (!n) return;
   if (patch.priority !== undefined) patch.priority = String(patch.priority).slice(0,3).toUpperCase();
   Object.assign(n, patch);
+  if (isGroup(n)) {
+    // Groups are cheap to rebuild: swap only this element (keeps inspector focus)
+    const old = world.querySelector('[data-node-id="' + id + '"]');
+    if (old) old.replaceWith(buildGroupEl(n));
+    return;
+  }
   renderConnections(); // only update SVG lines (positions may have changed for cylinder/class)
   // update the node card visuals without full re-render
   const nodeEl = world.querySelector('[data-node-id="' + id + '"]');
@@ -1363,7 +1603,7 @@ function renderConnections() {
     if (!src || !tgt) return;
 
     // Dim if priority filter active and neither node matches
-    const dimmed = filter && !src.priority.includes(filter) && !tgt.priority.includes(filter);
+    const dimmed = filter && !(src.priority || '').includes(filter) && !(tgt.priority || '').includes(filter);
 
     const {sp, tp} = bestAnchors(src, tgt);
     const d = buildPath(sp, tp, conn.style || 'curved');
@@ -1514,9 +1754,16 @@ function renderNodes() {
   const filter = state.priorityFilter.toUpperCase();
   const isLight = document.body.classList.contains('light-theme');
 
+  // Groups first, inserted BEFORE the SVG layer so they sit beneath connections
+  // and regular nodes. Larger groups go first so nested groups stay on top.
+  state.nodes.filter(isGroup)
+    .sort((a, b) => ((b.w || 0) * (b.h || 0)) - ((a.w || 0) * (a.h || 0)))
+    .forEach(g => world.insertBefore(buildGroupEl(g), svgLayer));
+
   state.nodes.forEach(node => {
+    if (isGroup(node)) return;
     const isSel = state.selectedNodeId === node.id;
-    const dimmed = filter && !node.priority.includes(filter);
+    const dimmed = filter && !(node.priority || '').includes(filter);
 
     const currentW = node.w || 200;
     const currentH = node.h || nodeHeight(node);
@@ -1833,6 +2080,7 @@ function attachNodeEvents(el, nodeData) {
 
   // ── Priority input ───────────────────────────────────────
   const prioInput = el.querySelector('.node-prio-input');
+  if (prioInput) {
   prioInput.addEventListener('pointerdown', e => e.stopPropagation());
   prioInput.addEventListener('mousedown',   e => e.stopPropagation());
   prioInput.addEventListener('click',       e => e.stopPropagation());
@@ -1845,6 +2093,7 @@ function attachNodeEvents(el, nodeData) {
     if (n) { n.priority = val; renderConnections(); renderInspector(); }
   });
   prioInput.addEventListener('blur', () => snapshot());
+  }
 
   // ── ✏️ Edit button – single-tap calls virtual keyboard ────
   const editBtn = el.querySelector('.node-edit-btn');
@@ -1864,7 +2113,7 @@ function attachNodeEvents(el, nodeData) {
   }
 
   // ── Editable title / desc ─────────────────────────────────
-  el.querySelectorAll('.node-title,.node-desc').forEach(field => {
+  el.querySelectorAll('.node-title,.node-desc,.group-title').forEach(field => {
     const key = field.dataset.field;
 
     // Desktop double-click to edit
@@ -1919,6 +2168,10 @@ function attachNodeEvents(el, nodeData) {
     const n = state.nodes.find(item => item.id === nodeData.id);
     if (!n) return;
     const startNX = n.x, startNY = n.y;
+    // Dragging a group carries every node currently inside it
+    const carried = isGroup(n)
+      ? getGroupMembers(n).map(m => ({ m, x: m.x, y: m.y, el: world.querySelector('[data-node-id="' + m.id + '"]') }))
+      : [];
     let moved = false;
     let rafId = null;
 
@@ -1939,6 +2192,13 @@ function attachNodeEvents(el, nodeData) {
         n.x = nx; n.y = ny;
         const fresh = world.querySelector('[data-node-id="' + nodeData.id + '"]');
         if (fresh) { fresh.style.left = nx + 'px'; fresh.style.top = ny + 'px'; }
+        if (carried.length) {
+          const ddx = nx - startNX, ddy = ny - startNY;
+          carried.forEach(c => {
+            c.m.x = c.x + ddx; c.m.y = c.y + ddy;
+            if (c.el) { c.el.style.left = c.m.x + 'px'; c.el.style.top = c.m.y + 'px'; }
+          });
+        }
         renderConnections();
       });
     }
@@ -2000,7 +2260,7 @@ function startConnectionDrag(srcNodeId, e, startPortEl) {
     const els = document.elementsFromPoint(me.clientX, me.clientY);
     let tgtId = null;
     for (const item of els) {
-      const nodeEl = item.closest?.('.gnode');
+      const nodeEl = item.closest?.('.gnode:not(.ggroup)');
       if (nodeEl && nodeEl.dataset.nodeId && nodeEl.dataset.nodeId !== src) {
         tgtId = nodeEl.dataset.nodeId;
         break;
@@ -2138,7 +2398,8 @@ function renderInspector() {
   const conn = state.connections.find(c => c.id === state.selectedConnId);
 
   if (node) {
-    renderNodeInspector(node);
+    if (isGroup(node)) renderGroupInspector(node);
+    else renderNodeInspector(node);
   } else if (conn) {
     renderConnInspector(conn);
   } else {
@@ -2443,6 +2704,7 @@ function renderConnInspector(conn) {
 // TOOLBAR EVENTS
 // ══════════════════════════════════════════════════════════════
 document.getElementById('btn-add-node').addEventListener('click', () => addNode());
+document.getElementById('btn-add-group').addEventListener('click', () => addGroup());
 
 function setToolbarLineType(lt) {
   state.lineType = lt;
@@ -3178,8 +3440,11 @@ document.getElementById('zc-reset').addEventListener('click', () => {
 // AUTO FORMAT LAYOUT (DYNAMIC COLUMN-AWARE & ZERO OVERLAP)
 // ══════════════════════════════════════════════════════════════
 function autoFormat(silent = false) {
+  // Groups are background frames: keep them where they are, arrange only regular nodes
+  const _allNodes = state.nodes;
+  state.nodes = _allNodes.filter(n => !isGroup(n));
   const N = state.nodes.length;
-  if (N === 0) return;
+  if (N === 0) { state.nodes = _allNodes; return; }
 
   function getNodeW(n) {
     const el = typeof world !== 'undefined' && world ? world.querySelector(`[data-node-id="${n.id}"]`) : null;
@@ -3353,6 +3618,7 @@ function autoFormat(silent = false) {
     if (!anyOverlap) break;
   }
 
+  state.nodes = _allNodes;
   snapshot();
   renderAll();
   if (!silent) toast('✓ Graph formatted: all overlaps eliminated!');
@@ -3507,22 +3773,22 @@ function loadDemo1() {
 }
 
 const DEMO_2_DATA = {
-  "diagramId": "diag_food_molecular_commonality_005",
-  "diagramName": "Food Products → Molecules → Elements — Sensitivity Highlighted",
+  "diagramId": "diag_food_molecular_commonality_010",
+  "diagramName": "Food → Molecules → Elements — No-Overlap Layout",
   "canvas": {
-    "zoom": 0.42,
-    "panX": 160,
-    "panY": 80
+    "zoom": 0.18,
+    "panX": 40,
+    "panY": 40
   },
   "nodes": [
     {
       "id": "node_wine",
-      "x": 0,
-      "y": 0,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 610,
+      "w": 760,
+      "h": 620,
       "title": "Wine",
-      "desc": "Fermented grape beverage. Representative chemistry; exact composition varies by grape, style, fermentation and aging.",
+      "desc": "Fermented grape beverage. Representative chemistry; exact composition varies by grape, style, fermenta…",
       "priority": "13",
       "color": "#1e293b",
       "borderColor": "#8b5cf6",
@@ -3535,12 +3801,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_vinegar",
-      "x": 0,
-      "y": 520,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 1590,
+      "w": 760,
+      "h": 620,
       "title": "Vinegar",
-      "desc": "Fermented acidic condiment. Primarily water + acetic acid, with variable trace alcohols and phenolics depending on source.",
+      "desc": "Fermented acidic condiment. Primarily water + acetic acid, with variable trace alcohols and phenolics…",
       "priority": "5",
       "color": "#1e293b",
       "borderColor": "#8b5cf6",
@@ -3553,12 +3819,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_soy_sauce",
-      "x": 0,
-      "y": 1040,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 2570,
+      "w": 760,
+      "h": 620,
       "title": "Soy Sauce",
-      "desc": "Fermented soy/wheat seasoning. Representative salt, amino-acid, sugar, organic-acid and nucleotide chemistry.",
+      "desc": "Fermented soy/wheat seasoning. Representative salt, amino-acid, sugar, organic-acid and nucleotide che…",
       "priority": "11",
       "color": "#1e293b",
       "borderColor": "#8b5cf6",
@@ -3571,10 +3837,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_ketchup",
-      "x": 0,
-      "y": 1560,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 3550,
+      "w": 760,
+      "h": 620,
       "title": "Ketchup",
       "desc": "Tomato-based condiment. Generic formulation modeled as tomato solids + vinegar + sugar + salt.",
       "priority": "12",
@@ -3589,12 +3855,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_eggplant",
-      "x": 0,
-      "y": 2080,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 4530,
+      "w": 760,
+      "h": 620,
       "title": "Fried Eggplant + Salt",
-      "desc": "Eggplant after frying and salting. Includes native eggplant phytochemicals plus representative absorbed frying-oil lipids.",
+      "desc": "Eggplant after frying and salting. Includes native eggplant phytochemicals plus representative absorbe…",
       "priority": "11",
       "color": "#1e293b",
       "borderColor": "#8b5cf6",
@@ -3607,10 +3873,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_tomato",
-      "x": 0,
-      "y": 2600,
-      "w": 460,
-      "h": 360,
+      "x": 120,
+      "y": 5510,
+      "w": 760,
+      "h": 620,
       "title": "Tomatoes",
       "desc": "Fresh ripe tomato. Representative water, sugars, organic acids, amino acids, carotenoids and vitamin C.",
       "priority": "10",
@@ -3625,10 +3891,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_water",
-      "x": 620,
-      "y": 0,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 120,
+      "w": 760,
+      "h": 620,
       "title": "Water",
       "desc": "H₂O • Major solvent/moisture component.",
       "priority": "8",
@@ -3643,12 +3909,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_ethanol",
-      "x": 620,
-      "y": 340,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 1100,
+      "w": 760,
+      "h": 620,
       "title": "Ethanol",
-      "desc": "C₂H₆O • Primary alcohol of wine; may remain in small amounts in fermented condiments.\nPotential sensitivity: Alcohol intolerance/sensitivity.",
+      "desc": "C₂H₆O • Primary alcohol of wine; may remain in small amounts in fermented condiments.\n⚠ Potential sensitivity/intolerance",
       "priority": "6",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -3661,10 +3927,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_glycerol",
-      "x": 1120,
-      "y": 0,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 5020,
+      "w": 760,
+      "h": 620,
       "title": "Glycerol",
       "desc": "C₃H₈O₃ • Major wine fermentation by-product contributing body.",
       "priority": "4",
@@ -3679,10 +3945,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_glucose",
-      "x": 620,
-      "y": 680,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "Glucose",
       "desc": "C₆H₁₂O₆ • Simple reducing sugar.",
       "priority": "7",
@@ -3697,12 +3963,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_fructose",
-      "x": 620,
-      "y": 1020,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "Fructose",
-      "desc": "C₆H₁₂O₆ • Simple fruit sugar.\nPotential sensitivity: Fructose malabsorption / FODMAP sensitivity.",
+      "desc": "C₆H₁₂O₆ • Simple fruit sugar.\n⚠ Potential sensitivity/intolerance",
       "priority": "6",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -3715,10 +3981,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_sucrose",
-      "x": 1120,
-      "y": 340,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 6000,
+      "w": 760,
+      "h": 620,
       "title": "Sucrose",
       "desc": "C₁₂H₂₂O₁₁ • Disaccharide used as a common ketchup sweetener.",
       "priority": "4",
@@ -3733,12 +3999,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_acetic",
-      "x": 620,
-      "y": 1700,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "Acetic Acid",
-      "desc": "C₂H₄O₂ • Defining acid of vinegar; also occurs in wine and soy-sauce fermentation.\nPotential sensitivity: Acid-sensitive GI/reflux symptoms in some people.",
+      "desc": "C₂H₄O₂ • Defining acid of vinegar; also occurs in wine and soy-sauce fermentation.\n⚠ Potential sensitivity/intolerance",
       "priority": "7",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -3751,12 +4017,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_lactic",
-      "x": 620,
-      "y": 3060,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 120,
+      "w": 760,
+      "h": 620,
       "title": "Lactic Acid",
-      "desc": "C₃H₆O₃ • Fermentation acid, important in soy sauce and malolactic wine.\nPotential sensitivity: Acid-sensitive GI symptoms in some people.",
+      "desc": "C₃H₆O₃ • Fermentation acid, important in soy sauce and malolactic wine.\n⚠ Potential sensitivity/intolerance",
       "priority": "5",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -3769,12 +4035,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_citric",
-      "x": 620,
-      "y": 2380,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 1100,
+      "w": 760,
+      "h": 620,
       "title": "Citric Acid",
-      "desc": "C₆H₈O₇ • Major tomato organic acid; also occurs in wine.\nPotential sensitivity: Acid-sensitive oral/GI symptoms in some people.",
+      "desc": "C₆H₈O₇ • Major tomato organic acid; also occurs in wine.\n⚠ Potential sensitivity/intolerance",
       "priority": "6",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -3787,12 +4053,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_malic",
-      "x": 620,
-      "y": 2720,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "Malic Acid",
-      "desc": "C₄H₆O₅ • Important grape/tomato organic acid.\nPotential sensitivity: Acid-sensitive oral/GI symptoms in some people.",
+      "desc": "C₄H₆O₅ • Important grape/tomato organic acid.\n⚠ Potential sensitivity/intolerance",
       "priority": "6",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -3805,12 +4071,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_tartaric",
-      "x": 1120,
-      "y": 680,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "Tartaric Acid",
-      "desc": "C₄H₆O₆ • Signature major grape/wine acid.\nPotential sensitivity: Acid-sensitive oral/GI symptoms in some people.",
+      "desc": "C₄H₆O₆ • Signature major grape/wine acid.\n⚠ Potential sensitivity/intolerance",
       "priority": "4",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -3823,10 +4089,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_succinic",
-      "x": 620,
-      "y": 3400,
-      "w": 420,
-      "h": 300,
+      "x": 3320,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "Succinic Acid",
       "desc": "C₄H₆O₄ • Fermentation-derived organic acid found in wine and soy sauce.",
       "priority": "5",
@@ -3841,12 +4107,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_glutamic",
-      "x": 620,
-      "y": 2040,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 6000,
+      "w": 760,
+      "h": 620,
       "title": "Glutamic Acid / Glutamate",
-      "desc": "C₅H₉NO₄ • Key umami amino-acid system in tomato and soy sauce.\nPotential sensitivity: Some people report sensitivity to glutamate/MSG-type exposures.",
+      "desc": "C₅H₉NO₄ • Key umami amino-acid system in tomato and soy sauce.\n⚠ Potential sensitivity/intolerance",
       "priority": "7",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -3859,10 +4125,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_aspartic",
-      "x": 1120,
-      "y": 1020,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 120,
+      "w": 760,
+      "h": 620,
       "title": "Aspartic Acid / Aspartate",
       "desc": "C₄H₇NO₄ • Taste-active amino acid found in tomato and soy sauce.",
       "priority": "6",
@@ -3877,10 +4143,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_proline",
-      "x": 1120,
-      "y": 1360,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 1100,
+      "w": 760,
+      "h": 620,
       "title": "Proline",
       "desc": "C₅H₉NO₂ • Prominent wine amino acid.",
       "priority": "5",
@@ -3895,12 +4161,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_salt",
-      "x": 620,
-      "y": 1360,
-      "w": 420,
-      "h": 300,
+      "x": 1720,
+      "y": 5020,
+      "w": 760,
+      "h": 620,
       "title": "Sodium Chloride",
-      "desc": "NaCl • Table salt / major salinity source.\nPotential sensitivity: Salt sensitivity in some people.",
+      "desc": "NaCl • Table salt / major salinity source.\n⚠ Potential sensitivity/intolerance",
       "priority": "5",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -3913,10 +4179,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_lycopene",
-      "x": 1120,
-      "y": 1700,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "Lycopene",
       "desc": "C₄₀H₅₆ • Red tomato carotenoid pigment.",
       "priority": "4",
@@ -3931,10 +4197,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_beta_carotene",
-      "x": 1120,
-      "y": 2040,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "β-Carotene",
       "desc": "C₄₀H₅₆ • Orange-red provitamin-A carotenoid in tomato products.",
       "priority": "4",
@@ -3949,10 +4215,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_ascorbic",
-      "x": 1120,
-      "y": 2380,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "Ascorbic Acid (Vitamin C)",
       "desc": "C₆H₈O₆ • Water-soluble antioxidant present in tomatoes and tomato products.",
       "priority": "5",
@@ -3967,10 +4233,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_chlorogenic",
-      "x": 1120,
-      "y": 3060,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 6000,
+      "w": 760,
+      "h": 620,
       "title": "Chlorogenic Acid",
       "desc": "C₁₆H₁₈O₉ • Predominant eggplant phenolic; also reported among vinegar bioactives.",
       "priority": "5",
@@ -3985,10 +4251,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_nasunin",
-      "x": 1620,
-      "y": 0,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 120,
+      "w": 760,
+      "h": 620,
       "title": "Nasunin",
       "desc": "C₄₂H₄₇O₂₃⁺ • Characteristic purple eggplant-peel anthocyanin.",
       "priority": "4",
@@ -4003,10 +4269,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_rutin",
-      "x": 1620,
-      "y": 340,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 1100,
+      "w": 760,
+      "h": 620,
       "title": "Rutin",
       "desc": "C₂₇H₃₀O₁₆ • Flavonoid reported in eggplant.",
       "priority": "4",
@@ -4021,12 +4287,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_solasonine",
-      "x": 1620,
-      "y": 680,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "α-Solasonine",
-      "desc": "C₄₅H₇₃NO₁₆ • Eggplant steroidal glycoalkaloid.\nPotential sensitivity: Nightshade glycoalkaloid; can be irritating at sufficient exposure.",
+      "desc": "C₄₅H₇₃NO₁₆ • Eggplant steroidal glycoalkaloid.\n⚠ Potential sensitivity/intolerance",
       "priority": "5",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -4039,12 +4305,12 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_solamargine",
-      "x": 1620,
-      "y": 1020,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "α-Solamargine",
-      "desc": "C₄₅H₇₃NO₁₅ • Eggplant steroidal glycoalkaloid.\nPotential sensitivity: Nightshade glycoalkaloid; can be irritating at sufficient exposure.",
+      "desc": "C₄₅H₇₃NO₁₅ • Eggplant steroidal glycoalkaloid.\n⚠ Potential sensitivity/intolerance",
       "priority": "5",
       "color": "#4a0d0d",
       "borderColor": "#ef4444",
@@ -4057,10 +4323,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_triolein",
-      "x": 1620,
-      "y": 1360,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "Triolein (Triglyceride)",
       "desc": "C₅₇H₁₀₄O₆ • Representative triacylglycerol in absorbed frying oil.",
       "priority": "4",
@@ -4075,10 +4341,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_oleic",
-      "x": 1620,
-      "y": 1700,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 5020,
+      "w": 760,
+      "h": 620,
       "title": "Oleic Acid",
       "desc": "C₁₈H₃₄O₂ • Common monounsaturated fatty acid in cooking oils.",
       "priority": "4",
@@ -4093,10 +4359,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_linoleic",
-      "x": 1620,
-      "y": 2040,
-      "w": 420,
-      "h": 300,
+      "x": 6520,
+      "y": 6000,
+      "w": 760,
+      "h": 620,
       "title": "Linoleic Acid",
       "desc": "C₁₈H₃₂O₂ • Common polyunsaturated fatty acid in cooking oils.",
       "priority": "4",
@@ -4111,10 +4377,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_palmitic",
-      "x": 1620,
-      "y": 2380,
-      "w": 420,
-      "h": 300,
+      "x": 8120,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "Palmitic Acid",
       "desc": "C₁₆H₃₂O₂ • Common saturated fatty acid in cooking oils.",
       "priority": "4",
@@ -4129,10 +4395,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_caffeic",
-      "x": 1120,
-      "y": 2720,
-      "w": 420,
-      "h": 300,
+      "x": 4920,
+      "y": 5020,
+      "w": 760,
+      "h": 620,
       "title": "Caffeic Acid",
       "desc": "C₉H₈O₄ • Phenolic acid reported in wine and some vinegars.",
       "priority": "5",
@@ -4147,10 +4413,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_gmp",
-      "x": 1620,
-      "y": 2720,
-      "w": 420,
-      "h": 300,
+      "x": 8120,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "5′-GMP",
       "desc": "C₁₀H₁₄N₅O₈P • Guanosine monophosphate; nucleotide contributing to umami in some soy sauces.",
       "priority": "6",
@@ -4165,10 +4431,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_imp",
-      "x": 1620,
-      "y": 3060,
-      "w": 420,
-      "h": 300,
+      "x": 8120,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "5′-IMP",
       "desc": "C₁₀H₁₃N₄O₈P • Inosine monophosphate; taste-active nucleotide reported in some soy sauces.",
       "priority": "6",
@@ -4183,10 +4449,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_H",
-      "x": 2260,
-      "y": 180,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 120,
+      "w": 760,
+      "h": 620,
       "title": "Hydrogen (H)",
       "desc": "Element shared by water and essentially all organic compounds.",
       "priority": "30",
@@ -4201,10 +4467,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_O",
-      "x": 2260,
-      "y": 680,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 2080,
+      "w": 760,
+      "h": 620,
       "title": "Oxygen (O)",
       "desc": "Element shared by water, sugars, alcohols, acids and many phytochemicals.",
       "priority": "28",
@@ -4219,10 +4485,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_C",
-      "x": 2260,
-      "y": 1180,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 1100,
+      "w": 760,
+      "h": 620,
       "title": "Carbon (C)",
       "desc": "Core element of every organic molecule shown.",
       "priority": "29",
@@ -4237,10 +4503,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_N",
-      "x": 2260,
-      "y": 1680,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 3060,
+      "w": 760,
+      "h": 620,
       "title": "Nitrogen (N)",
       "desc": "Present in amino acids, glycoalkaloids and nucleotides.",
       "priority": "7",
@@ -4255,10 +4521,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_Na",
-      "x": 2260,
-      "y": 2180,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 4040,
+      "w": 760,
+      "h": 620,
       "title": "Sodium (Na)",
       "desc": "Element in sodium chloride.",
       "priority": "1",
@@ -4273,10 +4539,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_Cl",
-      "x": 2260,
-      "y": 2680,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 5020,
+      "w": 760,
+      "h": 620,
       "title": "Chlorine (Cl)",
       "desc": "Present as chloride in sodium chloride.",
       "priority": "1",
@@ -4291,10 +4557,10 @@ const DEMO_2_DATA = {
     },
     {
       "id": "node_P",
-      "x": 2260,
-      "y": 3180,
-      "w": 380,
-      "h": 300,
+      "x": 9720,
+      "y": 6000,
+      "w": 760,
+      "h": 620,
       "title": "Phosphorus (P)",
       "desc": "Present in nucleotide phosphate groups.",
       "priority": "2",
@@ -4315,8 +4581,8 @@ const DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_002",
@@ -4324,8 +4590,8 @@ const DEMO_2_DATA = {
       "tgt": "node_ethanol",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_003",
@@ -4333,8 +4599,8 @@ const DEMO_2_DATA = {
       "tgt": "node_glycerol",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_004",
@@ -4342,8 +4608,8 @@ const DEMO_2_DATA = {
       "tgt": "node_glucose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_005",
@@ -4351,8 +4617,8 @@ const DEMO_2_DATA = {
       "tgt": "node_fructose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_006",
@@ -4360,8 +4626,8 @@ const DEMO_2_DATA = {
       "tgt": "node_acetic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_007",
@@ -4369,8 +4635,8 @@ const DEMO_2_DATA = {
       "tgt": "node_lactic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_008",
@@ -4378,8 +4644,8 @@ const DEMO_2_DATA = {
       "tgt": "node_citric",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_009",
@@ -4387,8 +4653,8 @@ const DEMO_2_DATA = {
       "tgt": "node_malic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_010",
@@ -4396,8 +4662,8 @@ const DEMO_2_DATA = {
       "tgt": "node_tartaric",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_011",
@@ -4405,8 +4671,8 @@ const DEMO_2_DATA = {
       "tgt": "node_succinic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_012",
@@ -4414,8 +4680,8 @@ const DEMO_2_DATA = {
       "tgt": "node_proline",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_013",
@@ -4423,8 +4689,8 @@ const DEMO_2_DATA = {
       "tgt": "node_caffeic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_014",
@@ -4432,8 +4698,8 @@ const DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_015",
@@ -4441,8 +4707,8 @@ const DEMO_2_DATA = {
       "tgt": "node_acetic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_016",
@@ -4450,8 +4716,8 @@ const DEMO_2_DATA = {
       "tgt": "node_ethanol",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_017",
@@ -4459,8 +4725,8 @@ const DEMO_2_DATA = {
       "tgt": "node_caffeic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_018",
@@ -4468,8 +4734,8 @@ const DEMO_2_DATA = {
       "tgt": "node_chlorogenic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_019",
@@ -4477,8 +4743,8 @@ const DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_020",
@@ -4486,8 +4752,8 @@ const DEMO_2_DATA = {
       "tgt": "node_salt",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_021",
@@ -4495,8 +4761,8 @@ const DEMO_2_DATA = {
       "tgt": "node_glutamic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_022",
@@ -4504,8 +4770,8 @@ const DEMO_2_DATA = {
       "tgt": "node_aspartic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_023",
@@ -4513,8 +4779,8 @@ const DEMO_2_DATA = {
       "tgt": "node_glucose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_024",
@@ -4522,8 +4788,8 @@ const DEMO_2_DATA = {
       "tgt": "node_lactic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_025",
@@ -4531,8 +4797,8 @@ const DEMO_2_DATA = {
       "tgt": "node_acetic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_026",
@@ -4540,8 +4806,8 @@ const DEMO_2_DATA = {
       "tgt": "node_succinic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_027",
@@ -4549,8 +4815,8 @@ const DEMO_2_DATA = {
       "tgt": "node_ethanol",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_028",
@@ -4558,8 +4824,8 @@ const DEMO_2_DATA = {
       "tgt": "node_gmp",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_029",
@@ -4567,8 +4833,8 @@ const DEMO_2_DATA = {
       "tgt": "node_imp",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_030",
@@ -4576,8 +4842,8 @@ const DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_031",
@@ -4585,8 +4851,8 @@ const DEMO_2_DATA = {
       "tgt": "node_acetic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_032",
@@ -4594,8 +4860,8 @@ const DEMO_2_DATA = {
       "tgt": "node_salt",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_033",
@@ -4603,8 +4869,8 @@ const DEMO_2_DATA = {
       "tgt": "node_glucose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_034",
@@ -4612,8 +4878,8 @@ const DEMO_2_DATA = {
       "tgt": "node_fructose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_035",
@@ -4621,8 +4887,8 @@ const DEMO_2_DATA = {
       "tgt": "node_sucrose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_036",
@@ -4630,8 +4896,8 @@ const DEMO_2_DATA = {
       "tgt": "node_citric",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_037",
@@ -4639,8 +4905,8 @@ const DEMO_2_DATA = {
       "tgt": "node_malic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_038",
@@ -4648,8 +4914,8 @@ const DEMO_2_DATA = {
       "tgt": "node_glutamic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_039",
@@ -4657,8 +4923,8 @@ const DEMO_2_DATA = {
       "tgt": "node_lycopene",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_040",
@@ -4666,8 +4932,8 @@ const DEMO_2_DATA = {
       "tgt": "node_beta_carotene",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_041",
@@ -4675,8 +4941,8 @@ const DEMO_2_DATA = {
       "tgt": "node_ascorbic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_042",
@@ -4684,8 +4950,8 @@ const DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_043",
@@ -4693,8 +4959,8 @@ const DEMO_2_DATA = {
       "tgt": "node_salt",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_044",
@@ -4702,8 +4968,8 @@ const DEMO_2_DATA = {
       "tgt": "node_chlorogenic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_045",
@@ -4711,8 +4977,8 @@ const DEMO_2_DATA = {
       "tgt": "node_nasunin",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_046",
@@ -4720,8 +4986,8 @@ const DEMO_2_DATA = {
       "tgt": "node_rutin",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_047",
@@ -4729,8 +4995,8 @@ const DEMO_2_DATA = {
       "tgt": "node_solasonine",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_048",
@@ -4738,8 +5004,8 @@ const DEMO_2_DATA = {
       "tgt": "node_solamargine",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_049",
@@ -4747,8 +5013,8 @@ const DEMO_2_DATA = {
       "tgt": "node_triolein",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_050",
@@ -4756,8 +5022,8 @@ const DEMO_2_DATA = {
       "tgt": "node_oleic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_051",
@@ -4765,8 +5031,8 @@ const DEMO_2_DATA = {
       "tgt": "node_linoleic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_052",
@@ -4774,8 +5040,8 @@ const DEMO_2_DATA = {
       "tgt": "node_palmitic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_053",
@@ -4783,8 +5049,8 @@ const DEMO_2_DATA = {
       "tgt": "node_water",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_054",
@@ -4792,8 +5058,8 @@ const DEMO_2_DATA = {
       "tgt": "node_glucose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_055",
@@ -4801,8 +5067,8 @@ const DEMO_2_DATA = {
       "tgt": "node_fructose",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_056",
@@ -4810,8 +5076,8 @@ const DEMO_2_DATA = {
       "tgt": "node_citric",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_057",
@@ -4819,8 +5085,8 @@ const DEMO_2_DATA = {
       "tgt": "node_malic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_058",
@@ -4828,8 +5094,8 @@ const DEMO_2_DATA = {
       "tgt": "node_glutamic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_059",
@@ -4837,8 +5103,8 @@ const DEMO_2_DATA = {
       "tgt": "node_aspartic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_060",
@@ -4846,8 +5112,8 @@ const DEMO_2_DATA = {
       "tgt": "node_lycopene",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_061",
@@ -4855,8 +5121,8 @@ const DEMO_2_DATA = {
       "tgt": "node_beta_carotene",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_062",
@@ -4864,8 +5130,8 @@ const DEMO_2_DATA = {
       "tgt": "node_ascorbic",
       "lineType": "one-way",
       "style": "curved",
-      "label": "contains / representative",
-      "color": "#6b7f9d"
+      "label": "",
+      "color": "#71839d"
     },
     {
       "id": "conn_063",
@@ -4873,8 +5139,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_064",
@@ -4882,8 +5148,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_065",
@@ -4891,8 +5157,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_066",
@@ -4900,8 +5166,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_067",
@@ -4909,8 +5175,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_068",
@@ -4918,8 +5184,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_069",
@@ -4927,8 +5193,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_070",
@@ -4936,8 +5202,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_071",
@@ -4945,8 +5211,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_072",
@@ -4954,8 +5220,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_073",
@@ -4963,8 +5229,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_074",
@@ -4972,8 +5238,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_075",
@@ -4981,8 +5247,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_076",
@@ -4990,8 +5256,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_077",
@@ -4999,8 +5265,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_078",
@@ -5008,8 +5274,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_079",
@@ -5017,8 +5283,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_080",
@@ -5026,8 +5292,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_081",
@@ -5035,8 +5301,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_082",
@@ -5044,8 +5310,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_083",
@@ -5053,8 +5319,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_084",
@@ -5062,8 +5328,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_085",
@@ -5071,8 +5337,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_086",
@@ -5080,8 +5346,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_087",
@@ -5089,8 +5355,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_088",
@@ -5098,8 +5364,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_089",
@@ -5107,8 +5373,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_090",
@@ -5116,8 +5382,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_091",
@@ -5125,8 +5391,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_092",
@@ -5134,8 +5400,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_093",
@@ -5143,8 +5409,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_094",
@@ -5152,8 +5418,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_095",
@@ -5161,8 +5427,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_096",
@@ -5170,8 +5436,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_097",
@@ -5179,8 +5445,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_098",
@@ -5188,8 +5454,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_099",
@@ -5197,8 +5463,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_100",
@@ -5206,8 +5472,8 @@ const DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_101",
@@ -5215,8 +5481,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_102",
@@ -5224,8 +5490,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_103",
@@ -5233,8 +5499,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_104",
@@ -5242,8 +5508,8 @@ const DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_105",
@@ -5251,8 +5517,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_106",
@@ -5260,8 +5526,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_107",
@@ -5269,8 +5535,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_108",
@@ -5278,8 +5544,8 @@ const DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_109",
@@ -5287,8 +5553,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_110",
@@ -5296,8 +5562,8 @@ const DEMO_2_DATA = {
       "tgt": "node_Na",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_111",
@@ -5305,8 +5571,8 @@ const DEMO_2_DATA = {
       "tgt": "node_Cl",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_112",
@@ -5314,8 +5580,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_113",
@@ -5323,8 +5589,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_114",
@@ -5332,8 +5598,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_115",
@@ -5341,8 +5607,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_116",
@@ -5350,8 +5616,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_117",
@@ -5359,8 +5625,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_118",
@@ -5368,8 +5634,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_119",
@@ -5377,8 +5643,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_120",
@@ -5386,8 +5652,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_121",
@@ -5395,8 +5661,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_122",
@@ -5404,8 +5670,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_123",
@@ -5413,8 +5679,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_124",
@@ -5422,8 +5688,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_125",
@@ -5431,8 +5697,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_126",
@@ -5440,8 +5706,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_127",
@@ -5449,8 +5715,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_128",
@@ -5458,8 +5724,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_129",
@@ -5467,8 +5733,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_130",
@@ -5476,8 +5742,8 @@ const DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_131",
@@ -5485,8 +5751,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_132",
@@ -5494,8 +5760,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_133",
@@ -5503,8 +5769,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_134",
@@ -5512,8 +5778,8 @@ const DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_135",
@@ -5521,8 +5787,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_136",
@@ -5530,8 +5796,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_137",
@@ -5539,8 +5805,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_138",
@@ -5548,8 +5814,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_139",
@@ -5557,8 +5823,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_140",
@@ -5566,8 +5832,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_141",
@@ -5575,8 +5841,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_142",
@@ -5584,8 +5850,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_143",
@@ -5593,8 +5859,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_144",
@@ -5602,8 +5868,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_145",
@@ -5611,8 +5877,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_146",
@@ -5620,8 +5886,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_147",
@@ -5629,8 +5895,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_148",
@@ -5638,8 +5904,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_149",
@@ -5647,8 +5913,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_150",
@@ -5656,8 +5922,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_151",
@@ -5665,8 +5931,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_152",
@@ -5674,8 +5940,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_153",
@@ -5683,8 +5949,8 @@ const DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_154",
@@ -5692,8 +5958,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_155",
@@ -5701,8 +5967,8 @@ const DEMO_2_DATA = {
       "tgt": "node_P",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_156",
@@ -5710,8 +5976,8 @@ const DEMO_2_DATA = {
       "tgt": "node_C",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_157",
@@ -5719,8 +5985,8 @@ const DEMO_2_DATA = {
       "tgt": "node_H",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_158",
@@ -5728,8 +5994,8 @@ const DEMO_2_DATA = {
       "tgt": "node_N",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_159",
@@ -5737,8 +6003,8 @@ const DEMO_2_DATA = {
       "tgt": "node_O",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     },
     {
       "id": "conn_160",
@@ -5746,11 +6012,11 @@ const DEMO_2_DATA = {
       "tgt": "node_P",
       "lineType": "one-way",
       "style": "ortho",
-      "label": "contains element",
-      "color": "#52647f"
+      "label": "",
+      "color": "#7b8ba3"
     }
   ],
-  "updatedAt": 1790404920000
+  "updatedAt": 1790990400000
 };
 
 function loadDemo2() {
@@ -5956,7 +6222,7 @@ document.getElementById('gp-btn-apply-shape').addEventListener('click', () => {
 
   if (setDefault) state.defaultShape = selectedGlobalShape;
   if (applyExisting && state.nodes && state.nodes.length) {
-    state.nodes.forEach(n => { n.shape = selectedGlobalShape; });
+    state.nodes.filter(n => !isGroup(n)).forEach(n => { n.shape = selectedGlobalShape; });
     snapshot();
     renderNodes();
     renderConnections();
@@ -5986,7 +6252,7 @@ document.getElementById('gp-btn-apply-line').addEventListener('click', () => {
 document.getElementById('gp-btn-apply-fill').addEventListener('click', () => {
   const color = document.getElementById('gp-color-node-fill').value;
   if (!state.nodes || !state.nodes.length) return;
-  state.nodes.forEach(n => { n.color = color; });
+  state.nodes.filter(n => !isGroup(n)).forEach(n => { n.color = color; });
   snapshot();
   renderNodes();
   toast(`✓ Updated fill color across all ${state.nodes.length} nodes!`);
@@ -5996,7 +6262,7 @@ document.getElementById('gp-btn-apply-fill').addEventListener('click', () => {
 document.getElementById('gp-btn-apply-border').addEventListener('click', () => {
   const color = document.getElementById('gp-color-node-border').value;
   if (!state.nodes || !state.nodes.length) return;
-  state.nodes.forEach(n => { n.borderColor = color; });
+  state.nodes.filter(n => !isGroup(n)).forEach(n => { n.borderColor = color; });
   snapshot();
   renderNodes();
   toast(`✓ Updated border color across all ${state.nodes.length} nodes!`);
@@ -6016,7 +6282,7 @@ document.getElementById('gp-btn-apply-conn-color').addEventListener('click', () 
 document.getElementById('gp-btn-apply-width').addEventListener('click', () => {
   const w = parseInt(document.getElementById('gp-node-width').value) || 240;
   if (!state.nodes || !state.nodes.length) return;
-  state.nodes.forEach(n => { n.w = w; });
+  state.nodes.filter(n => !isGroup(n)).forEach(n => { n.w = w; });
   snapshot();
   renderNodes();
   renderConnections();
@@ -6026,7 +6292,7 @@ document.getElementById('gp-btn-apply-width').addEventListener('click', () => {
 // Scale Nodes (-15%, Reset, +15%)
 function scaleAllNodes(factor) {
   if (!state.nodes || !state.nodes.length) return;
-  state.nodes.forEach(n => {
+  state.nodes.filter(n => !isGroup(n)).forEach(n => {
     n.w = Math.max(140, Math.min(600, Math.round((n.w || 200) * factor)));
     if (n.h) n.h = Math.max(80, Math.min(600, Math.round(n.h * factor)));
   });
@@ -6040,7 +6306,7 @@ document.getElementById('gp-scale-down').addEventListener('click', () => scaleAl
 document.getElementById('gp-scale-up').addEventListener('click', () => scaleAllNodes(1.15));
 document.getElementById('gp-scale-reset').addEventListener('click', () => {
   if (!state.nodes || !state.nodes.length) return;
-  state.nodes.forEach(n => {
+  state.nodes.filter(n => !isGroup(n)).forEach(n => {
     n.w = 240;
     delete n.h;
   });
@@ -6061,7 +6327,7 @@ document.getElementById('gp-btn-apply-all').addEventListener('click', () => {
   if (setDefLine) setToolbarLineType(selectedGlobalLineType);
 
   if (applyShape && state.nodes && state.nodes.length) {
-    state.nodes.forEach(n => { n.shape = selectedGlobalShape; });
+    state.nodes.filter(n => !isGroup(n)).forEach(n => { n.shape = selectedGlobalShape; });
   }
 
   if (applyLine && state.connections && state.connections.length) {

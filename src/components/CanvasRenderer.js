@@ -193,8 +193,8 @@ export class CanvasRenderer {
           <!-- Media Attachment (Photo or Video, If Present) -->
           ${(node.mediaUrl || node.imageUrl) ? `
             <div class="rounded-lg overflow-hidden border border-slate-700/80 bg-slate-950/80 flex items-center justify-center p-1 flex-shrink-0" style="max-height: ${mediaMaxHeight + 10}px;">
-              ${(node.mediaType === 'video' || (node.mediaUrl || node.imageUrl || '').startsWith('data:video')) ? `
-                <video src="${node.mediaUrl || node.imageUrl}" controls class="rounded w-full object-contain pointer-events-auto" style="max-height: ${mediaMaxHeight}px;" preload="metadata"></video>
+              ${(node.mediaType === 'video' || (node.mediaUrl || node.imageUrl || '').startsWith('data:video') || (node.mediaUrl || node.imageUrl || '').endsWith('.mp4') || (node.mediaUrl || node.imageUrl || '').endsWith('.webm')) ? `
+                <video src="${node.mediaUrl || node.imageUrl}" controls playsinline loop muted autoplay class="rounded w-full object-contain pointer-events-auto" style="max-height: ${mediaMaxHeight}px;" preload="metadata"></video>
               ` : `
                 <img src="${node.mediaUrl || node.imageUrl}" class="object-contain rounded w-full" style="max-height: ${mediaMaxHeight}px;" alt="Node media" />
               `}

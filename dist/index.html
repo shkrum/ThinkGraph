@@ -1843,8 +1843,8 @@ function renderNodes() {
         </div>
         ${node.imageUrl ? `
           <div class="node-img-wrap" style="max-height: ${mediaMaxH + 10}px;">
-            ${(node.mediaType === 'video' || (node.imageUrl || '').startsWith('data:video')) ? `
-              <video src="${esc(resolveImgUrl(node.imageUrl))}" controls style="max-height: ${mediaMaxH}px; width: 100%; border-radius: 6px; object-fit: contain;" preload="metadata"></video>
+            ${(node.mediaType === 'video' || (node.imageUrl || '').startsWith('data:video') || (node.imageUrl || '').endsWith('.mp4') || (node.imageUrl || '').endsWith('.webm')) ? `
+              <video src="${esc(resolveImgUrl(node.imageUrl))}" controls playsinline loop muted autoplay style="max-height: ${mediaMaxH}px; width: 100%; border-radius: 6px; object-fit: contain;" preload="metadata" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}else if(this.dataset.tried==='1'){this.dataset.tried='2';this.src='https://raw.githubusercontent.com/shkrum/ThinkGraph/main/'+this.getAttribute('src')}"></video>
             ` : `
               <img src="${esc(resolveImgUrl(node.imageUrl))}" alt="" style="max-height: ${mediaMaxH}px; width: 100%; object-fit: contain;" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='public/'+this.getAttribute('src')}else if(this.dataset.tried==='1'){this.dataset.tried='2';this.src='https://raw.githubusercontent.com/shkrum/ThinkGraph/main/'+this.getAttribute('src')}"/>
             `}
@@ -3681,12 +3681,13 @@ function loadDemo1() {
 
   state.nodes = [
     {
-      id:'homer', x:460, y:320, w:260,
+      id:'homer', x:460, y:300, w:280,
       title:'Homer J. Simpson',
-      desc:'Chief Nuclear Safety Inspector. Zero safety record since 1989. World record: most "D\'oh"s per minute under reactor pressure.',
+      desc:'Chief Nuclear Safety Inspector. Zero safety record since 1989. Disappearing into the bushes whenever reactor core hits 4000°C.',
       priority:'D\'H',
       color:'#1a1a0a', borderColor:'#facc15',
-      shape:'rounded', imageUrl:null,
+      shape:'rounded', imageUrl:'images/homer_bushes.mp4',
+      mediaType:'video',
       attributes:[], methods:[]
     },
     {

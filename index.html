@@ -975,8 +975,16 @@ body.light-theme #gdrive-client-modal > div {
     <div class="dropdown-content" id="file-menu-dropdown">
       <div class="menu-item" id="menu-new">New Diagram</div>
       <div class="menu-item" id="menu-open">Open Locally...</div>
+      <div class="menu-item has-sub" id="menu-gdrive-diagrams-wrap" style="display:none;color:#60a5fa">
+        <span style="display:flex;align-items:center;gap:6px">☁️ Google Drive Diagrams</span>
+        <span style="font-size:10px;margin-left:auto;color:#60a5fa">▸</span>
+        <div class="submenu" id="menu-gdrive-list">
+          <div class="submenu-empty" style="color:#60a5fa">Loading Google Drive diagrams...</div>
+        </div>
+      </div>
       <div class="menu-item has-sub">
-        Recent Diagrams ▸
+        <span>Recent Diagrams</span>
+        <span style="font-size:10px;margin-left:auto">▸</span>
         <div class="submenu" id="menu-recent-list">
           <div class="submenu-empty">No recent diagrams</div>
         </div>
@@ -1858,20 +1866,91 @@ class GoogleDriveService {
         fileId = data.id;
       }
       await this._updateAppDataIndex(diagramData);
+      await this.saveLastState(diagramData);
       return fileId;
     } catch(err) {
       return this._saveDemoAppData(filename, diagramData);
     }
   }
 
+  async saveLastState(diagramData) {
+    if (!diagramData || !diagramData.nodes) return;
+    if (this.isDemoMode || !this.accessToken) {
+      localStorage.setItem('gdrive_mock_last_state', JSON.stringify({
+        lastOpenedId: diagramData.diagramId,
+        lastOpenedName: diagramData.diagramName,
+        timestamp: Date.now(),
+        diagram: diagramData
+      }));
+      return;
+    }
+
+    try {
+      const payload = {
+        app: 'ThinkGraph',
+        systemFile: 'last_state.json',
+        version: '1.0',
+        lastOpenedId: diagramData.diagramId,
+        lastOpenedName: diagramData.diagramName || 'Untitled Diagram',
+        timestamp: Date.now(),
+        canvas: diagramData.canvas || { zoom: 1, panX: 0, panY: 0 },
+        diagram: diagramData
+      };
+      const jsonStr = JSON.stringify(payload, null, 2);
+      const existingId = await this._findFileInAppData('last_state.json');
+
+      if (existingId) {
+        await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingId}?uploadType=media`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
+          body: jsonStr
+        });
+      } else {
+        const metadata = { name: 'last_state.json', parents: ['appDataFolder'], mimeType: 'application/json' };
+        const boundary = '-------314159265358979323846';
+        const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${jsonStr}\r\n--${boundary}--`;
+        await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': `multipart/related; boundary="${boundary}"` },
+          body
+        });
+      }
+    } catch(e) {
+      console.warn('Could not save last_state.json to Google Drive:', e);
+    }
+  }
+
   async getLastOpenedDiagram() {
     if (this.isDemoMode || !this.accessToken) return this._getDemoLastOpened();
     try {
-      const index = await this.listCloudDiagrams();
-      if (!index || index.length === 0) return null;
-      const last = index.sort((a,b) => (b.lastOpened||b.updatedAt||0) - (a.lastOpened||a.updatedAt||0))[0];
-      if (!last) return null;
-      return await this.loadCloudDiagram(last.id);
+      // 1. Check system state file 'last_state.json' in appDataFolder
+      const lastStateFileId = await this._findFileInAppData('last_state.json');
+      if (lastStateFileId) {
+        const res = await fetch(`https://www.googleapis.com/drive/v3/files/${lastStateFileId}?alt=media`, {
+          headers: { Authorization: `Bearer ${this.accessToken}` }
+        });
+        if (res.ok) {
+          const stateData = await res.json();
+          if (stateData) {
+            if (stateData.diagram && stateData.diagram.nodes && stateData.diagram.nodes.length > 0) {
+              return stateData.diagram;
+            }
+            if (stateData.lastOpenedId) {
+              const diag = await this.loadCloudDiagram(stateData.lastOpenedId);
+              if (diag && diag.nodes && diag.nodes.length > 0) return diag;
+            }
+          }
+        }
+      }
+
+      // 2. Fallback to most recent diagram in listCloudDiagrams
+      const list = await this.listCloudDiagrams();
+      if (!list || list.length === 0) return null;
+      const mostRecent = list[0];
+      if (mostRecent) {
+        return await this.loadCloudDiagram(mostRecent.id, mostRecent.fileId);
+      }
+      return null;
     } catch(err) {
       return this._getDemoLastOpened();
     }
@@ -1880,29 +1959,90 @@ class GoogleDriveService {
   async listCloudDiagrams() {
     if (this.isDemoMode || !this.accessToken) return this._getDemoCloudIndex();
     try {
+      const items = [];
+      const seenIds = new Set();
+
+      // 1. Check index.json in appDataFolder
       const indexFileId = await this._findFileInAppData('index.json');
-      if (!indexFileId) return [];
-      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${indexFileId}?alt=media`, {
-        headers: { Authorization: `Bearer ${this.accessToken}` }
-      });
-      if (!res.ok) return [];
-      return await res.json();
+      if (indexFileId) {
+        try {
+          const res = await fetch(`https://www.googleapis.com/drive/v3/files/${indexFileId}?alt=media`, {
+            headers: { Authorization: `Bearer ${this.accessToken}` }
+          });
+          if (res.ok) {
+            const arr = await res.json();
+            if (Array.isArray(arr)) {
+              arr.forEach(item => {
+                if (item && item.id && !seenIds.has(item.id)) {
+                  seenIds.add(item.id);
+                  items.push({
+                    id: item.id,
+                    name: item.name || 'Untitled Diagram',
+                    updatedAt: item.updatedAt || item.lastOpened || Date.now(),
+                    lastOpened: item.lastOpened || item.updatedAt || Date.now(),
+                    isAppData: true
+                  });
+                }
+              });
+            }
+          }
+        } catch(e) {}
+      }
+
+      // 2. Also search all .umlgraph files in user's accessible Drive
+      try {
+        const q = encodeURIComponent("name contains '.umlgraph' and trashed = false");
+        const driveRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime,createdTime,size)&pageSize=30`, {
+          headers: { Authorization: `Bearer ${this.accessToken}` }
+        });
+        if (driveRes.ok) {
+          const driveData = await driveRes.json();
+          if (driveData.files && Array.isArray(driveData.files)) {
+            driveData.files.forEach(f => {
+              let diagId = f.id;
+              const m = f.name.match(/^diagram_([a-zA-Z0-9_\-]+)\.umlgraph$/);
+              if (m) diagId = m[1];
+              if (!seenIds.has(diagId)) {
+                seenIds.add(diagId);
+                items.push({
+                  id: diagId,
+                  fileId: f.id,
+                  name: f.name.replace(/\.umlgraph$/, '').replace(/^diagram_/, ''),
+                  updatedAt: new Date(f.modifiedTime || f.createdTime || Date.now()).getTime(),
+                  lastOpened: new Date(f.modifiedTime || f.createdTime || Date.now()).getTime(),
+                  isDriveFile: true
+                });
+              }
+            });
+          }
+        }
+      } catch(e) {}
+
+      items.sort((a,b) => (b.lastOpened || b.updatedAt || 0) - (a.lastOpened || a.updatedAt || 0));
+      return items;
     } catch(err) {
       return this._getDemoCloudIndex();
     }
   }
 
-  async loadCloudDiagram(diagramId) {
+  async loadCloudDiagram(diagramId, fileId = null) {
     const filename = `diagram_${diagramId}.umlgraph`;
     if (this.isDemoMode || !this.accessToken) return this._loadDemoDiagram(filename);
     try {
-      const fileId = await this._findFileInAppData(filename);
-      if (!fileId) return null;
-      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+      let targetFileId = fileId;
+      if (!targetFileId) {
+        targetFileId = await this._findFileInAppData(filename);
+      }
+      if (!targetFileId) {
+        targetFileId = diagramId;
+      }
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${targetFileId}?alt=media`, {
         headers: { Authorization: `Bearer ${this.accessToken}` }
       });
       if (!res.ok) return null;
-      return await res.json();
+      const data = await res.json();
+      this.saveLastState(data);
+      return data;
     } catch(err) {
       return this._loadDemoDiagram(filename);
     }
@@ -3774,6 +3914,87 @@ function loadDiagramObject(data) {
   renderAll();
 }
 
+async function renderGoogleDriveMenu() {
+  const wrap = document.getElementById('menu-gdrive-diagrams-wrap');
+  const container = document.getElementById('menu-gdrive-list');
+  if (!wrap || !container) return;
+
+  const authState = googleDriveService.getUserState();
+  if (!authState.isSignedIn) {
+    wrap.style.display = 'none';
+    return;
+  }
+
+  // Show "Google Drive Diagrams" in File menu when authorized
+  wrap.style.display = 'flex';
+  wrap.style.alignItems = 'center';
+  wrap.style.justifyContent = 'space-between';
+
+  container.innerHTML = '<div class="submenu-empty" style="color:#60a5fa">☁️ Fetching diagrams from Google Drive...</div>';
+
+  try {
+    const list = await googleDriveService.listCloudDiagrams();
+    if (!list || list.length === 0) {
+      container.innerHTML = `
+        <div class="submenu-empty">No diagrams found on Google Drive</div>
+        <div class="menu-item" id="btn-save-current-to-gdrive" style="color:#38bdf8;font-size:11px;padding:6px 12px">☁️ Save current diagram to Drive</div>
+      `;
+      document.getElementById('btn-save-current-to-gdrive')?.addEventListener('click', e => {
+        e.stopPropagation();
+        exportToGoogleDriveFile();
+      });
+      return;
+    }
+
+    let html = `
+      <div style="padding:4px 12px 6px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:4px">
+        <span style="font-size:10px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.05em">☁️ Google Drive (${list.length})</span>
+        <button id="btn-refresh-gdrive-menu" class="tb-btn" style="padding:1px 5px;font-size:9px" title="Refresh Google Drive files">↻</button>
+      </div>
+    `;
+
+    list.forEach(f => {
+      const dateStr = f.updatedAt ? new Date(f.updatedAt).toLocaleDateString([], {month:'short', day:'numeric'}) : '';
+      html += `
+        <div class="menu-item gdrive-file-item" data-id="${f.id}" data-fileid="${f.fileId || ''}" style="padding:6px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer">
+          <div style="font-weight:600;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:145px;color:#f0f9ff" title="${esc(f.name)}">
+            📄 ${esc(f.name)}
+          </div>
+          <div style="font-size:9px;color:#38bdf8;flex-shrink:0">${dateStr}</div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('.gdrive-file-item').forEach(el => {
+      el.addEventListener('click', async e => {
+        e.stopPropagation();
+        document.getElementById('file-menu-wrap')?.classList.remove('open');
+        toast('Loading diagram from Google Drive ☁️...');
+        try {
+          const data = await googleDriveService.loadCloudDiagram(el.dataset.id, el.dataset.fileid);
+          if (data && data.nodes) {
+            loadDiagramObject(data);
+            toast(`Opened "${data.diagramName || 'Diagram'}" from Google Drive ✓`);
+          } else {
+            throw new Error('Diagram content is empty or unrecognized');
+          }
+        } catch(err) {
+          alert('Could not open diagram from Google Drive: ' + err.message);
+        }
+      });
+    });
+
+    document.getElementById('btn-refresh-gdrive-menu')?.addEventListener('click', e => {
+      e.stopPropagation();
+      renderGoogleDriveMenu();
+    });
+  } catch(e) {
+    container.innerHTML = `<div class="submenu-empty" style="color:#f87171">Failed to load: ${esc(e.message)}</div>`;
+  }
+}
+
 async function renderRecentMenu() {
   const container = document.getElementById('menu-recent-list');
   if (!container) return;
@@ -3781,65 +4002,27 @@ async function renderRecentMenu() {
   let localList = [];
   try { localList = JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch(e) {}
 
-  let cloudList = [];
-  if (googleDriveService.getUserState().isSignedIn) {
-    try { cloudList = await googleDriveService.listCloudDiagrams(); } catch(e) {}
-  }
-
-  if (localList.length === 0 && cloudList.length === 0) {
+  if (localList.length === 0) {
     container.innerHTML = '<div class="submenu-empty">No recent diagrams</div>';
     return;
   }
 
   let html = '';
-  if (cloudList.length > 0) {
-    html += '<div style="padding:4px 12px;font-size:10px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.05em">☁️ Google Drive Files</div>';
-    cloudList.slice(0, 6).forEach(f => {
-      html += `
-        <div class="menu-item recent-cloud-item" data-id="${f.id}" style="padding:6px 12px">
-          <div style="font-weight:600;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:130px;color:#e0f2fe">${esc(f.name)}</div>
-          <div style="font-size:9px;color:#38bdf8;margin-left:6px;flex-shrink:0">Cloud</div>
-        </div>
-      `;
-    });
-    if (localList.length > 0) html += '<div class="menu-sep"></div>';
-  }
-
-  if (localList.length > 0) {
-    html += '<div style="padding:4px 12px;font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.05em">💻 Local Files</div>';
-    localList.slice(0, 5).forEach(f => {
-      html += `
-        <div class="menu-item recent-item" data-id="${f.id}" style="padding:6px 12px">
-          <div style="font-weight:600;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:130px">${esc(f.name)}</div>
-          <div style="font-size:9px;color:#64748b;margin-left:6px;flex-shrink:0">${new Date(f.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-        </div>
-      `;
-    });
-  }
+  localList.slice(0, 8).forEach(f => {
+    html += `
+      <div class="menu-item recent-item" data-id="${f.id}" style="padding:6px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <div style="font-weight:600;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:140px">${esc(f.name)}</div>
+        <div style="font-size:9px;color:#64748b;flex-shrink:0">${new Date(f.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+      </div>
+    `;
+  });
 
   container.innerHTML = html;
-
-  container.querySelectorAll('.recent-cloud-item').forEach(el => {
-    el.addEventListener('click', async e => {
-      e.stopPropagation();
-      document.getElementById('file-menu-wrap').classList.remove('open');
-      toast('Loading diagram from Google Drive...');
-      try {
-        const data = await googleDriveService.loadCloudDiagram(el.dataset.id);
-        if (data) {
-          loadDiagramObject(data);
-          toast(`Opened "${data.diagramName}" from Google Drive ☁️`);
-        }
-      } catch(err) {
-        alert('Could not load diagram from Google Drive: ' + err.message);
-      }
-    });
-  });
 
   container.querySelectorAll('.recent-item').forEach(el => {
     el.addEventListener('click', e => {
       e.stopPropagation();
-      document.getElementById('file-menu-wrap').classList.remove('open');
+      document.getElementById('file-menu-wrap')?.classList.remove('open');
       loadRecent(el.dataset.id);
     });
   });
@@ -3876,6 +4059,7 @@ const smWrap = document.getElementById('settings-menu-wrap');
 
 document.getElementById('btn-file-menu')?.addEventListener('click', e => {
   e.stopPropagation();
+  renderGoogleDriveMenu();
   renderRecentMenu();
   if (smWrap) smWrap.classList.remove('open');
   if (userProfileDropdown) userProfileDropdown.classList.remove('open');
@@ -3992,12 +4176,17 @@ async function handleGoogleSignIn(forcePromptModal = false) {
     toast(`Signed in as ${user.name || user.email} ✓`);
     updateAuthUI();
 
-    // Show last opened diagram restoration toast & load
+    // Automatically load latest open diagram stored in Google Drive
+    toast('Loading latest diagram from Google Drive ☁️...');
     const lastDiag = await googleDriveService.getLastOpenedDiagram();
     if (lastDiag && lastDiag.nodes && lastDiag.nodes.length > 0) {
       loadDiagramObject(lastDiag);
-      toast(`Restored last opened diagram "${lastDiag.diagramName || 'Diagram'}" from Google Drive ☁️`);
+      toast(`Opened latest diagram "${lastDiag.diagramName || 'Diagram'}" from Google Drive ☁️`);
+    } else {
+      toast('Connected to Google Drive ☁️');
     }
+
+    renderGoogleDriveMenu();
   } catch(err) {
     if (err.message === 'MISSING_CLIENT_ID') {
       inputClientId.value = '';
@@ -4045,6 +4234,7 @@ document.getElementById('menu-gdrive-sync')?.addEventListener('click', async () 
   if (userProfileDropdown) userProfileDropdown.classList.remove('open');
   toast('Syncing with Google Drive...');
   await syncToCloud();
+  renderGoogleDriveMenu();
   renderRecentMenu();
   toast('Cloud sync complete ☁️');
 });
@@ -4119,6 +4309,10 @@ async function exportToGoogleDriveFile() {
     };
     const filename = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}_${Date.now()}.umlgraph`;
     const res = await googleDriveService.exportFileToDrive(filename, JSON.stringify(data, null, 2));
+
+    await googleDriveService.saveDiagramToAppData(data);
+    await googleDriveService.saveLastState(data);
+    renderGoogleDriveMenu();
 
     showExportToast('Saved file to Google Drive ☁️', res.webViewLink);
   } catch(err) {

@@ -220,10 +220,61 @@ export class GoogleDriveService {
 
       // Update last_opened pointer & index in AppData
       await this._updateAppDataIndex(diagramData);
+      await this.saveLastState(diagramData);
       return fileId;
     } catch (err) {
       console.warn('Google Drive AppData API call failed, falling back to local sync store:', err);
       return this._saveDemoAppData(filename, diagramData);
+    }
+  }
+
+  /**
+   * Persist last active state to Google Drive AppData
+   */
+  async saveLastState(diagramData) {
+    if (!diagramData || !diagramData.nodes) return;
+    if (this.isDemoMode || !this.accessToken) {
+      localStorage.setItem('gdrive_mock_last_state', JSON.stringify({
+        lastOpenedId: diagramData.diagramId,
+        lastOpenedName: diagramData.diagramName,
+        timestamp: Date.now(),
+        diagram: diagramData
+      }));
+      return;
+    }
+
+    try {
+      const payload = {
+        app: 'ThinkGraph',
+        systemFile: 'last_state.json',
+        version: '1.0',
+        lastOpenedId: diagramData.diagramId,
+        lastOpenedName: diagramData.diagramName || 'Untitled Diagram',
+        timestamp: Date.now(),
+        canvas: diagramData.canvas || { zoom: 1, panX: 0, panY: 0 },
+        diagram: diagramData
+      };
+      const jsonStr = JSON.stringify(payload, null, 2);
+      const existingId = await this._findFileInAppData('last_state.json');
+
+      if (existingId) {
+        await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingId}?uploadType=media`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': 'application/json' },
+          body: jsonStr
+        });
+      } else {
+        const metadata = { name: 'last_state.json', parents: ['appDataFolder'], mimeType: 'application/json' };
+        const boundary = '-------314159265358979323846';
+        const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${jsonStr}\r\n--${boundary}--`;
+        await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': `multipart/related; boundary="${boundary}"` },
+          body
+        });
+      }
+    } catch(e) {
+      console.warn('Could not save last_state.json to Google Drive:', e);
     }
   }
 
@@ -236,21 +287,34 @@ export class GoogleDriveService {
     }
 
     try {
-      const index = await this.listCloudDiagrams();
-      if (!index || index.length === 0) return null;
-      
-      const lastOpenedMeta = index.sort((a,b) => (b.lastOpened || b.updatedAt || 0) - (a.lastOpened || a.updatedAt || 0))[0];
-      if (!lastOpenedMeta) return null;
+      // 1. Check system state file 'last_state.json' in appDataFolder
+      const lastStateFileId = await this._findFileInAppData('last_state.json');
+      if (lastStateFileId) {
+        const res = await fetch(`https://www.googleapis.com/drive/v3/files/${lastStateFileId}?alt=media`, {
+          headers: { Authorization: `Bearer ${this.accessToken}` }
+        });
+        if (res.ok) {
+          const stateData = await res.json();
+          if (stateData) {
+            if (stateData.diagram && stateData.diagram.nodes && stateData.diagram.nodes.length > 0) {
+              return stateData.diagram;
+            }
+            if (stateData.lastOpenedId) {
+              const diag = await this.loadCloudDiagram(stateData.lastOpenedId);
+              if (diag && diag.nodes && diag.nodes.length > 0) return diag;
+            }
+          }
+        }
+      }
 
-      const filename = `diagram_${lastOpenedMeta.id}.umlgraph`;
-      const fileId = await this._findFileInAppData(filename);
-      if (!fileId) return null;
-
-      const contentRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-        headers: { Authorization: `Bearer ${this.accessToken}` }
-      });
-      if (!contentRes.ok) return null;
-      return await contentRes.json();
+      // 2. Fallback to most recent diagram in listCloudDiagrams
+      const list = await this.listCloudDiagrams();
+      if (!list || list.length === 0) return null;
+      const mostRecent = list[0];
+      if (mostRecent) {
+        return await this.loadCloudDiagram(mostRecent.id, mostRecent.fileId);
+      }
+      return null;
     } catch (err) {
       console.warn('Error fetching last opened diagram from Google Drive AppData:', err);
       return this._getDemoLastOpened();
@@ -258,7 +322,7 @@ export class GoogleDriveService {
   }
 
   /**
-   * List Cloud Diagrams in Google Drive AppData Folder
+   * List Cloud Diagrams across Google Drive AppData & User Drive Files
    */
   async listCloudDiagrams() {
     if (this.isDemoMode || !this.accessToken) {
@@ -266,14 +330,67 @@ export class GoogleDriveService {
     }
 
     try {
-      const indexFileId = await this._findFileInAppData('index.json');
-      if (!indexFileId) return [];
+      const items = [];
+      const seenIds = new Set();
 
-      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${indexFileId}?alt=media`, {
-        headers: { Authorization: `Bearer ${this.accessToken}` }
-      });
-      if (!res.ok) return [];
-      return await res.json();
+      // 1. Check index.json in appDataFolder
+      const indexFileId = await this._findFileInAppData('index.json');
+      if (indexFileId) {
+        try {
+          const res = await fetch(`https://www.googleapis.com/drive/v3/files/${indexFileId}?alt=media`, {
+            headers: { Authorization: `Bearer ${this.accessToken}` }
+          });
+          if (res.ok) {
+            const arr = await res.json();
+            if (Array.isArray(arr)) {
+              arr.forEach(item => {
+                if (item && item.id && !seenIds.has(item.id)) {
+                  seenIds.add(item.id);
+                  items.push({
+                    id: item.id,
+                    name: item.name || 'Untitled Diagram',
+                    updatedAt: item.updatedAt || item.lastOpened || Date.now(),
+                    lastOpened: item.lastOpened || item.updatedAt || Date.now(),
+                    isAppData: true
+                  });
+                }
+              });
+            }
+          }
+        } catch(e) {}
+      }
+
+      // 2. Also search all .umlgraph files in user's accessible Drive
+      try {
+        const q = encodeURIComponent("name contains '.umlgraph' and trashed = false");
+        const driveRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime,createdTime,size)&pageSize=30`, {
+          headers: { Authorization: `Bearer ${this.accessToken}` }
+        });
+        if (driveRes.ok) {
+          const driveData = await driveRes.json();
+          if (driveData.files && Array.isArray(driveData.files)) {
+            driveData.files.forEach(f => {
+              let diagId = f.id;
+              const m = f.name.match(/^diagram_([a-zA-Z0-9_\-]+)\.umlgraph$/);
+              if (m) diagId = m[1];
+              if (!seenIds.has(diagId)) {
+                seenIds.add(diagId);
+                items.push({
+                  id: diagId,
+                  fileId: f.id,
+                  name: f.name.replace(/\.umlgraph$/, '').replace(/^diagram_/, ''),
+                  updatedAt: new Date(f.modifiedTime || f.createdTime || Date.now()).getTime(),
+                  lastOpened: new Date(f.modifiedTime || f.createdTime || Date.now()).getTime(),
+                  isDriveFile: true
+                });
+              }
+            });
+          }
+        }
+      } catch(e) {}
+
+      items.sort((a,b) => (b.lastOpened || b.updatedAt || 0) - (a.lastOpened || a.updatedAt || 0));
+      return items;
     } catch (err) {
       return this._getDemoCloudIndex();
     }
@@ -282,22 +399,28 @@ export class GoogleDriveService {
   /**
    * Fetch specific cloud diagram by ID
    */
-  async loadCloudDiagram(diagramId) {
+  async loadCloudDiagram(diagramId, fileId = null) {
     const filename = `diagram_${diagramId}.umlgraph`;
     if (this.isDemoMode || !this.accessToken) {
       return this._loadDemoDiagram(filename);
     }
 
     try {
-      const fileId = await this._findFileInAppData(filename);
-      if (!fileId) throw new Error('Diagram file not found on Google Drive');
-
-      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+      let targetFileId = fileId;
+      if (!targetFileId) {
+        targetFileId = await this._findFileInAppData(filename);
+      }
+      if (!targetFileId) {
+        targetFileId = diagramId;
+      }
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${targetFileId}?alt=media`, {
         headers: { Authorization: `Bearer ${this.accessToken}` }
       });
-      if (!res.ok) throw new Error('Failed to download diagram from Google Drive');
-      return await res.json();
-    } catch (err) {
+      if (!res.ok) return null;
+      const data = await res.json();
+      this.saveLastState(data);
+      return data;
+    } catch(err) {
       return this._loadDemoDiagram(filename);
     }
   }

@@ -6027,9 +6027,9 @@ function loadDemo2() {
   const nameEl = document.getElementById('diagram-name');
   if (nameEl) nameEl.value = state.diagramName;
 
-  state.zoom = data.canvas?.zoom || 0.42;
-  state.panX = data.canvas?.panX !== undefined ? data.canvas.panX : 160;
-  state.panY = data.canvas?.panY !== undefined ? data.canvas.panY : 80;
+  state.zoom = data.canvas?.zoom || 0.18;
+  state.panX = data.canvas?.panX !== undefined ? data.canvas.panX : 40;
+  state.panY = data.canvas?.panY !== undefined ? data.canvas.panY : 40;
   applyTransform();
 
   state.nodes = (data.nodes || []).map(n => ({
@@ -6045,8 +6045,6 @@ function loadDemo2() {
   state.priorityFilter = '';
   const pf = document.getElementById('prio-filter');
   if (pf) pf.value = '';
-  renderNodes();
-  autoFormat(true);
   snapshot();
   renderAll();
   toast('🧪 Demo 2: Food & Molecular Chemistry Graph loaded (Click Demo again for Springfield)');

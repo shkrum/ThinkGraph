@@ -1647,7 +1647,7 @@ To guarantee that **all description text is completely visible without being hid
     </div>
 
     <label style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;display:block;margin-bottom:4px">Google OAuth Client ID</label>
-    <input type="text" id="input-client-id" placeholder="e.g. 123456789-abc.apps.googleusercontent.com"
+    <input type="text" id="input-client-id" placeholder="1049811661590-voon35gj4vbhn9l0hr53qcau2gpcbfkd.apps.googleusercontent.com"
            style="width:100%;padding:9px 12px;font-size:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);color:#fff;border-radius:8px;outline:none;margin-bottom:16px;font-family:'Fira Code',monospace" />
 
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
@@ -1712,9 +1712,11 @@ To guarantee that **all description text is completely visible without being hid
 // ══════════════════════════════════════════════════════════════
 // GOOGLE DRIVE SERVICE & OAUTH MANAGER
 // ══════════════════════════════════════════════════════════════
+const DEFAULT_GOOGLE_CLIENT_ID = '1049811661590-voon35gj4vbhn9l0hr53qcau2gpcbfkd.apps.googleusercontent.com';
+
 class GoogleDriveService {
   constructor() {
-    this.clientId = localStorage.getItem('gdrive_client_id') || '';
+    this.clientId = localStorage.getItem('gdrive_client_id') || DEFAULT_GOOGLE_CLIENT_ID;
     this.accessToken = sessionStorage.getItem('gdrive_token') || null;
     this.userProfile = JSON.parse(sessionStorage.getItem('gdrive_user') || 'null');
     this.tokenClient = null;
@@ -1740,9 +1742,13 @@ class GoogleDriveService {
   }
 
   setClientId(clientId) {
-    this.clientId = (clientId || '').trim();
-    if (this.clientId) localStorage.setItem('gdrive_client_id', this.clientId);
-    else localStorage.removeItem('gdrive_client_id');
+    const trimmed = (clientId || '').trim();
+    this.clientId = trimmed || DEFAULT_GOOGLE_CLIENT_ID;
+    if (trimmed && trimmed !== DEFAULT_GOOGLE_CLIENT_ID) {
+      localStorage.setItem('gdrive_client_id', trimmed);
+    } else {
+      localStorage.removeItem('gdrive_client_id');
+    }
     this.tokenClient = null;
     this.notify();
   }
@@ -1752,7 +1758,7 @@ class GoogleDriveService {
       isSignedIn: !!(this.accessToken || (this.isDemoMode && this.userProfile)),
       user: this.userProfile,
       isDemoMode: this.isDemoMode,
-      clientId: this.clientId
+      clientId: this.clientId || DEFAULT_GOOGLE_CLIENT_ID
     };
   }
 

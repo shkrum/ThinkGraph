@@ -488,24 +488,26 @@ export class GoogleDriveService {
       mimeType: 'application/json'
     };
 
-    const boundary = '-------314159265358979323846';
-    const body =
-      `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n` +
-      JSON.stringify(metadata) + `\r\n` +
-      `--${boundary}\r\nContent-Type: application/json\r\n\r\n` +
-      contentString + `\r\n` +
-      `--${boundary}--`;
+    const formData = new FormData();
+    formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json; charset=UTF-8' }));
+    formData.append('file', new Blob([contentString], { type: 'application/json; charset=UTF-8' }));
 
     const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${this.accessToken}`,
-        'Content-Type': `multipart/related; boundary="${boundary}"`
+        Authorization: `Bearer ${this.accessToken}`
       },
-      body
+      body: formData
     });
 
-    if (!res.ok) throw new Error('Export to Google Drive failed');
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => null);
+      const errMsg = errJson?.error?.message || `HTTP ${res.status}`;
+      if (res.status === 403 && errMsg.toLowerCase().includes('has not been used in project')) {
+        throw new Error('Google Drive API is not enabled in your Google Cloud Project. Please enable "Google Drive API" in Google Cloud Console.');
+      }
+      throw new Error(errMsg);
+    }
     return await res.json();
   }
 
@@ -527,7 +529,7 @@ export class GoogleDriveService {
     };
 
     const formData = new FormData();
-    formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+    formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json; charset=UTF-8' }));
     formData.append('file', blob);
 
     const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink', {
@@ -536,7 +538,14 @@ export class GoogleDriveService {
       body: formData
     });
 
-    if (!res.ok) throw new Error('Export Image to Google Drive failed');
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => null);
+      const errMsg = errJson?.error?.message || `HTTP ${res.status}`;
+      if (res.status === 403 && errMsg.toLowerCase().includes('has not been used in project')) {
+        throw new Error('Google Drive API is not enabled in your Google Cloud Project. Please enable "Google Drive API" in Google Cloud Console.');
+      }
+      throw new Error(errMsg);
+    }
     return await res.json();
   }
 

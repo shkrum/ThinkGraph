@@ -12,14 +12,18 @@ const DEFAULT_SCOPES = [
   'openid'
 ].join(' ');
 
+export const DEFAULT_GOOGLE_CLIENT_ID = '1049811661590-voon35gj4vbhn9l0hr53qcau2gpcbfkd.apps.googleusercontent.com';
+
 export class GoogleDriveService {
   constructor() {
-    this.clientId = localStorage.getItem('gdrive_client_id') || '';
+    this.clientId = localStorage.getItem('gdrive_client_id') || DEFAULT_GOOGLE_CLIENT_ID;
     this.accessToken = sessionStorage.getItem('gdrive_token') || null;
     this.userProfile = JSON.parse(sessionStorage.getItem('gdrive_user') || 'null');
     this.tokenClient = null;
     this.listeners = [];
     this.isDemoMode = false;
+    this.isDriveApiDisabled = false;
+    this.disabledProjectId = null;
 
     // Purge any legacy simulated 'alex.developer' fake session
     if (this.userProfile && this.userProfile.email === 'alex.developer@gmail.com') {
@@ -49,13 +53,16 @@ export class GoogleDriveService {
   }
 
   setClientId(clientId) {
-    this.clientId = (clientId || '').trim();
-    if (this.clientId) {
-      localStorage.setItem('gdrive_client_id', this.clientId);
+    const trimmed = (clientId || '').trim();
+    this.clientId = trimmed || DEFAULT_GOOGLE_CLIENT_ID;
+    if (trimmed && trimmed !== DEFAULT_GOOGLE_CLIENT_ID) {
+      localStorage.setItem('gdrive_client_id', trimmed);
     } else {
       localStorage.removeItem('gdrive_client_id');
     }
     this.tokenClient = null;
+    this.isDriveApiDisabled = false;
+    this.disabledProjectId = null;
     this.notify();
   }
 
@@ -64,8 +71,38 @@ export class GoogleDriveService {
       isSignedIn: !!(this.accessToken || (this.isDemoMode && this.userProfile)),
       user: this.userProfile,
       isDemoMode: this.isDemoMode,
-      clientId: this.clientId
+      clientId: this.clientId || DEFAULT_GOOGLE_CLIENT_ID,
+      isDriveApiDisabled: this.isDriveApiDisabled,
+      disabledProjectId: this.disabledProjectId
     };
+  }
+
+  _parseDriveApiError(res, errJson) {
+    const errMsg = errJson?.error?.message || `HTTP ${res.status}`;
+    const isDriveApiDisabled = res.status === 403 && (
+      errMsg.toLowerCase().includes('has not been used in project') ||
+      errMsg.toLowerCase().includes('is not enabled') ||
+      errMsg.toLowerCase().includes('it is disabled') ||
+      errMsg.toLowerCase().includes('drive.googleapis.com')
+    );
+    let projectId = null;
+    if (isDriveApiDisabled) {
+      const m = errMsg.match(/project[ =](\d+)/i) || (this.clientId ? this.clientId.match(/^(\d+)/) : null);
+      projectId = m ? m[1] : '1049811661590';
+      this.isDriveApiDisabled = true;
+      this.disabledProjectId = projectId;
+    }
+    const err = new Error(
+      isDriveApiDisabled
+        ? `Google Drive API is not enabled in Google Cloud Project ${projectId}. Please enable "Google Drive API" in Google Cloud Console.`
+        : errMsg
+    );
+    err.isDriveApiDisabled = isDriveApiDisabled;
+    err.projectId = projectId;
+    err.enableUrl = projectId
+      ? `https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=${projectId}`
+      : 'https://console.developers.google.com/apis/api/drive.googleapis.com/overview';
+    return err;
   }
 
   /**
@@ -192,28 +229,21 @@ export class GoogleDriveService {
           parents: ['appDataFolder'],
           mimeType: 'application/json'
         };
-        const boundary = '-------314159265358979323846';
-        const delimiter = "\r\n--" + boundary + "\r\n";
-        const close_delim = "\r\n--" + boundary + "--";
-
-        const multipartRequestBody =
-          delimiter +
-          'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
-          JSON.stringify(metadata) +
-          delimiter +
-          'Content-Type: application/json\r\n\r\n' +
-          jsonStr +
-          close_delim;
+        const formData = new FormData();
+        formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json; charset=UTF-8' }));
+        formData.append('file', new Blob([jsonStr], { type: 'application/json; charset=UTF-8' }));
 
         const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${this.accessToken}`,
-            'Content-Type': `multipart/related; boundary="${boundary}"`
+            Authorization: `Bearer ${this.accessToken}`
           },
-          body: multipartRequestBody
+          body: formData
         });
-        if (!res.ok) throw new Error('Failed to save diagram to AppData');
+        if (!res.ok) {
+          const errJson = await res.json().catch(() => null);
+          throw this._parseDriveApiError(res, errJson);
+        }
         const data = await res.json();
         fileId = data.id;
       }
@@ -223,6 +253,10 @@ export class GoogleDriveService {
       await this.saveLastState(diagramData);
       return fileId;
     } catch (err) {
+      if (err.isDriveApiDisabled) {
+        this.isDriveApiDisabled = true;
+        this.disabledProjectId = err.projectId;
+      }
       console.warn('Google Drive AppData API call failed, falling back to local sync store:', err);
       return this._saveDemoAppData(filename, diagramData);
     }
@@ -386,6 +420,13 @@ export class GoogleDriveService {
               }
             });
           }
+        } else {
+          const errJson = await driveRes.json().catch(() => null);
+          const err = this._parseDriveApiError(driveRes, errJson);
+          if (err.isDriveApiDisabled) {
+            this.isDriveApiDisabled = true;
+            this.disabledProjectId = err.projectId;
+          }
         }
       } catch(e) {}
 
@@ -431,7 +472,15 @@ export class GoogleDriveService {
     const res = await fetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}`, {
       headers: { Authorization: `Bearer ${this.accessToken}` }
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => null);
+      const err = this._parseDriveApiError(res, errJson);
+      if (err.isDriveApiDisabled) {
+        this.isDriveApiDisabled = true;
+        this.disabledProjectId = err.projectId;
+      }
+      return null;
+    }
     const data = await res.json();
     return data.files && data.files.length > 0 ? data.files[0].id : null;
   }
@@ -461,13 +510,22 @@ export class GoogleDriveService {
       });
     } else {
       const metadata = { name: 'index.json', parents: ['appDataFolder'], mimeType: 'application/json' };
-      const boundary = '-------314159265358979323846';
-      const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${jsonStr}\r\n--${boundary}--`;
-      await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      const formData = new FormData();
+      formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json; charset=UTF-8' }));
+      formData.append('file', new Blob([jsonStr], { type: 'application/json; charset=UTF-8' }));
+      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': `multipart/related; boundary="${boundary}"` },
-        body
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+        body: formData
       });
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => null);
+        const err = this._parseDriveApiError(res, errJson);
+        if (err.isDriveApiDisabled) {
+          this.isDriveApiDisabled = true;
+          this.disabledProjectId = err.projectId;
+        }
+      }
     }
   }
 
@@ -502,11 +560,7 @@ export class GoogleDriveService {
 
     if (!res.ok) {
       const errJson = await res.json().catch(() => null);
-      const errMsg = errJson?.error?.message || `HTTP ${res.status}`;
-      if (res.status === 403 && errMsg.toLowerCase().includes('has not been used in project')) {
-        throw new Error('Google Drive API is not enabled in your Google Cloud Project. Please enable "Google Drive API" in Google Cloud Console.');
-      }
-      throw new Error(errMsg);
+      throw this._parseDriveApiError(res, errJson);
     }
     return await res.json();
   }
@@ -540,11 +594,7 @@ export class GoogleDriveService {
 
     if (!res.ok) {
       const errJson = await res.json().catch(() => null);
-      const errMsg = errJson?.error?.message || `HTTP ${res.status}`;
-      if (res.status === 403 && errMsg.toLowerCase().includes('has not been used in project')) {
-        throw new Error('Google Drive API is not enabled in your Google Cloud Project. Please enable "Google Drive API" in Google Cloud Console.');
-      }
-      throw new Error(errMsg);
+      throw this._parseDriveApiError(res, errJson);
     }
     return await res.json();
   }

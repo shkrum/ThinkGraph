@@ -1648,9 +1648,12 @@ To guarantee that **all description text is completely visible without being hid
         1. In <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" style="color:#60a5fa;text-decoration:underline">Google Cloud Console &rarr; Credentials</a>, create an OAuth 2.0 Client ID (Web application).<br/>
         2. Add this origin to <strong>Authorized JavaScript origins</strong>:
       </div>
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px;background:rgba(0,0,0,0.3);padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.07)">
+      <div style="display:flex;align-items:center;gap:6px;margin-top:6px;margin-bottom:6px;background:rgba(0,0,0,0.3);padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.07)">
         <code id="auth-origin-display" style="font-family:'Fira Code',monospace;font-size:11px;color:#38bdf8;flex:1;overflow:hidden;text-overflow:ellipsis">https://shkrum.github.io</code>
         <button id="btn-copy-origin" class="tb-btn" style="padding:2px 6px;font-size:10px">Copy</button>
+      </div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.4">
+        3. In <a id="link-gdrive-api-enable-guide" href="https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=1049811661590" target="_blank" rel="noopener" style="color:#38bdf8;text-decoration:underline;font-weight:600">APIs &amp; Services &rarr; Google Drive API ↗</a>, click <strong>Enable</strong> so your project allows Drive uploads.
       </div>
     </div>
 
@@ -1667,6 +1670,51 @@ To guarantee that **all description text is completely visible without being hid
         <button class="tb-btn primary" id="btn-save-client-id" style="background:linear-gradient(135deg,#2563eb,#3b82f6);border-color:#3b82f6">
           Sign In with Google
         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── GOOGLE DRIVE API ENABLE MODAL ───────────────────────── -->
+<div id="gdrive-api-enable-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.78);z-index:100005;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px">
+  <div style="background:#0f172a;border:1px solid rgba(239,68,68,0.4);border-radius:14px;padding:24px;width:520px;max-width:94vw;box-shadow:0 24px 48px rgba(0,0,0,0.8);position:relative">
+    <button id="btn-close-api-modal" style="position:absolute;top:14px;right:14px;background:transparent;border:none;color:#94a3b8;font-size:20px;cursor:pointer;line-height:1;padding:4px" title="Close">&times;</button>
+    
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div style="width:42px;height:42px;border-radius:10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px">
+        ⚠️
+      </div>
+      <div>
+        <h3 style="font-size:16px;font-weight:700;color:#fff;margin:0">Google Drive API Not Enabled</h3>
+        <p style="font-size:11px;color:#fca5a5;margin:2px 0 0">Google Cloud Project: <span id="api-modal-project-id" style="font-family:'Fira Code',monospace;font-weight:700">1049811661590</span></p>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:#cbd5e1;line-height:1.5">
+      Your Google sign-in was successful, but the <strong>Google Drive API</strong> is not enabled in your Google Cloud Project. Google Cloud requires you to enable the Google Drive API before third-party apps can save or sync files to your Drive.
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+      <a id="btn-enable-drive-api-link" href="https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=1049811661590" target="_blank" rel="noopener" class="tb-btn primary" style="padding:10px 14px;text-align:center;text-decoration:none;font-weight:700;font-size:13px;background:linear-gradient(135deg,#2563eb,#3b82f6);border-color:#3b82f6;display:flex;align-items:center;justify-content:center;gap:6px">
+        <span>🚀</span> Enable Google Drive API in Google Console ↗
+      </a>
+      <div style="font-size:10px;color:#64748b;text-align:center">Opens the Google Cloud Console API overview page directly to enable the Drive API in 1 click.</div>
+    </div>
+
+    <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;margin-top:4px">
+      <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Your Work Is Safe</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <button class="tb-btn" id="btn-api-modal-download-local" style="font-size:11px;color:#38bdf8;border-color:rgba(56,189,248,0.4);background:rgba(56,189,248,0.1)">
+          ⬇️ Download .umlgraph Locally
+        </button>
+        <div style="display:flex;gap:8px">
+          <button class="tb-btn" id="btn-api-modal-switch-client" style="font-size:11px;color:#94a3b8">
+            ⚙️ Client ID Settings
+          </button>
+          <button class="tb-btn" id="btn-api-modal-close" style="font-size:11px">
+            Close
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1730,6 +1778,8 @@ class GoogleDriveService {
     this.tokenClient = null;
     this.listeners = [];
     this.isDemoMode = false;
+    this.isDriveApiDisabled = false;
+    this.disabledProjectId = null;
 
     // Purge any legacy simulated 'alex.developer' fake session
     if (this.userProfile && this.userProfile.email === 'alex.developer@gmail.com') {
@@ -1758,6 +1808,8 @@ class GoogleDriveService {
       localStorage.removeItem('gdrive_client_id');
     }
     this.tokenClient = null;
+    this.isDriveApiDisabled = false;
+    this.disabledProjectId = null;
     this.notify();
   }
 
@@ -1766,8 +1818,38 @@ class GoogleDriveService {
       isSignedIn: !!(this.accessToken || (this.isDemoMode && this.userProfile)),
       user: this.userProfile,
       isDemoMode: this.isDemoMode,
-      clientId: this.clientId || DEFAULT_GOOGLE_CLIENT_ID
+      clientId: this.clientId || DEFAULT_GOOGLE_CLIENT_ID,
+      isDriveApiDisabled: this.isDriveApiDisabled,
+      disabledProjectId: this.disabledProjectId
     };
+  }
+
+  _parseDriveApiError(res, errJson) {
+    const errMsg = errJson?.error?.message || `HTTP ${res.status}`;
+    const isDriveApiDisabled = res.status === 403 && (
+      errMsg.toLowerCase().includes('has not been used in project') ||
+      errMsg.toLowerCase().includes('is not enabled') ||
+      errMsg.toLowerCase().includes('it is disabled') ||
+      errMsg.toLowerCase().includes('drive.googleapis.com')
+    );
+    let projectId = null;
+    if (isDriveApiDisabled) {
+      const m = errMsg.match(/project[ =](\d+)/i) || (this.clientId ? this.clientId.match(/^(\d+)/) : null);
+      projectId = m ? m[1] : '1049811661590';
+      this.isDriveApiDisabled = true;
+      this.disabledProjectId = projectId;
+    }
+    const err = new Error(
+      isDriveApiDisabled
+        ? `Google Drive API is not enabled in Google Cloud Project ${projectId}. Please enable "Google Drive API" in Google Cloud Console.`
+        : errMsg
+    );
+    err.isDriveApiDisabled = isDriveApiDisabled;
+    err.projectId = projectId;
+    err.enableUrl = projectId
+      ? `https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=${projectId}`
+      : 'https://console.developers.google.com/apis/api/drive.googleapis.com/overview';
+    return err;
   }
 
   async signIn() {
@@ -1854,14 +1936,19 @@ class GoogleDriveService {
         fileId = data.id;
       } else {
         const metadata = { name: filename, parents: ['appDataFolder'], mimeType: 'application/json' };
-        const boundary = '-------314159265358979323846';
-        const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${jsonStr}\r\n--${boundary}--`;
+        const formData = new FormData();
+        formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json; charset=UTF-8' }));
+        formData.append('file', new Blob([jsonStr], { type: 'application/json; charset=UTF-8' }));
+
         const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
           method: 'POST',
-          headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': `multipart/related; boundary="${boundary}"` },
-          body
+          headers: { Authorization: `Bearer ${this.accessToken}` },
+          body: formData
         });
-        if (!res.ok) throw new Error('Failed to save to AppData');
+        if (!res.ok) {
+          const errJson = await res.json().catch(() => null);
+          throw this._parseDriveApiError(res, errJson);
+        }
         const data = await res.json();
         fileId = data.id;
       }
@@ -1869,6 +1956,10 @@ class GoogleDriveService {
       await this.saveLastState(diagramData);
       return fileId;
     } catch(err) {
+      if (err.isDriveApiDisabled) {
+        this.isDriveApiDisabled = true;
+        this.disabledProjectId = err.projectId;
+      }
       return this._saveDemoAppData(filename, diagramData);
     }
   }
@@ -2015,6 +2106,13 @@ class GoogleDriveService {
               }
             });
           }
+        } else {
+          const errJson = await driveRes.json().catch(() => null);
+          const err = this._parseDriveApiError(driveRes, errJson);
+          if (err.isDriveApiDisabled) {
+            this.isDriveApiDisabled = true;
+            this.disabledProjectId = err.projectId;
+          }
         }
       } catch(e) {}
 
@@ -2062,11 +2160,7 @@ class GoogleDriveService {
     });
     if (!res.ok) {
       const errJson = await res.json().catch(() => null);
-      const errMsg = errJson?.error?.message || `HTTP ${res.status}`;
-      if (res.status === 403 && errMsg.toLowerCase().includes('has not been used in project')) {
-        throw new Error('Google Drive API is not enabled in your Google Cloud Project. Please enable "Google Drive API" in Google Cloud Console.');
-      }
-      throw new Error(errMsg);
+      throw this._parseDriveApiError(res, errJson);
     }
     return await res.json();
   }
@@ -2087,11 +2181,7 @@ class GoogleDriveService {
     });
     if (!res.ok) {
       const errJson = await res.json().catch(() => null);
-      const errMsg = errJson?.error?.message || `HTTP ${res.status}`;
-      if (res.status === 403 && errMsg.toLowerCase().includes('has not been used in project')) {
-        throw new Error('Google Drive API is not enabled in your Google Cloud Project. Please enable "Google Drive API" in Google Cloud Console.');
-      }
-      throw new Error(errMsg);
+      throw this._parseDriveApiError(res, errJson);
     }
     return await res.json();
   }
@@ -2101,7 +2191,15 @@ class GoogleDriveService {
     const res = await fetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}`, {
       headers: { Authorization: `Bearer ${this.accessToken}` }
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => null);
+      const err = this._parseDriveApiError(res, errJson);
+      if (err.isDriveApiDisabled) {
+        this.isDriveApiDisabled = true;
+        this.disabledProjectId = err.projectId;
+      }
+      return null;
+    }
     const data = await res.json();
     return data.files && data.files.length > 0 ? data.files[0].id : null;
   }
@@ -2124,13 +2222,22 @@ class GoogleDriveService {
       });
     } else {
       const metadata = { name: 'index.json', parents: ['appDataFolder'], mimeType: 'application/json' };
-      const boundary = '-------314159265358979323846';
-      const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${jsonStr}\r\n--${boundary}--`;
-      await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      const formData = new FormData();
+      formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json; charset=UTF-8' }));
+      formData.append('file', new Blob([jsonStr], { type: 'application/json; charset=UTF-8' }));
+      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${this.accessToken}`, 'Content-Type': `multipart/related; boundary="${boundary}"` },
-        body
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+        body: formData
       });
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => null);
+        const err = this._parseDriveApiError(res, errJson);
+        if (err.isDriveApiDisabled) {
+          this.isDriveApiDisabled = true;
+          this.disabledProjectId = err.projectId;
+        }
+      }
     }
   }
 
@@ -3952,6 +4059,31 @@ async function renderGoogleDriveMenu() {
 
   try {
     const list = await googleDriveService.listCloudDiagrams();
+
+    if (googleDriveService.isDriveApiDisabled) {
+      const proj = googleDriveService.disabledProjectId || '1049811661590';
+      const enableUrl = `https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=${proj}`;
+      container.innerHTML = `
+        <div style="padding:8px 12px;background:rgba(239,68,68,0.12);border-radius:6px;margin:4px 6px;border:1px solid rgba(239,68,68,0.25)">
+          <div style="font-size:10px;font-weight:700;color:#fca5a5;display:flex;align-items:center;gap:4px">
+            <span>⚠️</span> Drive API Not Enabled
+          </div>
+          <div style="font-size:10px;color:#cbd5e1;margin-top:2px;line-height:1.3">
+            Project <strong style="color:#fff">${proj}</strong> requires Google Drive API.
+          </div>
+          <a href="${enableUrl}" target="_blank" rel="noopener" class="tb-btn" style="display:inline-block;margin-top:6px;padding:3px 8px;font-size:10px;background:#ef4444;color:#fff;text-decoration:none;border-radius:4px;font-weight:600">
+            Enable in Google Console ↗
+          </a>
+        </div>
+        <div class="menu-item" id="btn-save-current-to-gdrive" style="color:#38bdf8;font-size:11px;padding:6px 12px">💾 Save Backup / Download Locally</div>
+      `;
+      document.getElementById('btn-save-current-to-gdrive')?.addEventListener('click', e => {
+        e.stopPropagation();
+        exportToGoogleDriveFile();
+      });
+      return;
+    }
+
     if (!list || list.length === 0) {
       container.innerHTML = `
         <div class="submenu-empty">No diagrams found on Google Drive</div>
@@ -4305,6 +4437,65 @@ document.getElementById('btn-save-client-id')?.addEventListener('click', async (
   await handleGoogleSignIn();
 });
 
+// ── Google Drive API Enable Modal Handler ─────────────────────
+let pendingExportData = null;
+let pendingExportFilename = null;
+
+function showGoogleDriveApiEnableModal(projectId, diagramData, filename) {
+  const modal = document.getElementById('gdrive-api-enable-modal');
+  if (!modal) return;
+  const safeProj = projectId || googleDriveService.disabledProjectId || '1049811661590';
+  const projEl = document.getElementById('api-modal-project-id');
+  if (projEl) projEl.textContent = safeProj;
+  const link = document.getElementById('btn-enable-drive-api-link');
+  if (link) {
+    link.href = `https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=${safeProj}`;
+  }
+  pendingExportData = diagramData;
+  pendingExportFilename = filename || `${(state.diagramName||'diagram').replace(/\s+/g,'_')}.umlgraph`;
+
+  // Always auto-backup to local storage so user never loses their diagram
+  if (diagramData) {
+    try {
+      googleDriveService._saveDemoAppData(pendingExportFilename, diagramData);
+      googleDriveService.saveLastState(diagramData);
+      renderGoogleDriveMenu();
+    } catch(e) {}
+  }
+
+  modal.style.display = 'flex';
+}
+
+window.showGoogleDriveApiEnableModal = showGoogleDriveApiEnableModal;
+
+document.getElementById('btn-close-api-modal')?.addEventListener('click', () => {
+  document.getElementById('gdrive-api-enable-modal').style.display = 'none';
+});
+document.getElementById('btn-api-modal-close')?.addEventListener('click', () => {
+  document.getElementById('gdrive-api-enable-modal').style.display = 'none';
+});
+document.getElementById('btn-api-modal-download-local')?.addEventListener('click', () => {
+  const data = pendingExportData || {
+    app: 'UMLGraphStudio', version: '1.0',
+    exportDate: new Date().toISOString(),
+    diagramName: state.diagramName,
+    diagramId: state.diagramId,
+    canvas: { zoom: state.zoom, panX: state.panX, panY: state.panY },
+    nodes: state.nodes,
+    connections: state.connections,
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = pendingExportFilename || `${(state.diagramName||'diagram').replace(/\s+/g,'_')}.umlgraph`;
+  a.click();
+  toast('Downloaded diagram locally ✓');
+});
+document.getElementById('btn-api-modal-switch-client')?.addEventListener('click', () => {
+  document.getElementById('gdrive-api-enable-modal').style.display = 'none';
+  handleGoogleSignIn(true);
+});
+
 // ── Google Drive File & Image Export ──────────────────────────
 async function exportToGoogleDriveFile() {
   if (!googleDriveService.getUserState().isSignedIn) {
@@ -4315,17 +4506,18 @@ async function exportToGoogleDriveFile() {
   }
 
   toast('Saving file to Google Drive...');
+  const data = {
+    app: 'UMLGraphStudio', version: '1.0',
+    exportDate: new Date().toISOString(),
+    diagramName: state.diagramName,
+    diagramId: state.diagramId,
+    canvas: { zoom: state.zoom, panX: state.panX, panY: state.panY },
+    nodes: state.nodes,
+    connections: state.connections,
+  };
+  const filename = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}_${Date.now()}.umlgraph`;
+
   try {
-    const data = {
-      app: 'UMLGraphStudio', version: '1.0',
-      exportDate: new Date().toISOString(),
-      diagramName: state.diagramName,
-      diagramId: state.diagramId,
-      canvas: { zoom: state.zoom, panX: state.panX, panY: state.panY },
-      nodes: state.nodes,
-      connections: state.connections,
-    };
-    const filename = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}_${Date.now()}.umlgraph`;
     const res = await googleDriveService.exportFileToDrive(filename, JSON.stringify(data, null, 2));
 
     await googleDriveService.saveDiagramToAppData(data);
@@ -4334,7 +4526,13 @@ async function exportToGoogleDriveFile() {
 
     showExportToast('Saved file to Google Drive ☁️', res.webViewLink);
   } catch(err) {
-    alert('Failed to save to Google Drive: ' + err.message);
+    console.error('Save to Google Drive failed:', err);
+    if (err.isDriveApiDisabled || err.message?.toLowerCase().includes('google drive api is not enabled') || err.message?.toLowerCase().includes('not been used in project')) {
+      const proj = err.projectId || googleDriveService.disabledProjectId || '1049811661590';
+      showGoogleDriveApiEnableModal(proj, data, filename);
+    } else {
+      alert('Failed to save to Google Drive: ' + err.message);
+    }
   }
 }
 
@@ -4364,6 +4562,8 @@ async function exportToGoogleDriveImage() {
   });
   if (state.nodes.length === 0) { minX=0; minY=0; maxX=800; maxY=600; }
 
+  const filename = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}.png`;
+
   try {
     const canvas = await html2canvas(world, {
       backgroundColor: currentTheme === 'light' ? '#f8fafc' : '#0a0f1e',
@@ -4372,12 +4572,17 @@ async function exportToGoogleDriveImage() {
       scale: window.devicePixelRatio || 2
     });
     const dataUrl = canvas.toDataURL('image/png');
-    const filename = `${(state.diagramName||'diagram').replace(/\s+/g,'_')}.png`;
 
     const res = await googleDriveService.exportImageToDrive(filename, dataUrl);
     showExportToast('Saved PNG image to Google Drive ☁️', res.webViewLink);
   } catch(err) {
-    alert('Failed to save image to Google Drive: ' + err.message);
+    console.error('Save image to Google Drive failed:', err);
+    if (err.isDriveApiDisabled || err.message?.toLowerCase().includes('google drive api is not enabled') || err.message?.toLowerCase().includes('not been used in project')) {
+      const proj = err.projectId || googleDriveService.disabledProjectId || '1049811661590';
+      showGoogleDriveApiEnableModal(proj, null, filename);
+    } else {
+      alert('Failed to save image to Google Drive: ' + err.message);
+    }
   } finally {
     state.zoom = oldZoom; state.panX = oldPanX; state.panY = oldPanY;
     applyTransform();

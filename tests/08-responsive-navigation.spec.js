@@ -116,6 +116,7 @@ test.describe('Responsive Navigation & Small Screen / Resized Desktop Adaptabili
     await homerNode.click();
     await expect(inspector).toHaveClass(/open/);
     await expect(backdrop).toHaveClass(/active/);
+    await page.screenshot({ path: 'C:/Users/shkru/.gemini/antigravity-ide/brain/41307aa2-7525-4802-8d48-961fc37996f5/smartphone_inspector_drawer.png' });
 
     // Close button should be present in mobile close bar
     const closeBtn = page.locator('#btn-close-insp-panel');
@@ -145,5 +146,19 @@ test.describe('Responsive Navigation & Small Screen / Resized Desktop Adaptabili
     // Verify enlarged touch target for thumbs (>=30px)
     expect(box.width).toBeGreaterThanOrEqual(30);
     expect(box.height).toBeGreaterThanOrEqual(30);
+    
+    // Capture mobile screen with zoom controls and responsive toolbar
+    await page.screenshot({ path: 'C:/Users/shkru/.gemini/antigravity-ide/brain/41307aa2-7525-4802-8d48-961fc37996f5/smartphone_viewport_main.png' });
+
+    // Capture global properties modal on mobile via Tools menu
+    await page.locator('#btn-tools-menu').click();
+    await page.locator('#menu-tool-global-props').click();
+    const gpModal = page.locator('#global-props-modal');
+    await expect(gpModal).toBeVisible();
+    await page.screenshot({ path: 'C:/Users/shkru/.gemini/antigravity-ide/brain/41307aa2-7525-4802-8d48-961fc37996f5/smartphone_global_props.png' });
+    await page.locator('#btn-close-global-props').click();
+    await expect(gpModal).toBeHidden();
   });
 });
+
+

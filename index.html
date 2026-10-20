@@ -53,22 +53,37 @@ body{
 .logo-short{display:none}
 .logo-full{display:inline}
 #file-menu-wrap{order:2;flex-shrink:0}
-#settings-menu-wrap{order:3;flex-shrink:0}
-#btn-ai-help{order:4;flex-shrink:0}
-#diagram-name{order:5;flex-shrink:1}
-.tb-sep-desktop{order:6}
+#tools-menu-wrap{order:3;flex-shrink:0}
+#settings-menu-wrap{order:4;flex-shrink:0}
+#btn-ai-help{order:5;flex-shrink:0}
+#diagram-name{order:6;flex-shrink:1}
+.tb-sep-desktop{order:7}
+#tb-tools-container{
+  order:8;
+  display:flex;align-items:center;position:relative;
+  min-width:0;flex:1 1 auto;gap:4px;
+}
 #tb-tools-scroll{
-  order:7;
   display:flex;align-items:center;gap:8px;
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
   min-width:0;
-  flex-shrink:1;
+  flex:1 1 auto;
+  scroll-behavior:smooth;
 }
 #tb-tools-scroll::-webkit-scrollbar{display:none}
+.tb-scroll-btn{
+  display:none;
+  width:22px;height:26px;align-items:center;justify-content:center;
+  background:rgba(15,23,42,0.9);border:1px solid rgba(255,255,255,0.2);
+  border-radius:6px;color:#cbd5e1;cursor:pointer;font-size:16px;font-weight:700;
+  line-height:1;z-index:10;transition:all 0.15s ease;flex-shrink:0;padding:0;
+}
+.tb-scroll-btn:hover{background:rgba(99,102,241,0.4);color:#fff;border-color:#6366f1}
+.tb-scroll-btn.visible{display:flex}
 #google-auth-container{
-  order:8;
+  order:9;
   margin-left:auto;
   flex-shrink:0;
 }
@@ -758,8 +773,8 @@ textarea.node-inline-input{
   font-size:11px;font-weight:400;resize:vertical;min-height:54px;line-height:1.4;
 }
 
-/* Mobile & Touchscreen Adaptations */
-@media (max-width: 768px) {
+/* Mobile & Responsive Adaptations (triggers on mobile and resized desktop windows) */
+@media (max-width: 1080px) {
   :root {
     --toolbar-height: 90px;
   }
@@ -784,12 +799,20 @@ textarea.node-inline-input{
   .tb-sep-desktop {
     display: none !important;
   }
-  #tb-tools-scroll {
+  #tb-tools-container {
     height: 44px;
     width: 100%;
     padding: 0 8px;
-    gap: 6px;
+    gap: 4px;
     flex-shrink: 0;
+    display: flex !important;
+  }
+  #tb-tools-scroll {
+    height: 40px;
+    width: 100%;
+    padding: 0;
+    gap: 6px;
+    flex: 1 1 auto;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     display: flex !important;
@@ -813,64 +836,83 @@ textarea.node-inline-input{
     display: flex !important;
   }
 
-  /* Compact header elements on phone */
-  .logo-full { display: none !important; }
-  .logo-short { display: inline !important; font-size: 13px; }
-  
-  #btn-file-menu, #btn-settings-menu {
-    padding: 5px 6px;
-    font-size: 12px;
-  }
-  #btn-ai-help {
-    padding: 5px 6px;
-    font-size: 12px;
-  }
-  #btn-ai-help .ai-help-label {
-    display: none;
-  }
-  #diagram-name {
-    width: auto;
-    min-width: 45px;
-    max-width: 85px;
-    font-size: 11px;
-    padding: 2px 4px;
-  }
-  #google-auth-container {
-    margin-left: auto;
-  }
-  #btn-gdrive-login {
-    padding: 4px 7px;
-    font-size: 11px;
-    gap: 3px;
-  }
-  .gdrive-btn-full { display: none !important; }
-  .gdrive-btn-short { display: inline !important; }
-  #user-display-name {
-    max-width: 55px;
-    font-size: 11px;
-  }
-  #btn-user-badge {
-    padding: 2px 5px;
+  /* Compact header elements on phone & small window widths */
+  @media (max-width: 768px) {
+    .logo-full { display: none !important; }
+    .logo-short { display: inline !important; font-size: 13px; }
+    
+    #btn-file-menu, #btn-tools-menu, #btn-settings-menu {
+      padding: 5px 6px;
+      font-size: 12px;
+    }
+    #btn-ai-help {
+      padding: 5px 6px;
+      font-size: 12px;
+    }
+    #btn-ai-help .ai-help-label {
+      display: none;
+    }
+    #diagram-name {
+      width: auto;
+      min-width: 40px;
+      max-width: 80px;
+      font-size: 11px;
+      padding: 2px 4px;
+    }
+    #google-auth-container {
+      margin-left: auto;
+    }
+    #btn-gdrive-login {
+      padding: 4px 7px;
+      font-size: 11px;
+      gap: 3px;
+    }
+    .gdrive-btn-full { display: none !important; }
+    .gdrive-btn-short { display: inline !important; }
+    #user-display-name {
+      max-width: 55px;
+      font-size: 11px;
+    }
+    #btn-user-badge {
+      padding: 2px 5px;
+    }
+
+    /* Mobile Submenu Accordion Layout */
+    .menu-item.has-sub {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .menu-item.has-sub > .submenu {
+      position: static !important;
+      left: auto !important;
+      top: auto !important;
+      margin: 4px 4px 4px 10px !important;
+      background: rgba(0, 0, 0, 0.4) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-left: 2px solid #6366f1 !important;
+      border-radius: 6px !important;
+      box-shadow: none !important;
+      min-width: 0 !important;
+      max-height: 220px !important;
+      overflow-y: auto !important;
+    }
   }
 
-  /* Mobile Submenu Accordion Layout */
-  .menu-item.has-sub {
-    flex-direction: column;
-    align-items: stretch;
+  @media (max-width: 440px) {
+    #diagram-name {
+      max-width: 55px;
+      font-size: 10px;
+    }
+    #btn-file-menu, #btn-tools-menu, #btn-settings-menu {
+      padding: 4px 4px;
+      font-size: 11px;
+    }
   }
-  .menu-item.has-sub > .submenu {
-    position: static !important;
-    left: auto !important;
-    top: auto !important;
-    margin: 4px 4px 4px 10px !important;
-    background: rgba(0, 0, 0, 0.4) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-left: 2px solid #6366f1 !important;
-    border-radius: 6px !important;
-    box-shadow: none !important;
-    min-width: 0 !important;
-    max-height: 220px !important;
-    overflow-y: auto !important;
+
+  @media (max-width: 360px) {
+    #toolbar .logo {
+      display: none !important;
+    }
   }
 }
 
@@ -941,7 +983,16 @@ body.light-theme .submenu {
   color: #0f172a;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
 }
-@media (max-width: 768px) {
+body.light-theme .tb-scroll-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #4338ca;
+}
+body.light-theme .tb-scroll-btn:hover {
+  background: #e0e7ff;
+  border-color: #6366f1;
+}
+@media (max-width: 1080px) {
   body.light-theme .menu-item.has-sub > .submenu {
     background: rgba(0, 0, 0, 0.04) !important;
     border-color: rgba(0, 0, 0, 0.08) !important;
@@ -1161,6 +1212,41 @@ body.light-theme #gdrive-client-modal > div {
       </div>
     </div>
 
+    <div class="dropdown" id="tools-menu-wrap">
+      <button class="tb-btn" id="btn-tools-menu" style="border:none;background:transparent;font-size:13px">Tools ▾</button>
+      <div class="dropdown-content" id="tools-menu-dropdown">
+        <div class="menu-item" id="menu-tool-add-node">
+          <span style="display:flex;align-items:center;gap:6px">➕ Add Node</span>
+        </div>
+        <div class="menu-item" id="menu-tool-add-group">
+          <span style="display:flex;align-items:center;gap:6px">⬚ Add Group Frame</span>
+        </div>
+        <div class="menu-item" id="menu-tool-demo">
+          <span style="display:flex;align-items:center;gap:6px">⚡ Toggle Demo Diagram</span>
+        </div>
+        <div class="menu-item" id="menu-tool-format">
+          <span style="display:flex;align-items:center;gap:6px">🪄 Auto-Format Layout</span>
+        </div>
+        <div class="menu-item" id="menu-tool-inspector">
+          <span style="display:flex;align-items:center;gap:6px">⚙️ Toggle Inspector Panel</span>
+        </div>
+        <div class="menu-item" id="menu-tool-global-props">
+          <span style="display:flex;align-items:center;gap:6px">🌐 Global Properties...</span>
+        </div>
+        <div class="menu-sep"></div>
+        <div class="menu-item has-sub" id="menu-tool-lines-wrap">
+          <span style="display:flex;align-items:center;gap:6px">Line Connection Type</span>
+          <span class="menu-arrow">▸</span>
+          <div class="submenu">
+            <div class="menu-item" id="menu-line-arrow">→ Directed Arrow</div>
+            <div class="menu-item" id="menu-line-both">↔ Bi-directional</div>
+            <div class="menu-item" id="menu-line-dotted">╌ Dotted Dependency</div>
+            <div class="menu-item" id="menu-line-solid">— Solid Line</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="dropdown" id="settings-menu-wrap">
       <button class="tb-btn" id="btn-settings-menu" style="border:none;background:transparent;font-size:13px">Settings ▾</button>
       <div class="dropdown-content" id="settings-menu-dropdown">
@@ -1224,50 +1310,54 @@ body.light-theme #gdrive-client-modal > div {
 
   <div class="tb-sep tb-sep-desktop"></div>
 
-  <!-- Action tools scroll container (Row 2 on mobile, single continuous toolbar on desktop) -->
-  <div id="tb-tools-scroll">
-    <button class="tb-btn primary" id="btn-add-node" title="Add new node to canvas">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Add Node
-    </button>
+  <!-- Action tools container with scroll buttons for desktop window resizing and mobile swiping -->
+  <div id="tb-tools-container">
+    <button class="tb-scroll-btn left" id="btn-tb-scroll-left" title="Scroll tools left" aria-label="Scroll tools left">‹</button>
+    <div id="tb-tools-scroll">
+      <button class="tb-btn primary" id="btn-add-node" title="Add new node to canvas">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Node
+      </button>
 
-    <button class="tb-btn" id="btn-add-group" title="Add a Group frame: nodes placed inside move together with it" style="background:rgba(129,140,248,0.12);border-color:rgba(129,140,248,0.45);border-style:dashed;color:#c7d2fe">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2"><rect x="2" y="3" width="20" height="18" rx="3"/></svg>
-      Add Group
-    </button>
+      <button class="tb-btn" id="btn-add-group" title="Add a Group frame: nodes placed inside move together with it" style="background:rgba(129,140,248,0.12);border-color:rgba(129,140,248,0.45);border-style:dashed;color:#c7d2fe">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2"><rect x="2" y="3" width="20" height="18" rx="3"/></svg>
+        Add Group
+      </button>
 
-    <!-- Prominently placed Demo button for easy tap on phone and desktop -->
-    <button class="tb-btn" id="btn-demo" title="Load sample demo diagram" style="background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.4);color:#c7d2fe;font-weight:600">⚡ Demo</button>
+      <!-- Prominently placed Demo button for easy tap on phone and desktop -->
+      <button class="tb-btn" id="btn-demo" title="Load sample demo diagram" style="background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.4);color:#c7d2fe;font-weight:600">⚡ Demo</button>
 
-    <button class="tb-btn amber" id="btn-format" title="Auto-arrange nodes to eliminate overlaps">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="5" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="8" y="16" width="8" height="5" rx="1"/><line x1="6.5" y1="8" x2="6.5" y2="14"/><line x1="17.5" y1="8" x2="17.5" y2="13"/><line x1="6.5" y1="14" x2="17.5" y2="14"/><line x1="12" y1="14" x2="12" y2="16"/></svg>
-      Format
-    </button>
+      <button class="tb-btn amber" id="btn-format" title="Auto-arrange nodes to eliminate overlaps">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="5" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="8" y="16" width="8" height="5" rx="1"/><line x1="6.5" y1="8" x2="6.5" y2="14"/><line x1="17.5" y1="8" x2="17.5" y2="13"/><line x1="6.5" y1="14" x2="17.5" y2="14"/><line x1="12" y1="14" x2="12" y2="16"/></svg>
+        Format
+      </button>
 
-    <button class="tb-btn" id="btn-toggle-inspector" title="Toggle Inspector panel">⚙️ Inspector</button>
+      <button class="tb-btn" id="btn-toggle-inspector" title="Toggle Inspector panel">⚙️ Inspector</button>
 
-    <button class="tb-btn" id="btn-global-props" title="Change global diagram properties (all node shapes, arrow types, routing, colors)" style="background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.35);color:#c7d2fe">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"/></svg>
-      Global Properties
-    </button>
+      <button class="tb-btn" id="btn-global-props" title="Change global diagram properties (all node shapes, arrow types, routing, colors)" style="background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.35);color:#c7d2fe">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Global Properties
+      </button>
 
-    <div class="tb-sep"></div>
+      <div class="tb-sep"></div>
 
-    <!-- Line type selector -->
-    <span style="font-size:11px;color:#64748b;white-space:nowrap">Line:</span>
-    <div id="line-type-group">
-      <button class="tb-btn active" id="lt-one-way"   data-lt="one-way"  title="Directed arrow →">→ Arrow</button>
-      <button class="tb-btn"        id="lt-two-way"   data-lt="two-way"  title="Bi-directional ↔">↔ Both</button>
-      <button class="tb-btn"        id="lt-dotted"    data-lt="dotted"   title="Dotted dependency - - ->">╌ Dotted</button>
-      <button class="tb-btn"        id="lt-solid"     data-lt="solid"    title="Plain solid line ——">— Solid</button>
+      <!-- Line type selector -->
+      <span style="font-size:11px;color:#64748b;white-space:nowrap">Line:</span>
+      <div id="line-type-group">
+        <button class="tb-btn active" id="lt-one-way"   data-lt="one-way"  title="Directed arrow →">→ Arrow</button>
+        <button class="tb-btn"        id="lt-two-way"   data-lt="two-way"  title="Bi-directional ↔">↔ Both</button>
+        <button class="tb-btn"        id="lt-dotted"    data-lt="dotted"   title="Dotted dependency - - ->">╌ Dotted</button>
+        <button class="tb-btn"        id="lt-solid"     data-lt="solid"    title="Plain solid line ——">— Solid</button>
+      </div>
+
+      <div class="tb-sep"></div>
+
+      <span style="font-size:11px;color:#64748b;white-space:nowrap">Filter:</span>
+      <input id="prio-filter" type="text" maxlength="3" placeholder="P01…" autocomplete="off"
+        style="width:50px;padding:4px 7px;font-size:11px;font-family:'Fira Code',monospace;font-weight:700;color:#fbbf24;text-transform:uppercase;
+               background:rgba(0,0,0,0.4);border:1px solid rgba(251,191,36,0.3);border-radius:6px;outline:none;color:#fbbf24;text-align:center"/>
     </div>
-
-    <div class="tb-sep"></div>
-
-    <span style="font-size:11px;color:#64748b;white-space:nowrap">Filter:</span>
-    <input id="prio-filter" type="text" maxlength="3" placeholder="P01…" autocomplete="off"
-      style="width:50px;padding:4px 7px;font-size:11px;font-family:'Fira Code',monospace;font-weight:700;color:#fbbf24;text-transform:uppercase;
-             background:rgba(0,0,0,0.4);border:1px solid rgba(251,191,36,0.3);border-radius:6px;outline:none;color:#fbbf24;text-align:center"/>
+    <button class="tb-scroll-btn right" id="btn-tb-scroll-right" title="Scroll tools right" aria-label="Scroll tools right">›</button>
   </div>
 
   <input type="file" id="file-import" accept=".json,.umlgraph" style="display:none"/>
@@ -4362,24 +4452,83 @@ function applyTheme(theme) {
 applyTheme(currentTheme);
 
 const fmWrap = document.getElementById('file-menu-wrap');
+const tmWrap = document.getElementById('tools-menu-wrap');
 const smWrap = document.getElementById('settings-menu-wrap');
 
 document.getElementById('btn-file-menu')?.addEventListener('click', e => {
   e.stopPropagation();
   renderGoogleDriveMenu();
   renderRecentMenu();
+  if (tmWrap) tmWrap.classList.remove('open');
   if (smWrap) smWrap.classList.remove('open');
   if (userProfileDropdown) userProfileDropdown.classList.remove('open');
   if (userProfileMenu) userProfileMenu.style.display = 'none';
-  fmWrap.classList.toggle('open');
+  fmWrap?.classList.toggle('open');
+});
+
+document.getElementById('btn-tools-menu')?.addEventListener('click', e => {
+  e.stopPropagation();
+  if (fmWrap) fmWrap.classList.remove('open');
+  if (smWrap) smWrap.classList.remove('open');
+  if (userProfileDropdown) userProfileDropdown.classList.remove('open');
+  if (userProfileMenu) userProfileMenu.style.display = 'none';
+  tmWrap?.classList.toggle('open');
 });
 
 document.getElementById('btn-settings-menu')?.addEventListener('click', e => {
   e.stopPropagation();
   if (fmWrap) fmWrap.classList.remove('open');
+  if (tmWrap) tmWrap.classList.remove('open');
   if (userProfileDropdown) userProfileDropdown.classList.remove('open');
   if (userProfileMenu) userProfileMenu.style.display = 'none';
   if (smWrap) smWrap.classList.toggle('open');
+});
+
+// Tools menu action items
+document.getElementById('menu-tool-add-node')?.addEventListener('click', () => {
+  if (tmWrap) tmWrap.classList.remove('open');
+  document.getElementById('btn-add-node')?.click();
+});
+document.getElementById('menu-tool-add-group')?.addEventListener('click', () => {
+  if (tmWrap) tmWrap.classList.remove('open');
+  document.getElementById('btn-add-group')?.click();
+});
+document.getElementById('menu-tool-demo')?.addEventListener('click', () => {
+  if (tmWrap) tmWrap.classList.remove('open');
+  document.getElementById('btn-demo')?.click();
+});
+document.getElementById('menu-tool-format')?.addEventListener('click', () => {
+  if (tmWrap) tmWrap.classList.remove('open');
+  document.getElementById('btn-format')?.click();
+});
+document.getElementById('menu-tool-inspector')?.addEventListener('click', () => {
+  if (tmWrap) tmWrap.classList.remove('open');
+  document.getElementById('btn-toggle-inspector')?.click();
+});
+document.getElementById('menu-tool-global-props')?.addEventListener('click', () => {
+  if (tmWrap) tmWrap.classList.remove('open');
+  document.getElementById('btn-global-props')?.click();
+});
+
+document.getElementById('menu-line-arrow')?.addEventListener('click', () => {
+  if (tmWrap) tmWrap.classList.remove('open');
+  document.getElementById('lt-one-way')?.click();
+  toast('Line type: Directed Arrow →');
+});
+document.getElementById('menu-line-both')?.addEventListener('click', () => {
+  if (tmWrap) tmWrap.classList.remove('open');
+  document.getElementById('lt-two-way')?.click();
+  toast('Line type: Bi-directional ↔');
+});
+document.getElementById('menu-line-dotted')?.addEventListener('click', () => {
+  if (tmWrap) tmWrap.classList.remove('open');
+  document.getElementById('lt-dotted')?.click();
+  toast('Line type: Dotted Dependency ╌');
+});
+document.getElementById('menu-line-solid')?.addEventListener('click', () => {
+  if (tmWrap) tmWrap.classList.remove('open');
+  document.getElementById('lt-solid')?.click();
+  toast('Line type: Solid Line —');
 });
 
 document.getElementById('menu-theme-dark')?.addEventListener('click', () => {
@@ -4424,8 +4573,47 @@ document.querySelectorAll('.menu-item.has-sub').forEach(item => {
   });
 });
 
+// Tools bar scrolling (mouse wheel horizontal scroll + chevrons)
+const toolsScroll = document.getElementById('tb-tools-scroll');
+const btnScrollLeft = document.getElementById('btn-tb-scroll-left');
+const btnScrollRight = document.getElementById('btn-tb-scroll-right');
+
+function updateScrollArrows() {
+  if (!toolsScroll) return;
+  const maxScroll = toolsScroll.scrollWidth - toolsScroll.clientWidth;
+  const hasOverflow = maxScroll > 6;
+  if (btnScrollLeft) btnScrollLeft.classList.toggle('visible', hasOverflow && toolsScroll.scrollLeft > 6);
+  if (btnScrollRight) btnScrollRight.classList.toggle('visible', hasOverflow && toolsScroll.scrollLeft < maxScroll - 6);
+}
+
+if (toolsScroll) {
+  // Convert mouse wheel on toolbar to horizontal scrolling for desktop users
+  toolsScroll.addEventListener('wheel', e => {
+    if (e.deltaY !== 0) {
+      e.preventDefault();
+      toolsScroll.scrollLeft += e.deltaY;
+      updateScrollArrows();
+    }
+  }, { passive: false });
+
+  toolsScroll.addEventListener('scroll', updateScrollArrows);
+  window.addEventListener('resize', updateScrollArrows);
+  setTimeout(updateScrollArrows, 300);
+}
+
+btnScrollLeft?.addEventListener('click', () => {
+  toolsScroll?.scrollBy({ left: -220, behavior: 'smooth' });
+  setTimeout(updateScrollArrows, 280);
+});
+
+btnScrollRight?.addEventListener('click', () => {
+  toolsScroll?.scrollBy({ left: 220, behavior: 'smooth' });
+  setTimeout(updateScrollArrows, 280);
+});
+
 document.addEventListener('click', () => {
   if (fmWrap) fmWrap.classList.remove('open');
+  if (tmWrap) tmWrap.classList.remove('open');
   if (smWrap) smWrap.classList.remove('open');
   document.querySelectorAll('.menu-item.has-sub.open').forEach(el => el.classList.remove('open'));
   const userMenu = document.getElementById('user-profile-menu');

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"/>
 <title>UML Graph Studio</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -25,6 +25,10 @@ body{
 
 :root {
   --toolbar-height: 56px;
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
 }
 
 /* ─── TOOLBAR ─────────────────────────────────────────────── */
@@ -333,7 +337,19 @@ body.light-theme .ggroup .group-count{color:#4338ca}
   margin-bottom: 2px;
 }
 
-/* ─── INSPECTOR ───────────────────────────────────────────── */
+/* ─── INSPECTOR & MOBILE BACKDROP ───────────────────────── */
+#inspector-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 99990;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  pointer-events: none;
+}
 #inspector{
   position:fixed;top:var(--toolbar-height);right:0;bottom:0;width:320px;
   background:rgba(10,15,30,0.94);
@@ -773,15 +789,15 @@ textarea.node-inline-input{
   font-size:11px;font-weight:400;resize:vertical;min-height:54px;line-height:1.4;
 }
 
-/* Mobile & Responsive Adaptations (triggers on mobile and resized desktop windows) */
+/* Mobile & Responsive Adaptations (smartphones & small desktop windows) */
 @media (max-width: 1080px) {
   :root {
-    --toolbar-height: 90px;
+    --toolbar-height: calc(90px + var(--sat));
   }
   #toolbar {
     flex-direction: column;
     height: var(--toolbar-height);
-    padding: 0;
+    padding: var(--sat) max(8px, var(--sar)) 0 max(8px, var(--sal));
     align-items: stretch;
     gap: 0;
   }
@@ -821,13 +837,19 @@ textarea.node-inline-input{
     top: var(--toolbar-height);
     right: 0;
   }
+  #inspector-backdrop.active {
+    display: block !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
   #inspector {
     top: var(--toolbar-height);
     width: 100%;
-    max-width: 340px;
+    max-width: 360px;
     transform: translateX(100%);
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.6);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: -6px 0 32px rgba(0, 0, 0, 0.7);
+    z-index: 99999 !important;
   }
   #inspector.open {
     transform: translateX(0);
@@ -835,84 +857,168 @@ textarea.node-inline-input{
   .insp-mobile-close-bar {
     display: flex !important;
   }
+}
 
-  /* Compact header elements on phone & small window widths */
-  @media (max-width: 768px) {
-    .logo-full { display: none !important; }
-    .logo-short { display: inline !important; font-size: 13px; }
-    
-    #btn-file-menu, #btn-tools-menu, #btn-settings-menu {
-      padding: 5px 6px;
-      font-size: 12px;
-    }
-    #btn-ai-help {
-      padding: 5px 6px;
-      font-size: 12px;
-    }
-    #btn-ai-help .ai-help-label {
-      display: none;
-    }
-    #diagram-name {
-      width: auto;
-      min-width: 40px;
-      max-width: 80px;
-      font-size: 11px;
-      padding: 2px 4px;
-    }
-    #google-auth-container {
-      margin-left: auto;
-    }
-    #btn-gdrive-login {
-      padding: 4px 7px;
-      font-size: 11px;
-      gap: 3px;
-    }
-    .gdrive-btn-full { display: none !important; }
-    .gdrive-btn-short { display: inline !important; }
-    #user-display-name {
-      max-width: 55px;
-      font-size: 11px;
-    }
-    #btn-user-badge {
-      padding: 2px 5px;
-    }
-
-    /* Mobile Submenu Accordion Layout */
-    .menu-item.has-sub {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .menu-item.has-sub > .submenu {
-      position: static !important;
-      left: auto !important;
-      top: auto !important;
-      margin: 4px 4px 4px 10px !important;
-      background: rgba(0, 0, 0, 0.4) !important;
-      border: 1px solid rgba(255, 255, 255, 0.08) !important;
-      border-left: 2px solid #6366f1 !important;
-      border-radius: 6px !important;
-      box-shadow: none !important;
-      min-width: 0 !important;
-      max-height: 220px !important;
-      overflow-y: auto !important;
-    }
+/* ─── SMARTPHONE / TABLET ADAPTATIONS (<= 768px) ──────────── */
+@media (max-width: 768px) {
+  .logo-full { display: none !important; }
+  .logo-short { display: inline !important; font-size: 13px; }
+  
+  #btn-file-menu, #btn-tools-menu, #btn-settings-menu {
+    padding: 6px 7px;
+    font-size: 12px;
+    touch-action: manipulation;
+  }
+  #btn-ai-help {
+    padding: 6px 7px;
+    font-size: 12px;
+    touch-action: manipulation;
+  }
+  #btn-ai-help .ai-help-label {
+    display: none;
+  }
+  #diagram-name {
+    width: auto;
+    min-width: 40px;
+    max-width: 80px;
+    font-size: 11px;
+    padding: 2px 4px;
+  }
+  #google-auth-container {
+    margin-left: auto;
+  }
+  #btn-gdrive-login {
+    padding: 5px 8px;
+    font-size: 11px;
+    gap: 3px;
+  }
+  .gdrive-btn-full { display: none !important; }
+  .gdrive-btn-short { display: inline !important; }
+  #user-display-name {
+    max-width: 55px;
+    font-size: 11px;
+  }
+  #btn-user-badge {
+    padding: 3px 6px;
   }
 
-  @media (max-width: 440px) {
-    #diagram-name {
-      max-width: 55px;
-      font-size: 10px;
-    }
-    #btn-file-menu, #btn-tools-menu, #btn-settings-menu {
-      padding: 4px 4px;
-      font-size: 11px;
-    }
+  /* Prevent dropdown menus from overflowing phone screen edge */
+  .dropdown-content {
+    max-width: calc(100vw - 16px);
+  }
+  #settings-menu-dropdown {
+    right: 0 !important;
+    left: auto !important;
   }
 
-  @media (max-width: 360px) {
-    #toolbar .logo {
-      display: none !important;
-    }
+  /* Mobile Submenu Accordion Layout */
+  .menu-item.has-sub {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .menu-item.has-sub > .submenu {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    margin: 4px 4px 4px 10px !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-left: 2px solid #6366f1 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    min-width: 0 !important;
+    max-height: 220px !important;
+    overflow-y: auto !important;
+  }
+
+  /* Thumb-Friendly Zoom Controls on Smartphones */
+  #zoom-controls {
+    bottom: max(16px, var(--sab)) !important;
+    left: max(12px, var(--sal)) !important;
+    padding: 6px 8px !important;
+    gap: 6px !important;
+    border-radius: 12px !important;
+  }
+  #zoom-controls .zc-btn,
+  .zc-btn {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 18px !important;
+    border-radius: 7px !important;
+  }
+  #zoom-label {
+    font-size: 12px !important;
+    min-width: 42px !important;
+  }
+  #toast {
+    bottom: max(64px, calc(48px + var(--sab))) !important;
+  }
+
+  /* Modal Dialogs Smartphone Adaptations */
+  #ai-help-modal,
+  #global-props-modal,
+  #gdrive-client-modal,
+  #gdrive-api-enable-modal {
+    padding: 10px 8px !important;
+  }
+  .global-props-dialog,
+  .ai-help-dialog {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 94vh !important;
+    border-radius: 12px !important;
+  }
+  .global-props-header,
+  .global-props-body,
+  .global-props-footer,
+  .ai-help-header,
+  .ai-help-actions {
+    padding: 12px 14px !important;
+  }
+  .gp-shape-grid#gp-shapes-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+  .gp-shape-grid#gp-lines-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+  .gp-shape-grid#gp-routing-container {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+  }
+  .gp-colors-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .gp-shape-btn, .gp-line-btn, .gp-routing-btn {
+    padding: 8px 6px !important;
+  }
+  .gp-shape-desc {
+    display: none !important;
+  }
+  .ai-help-content {
+    font-size: 11px !important;
+    padding: 12px 14px !important;
+  }
+}
+
+/* ─── COMPACT MOBILE (<= 440px) ───────────────────────────── */
+@media (max-width: 440px) {
+  #diagram-name {
+    max-width: 55px;
+    font-size: 10px;
+  }
+  #btn-file-menu, #btn-tools-menu, #btn-settings-menu {
+    padding: 5px 4px;
+    font-size: 11px;
+  }
+}
+
+/* ─── ULTRA-SLIM MOBILE (<= 360px) ────────────────────────── */
+@media (max-width: 360px) {
+  #toolbar .logo {
+    display: none !important;
   }
 }
 
@@ -1991,7 +2097,8 @@ To guarantee that **all description text is completely visible without being hid
   </div>
 </div>
 
-<!-- ─── INSPECTOR ──────────────────────────────────────────── -->
+<!-- ─── INSPECTOR & MOBILE BACKDROP ───────────────────────── -->
+<div id="inspector-backdrop"></div>
 <div id="inspector"></div>
 
 <!-- ─── ZOOM CONTROLS ─────────────────────────────────────── -->
@@ -2758,8 +2865,9 @@ function renderGroupInspector(node) {
   const members = getGroupMembers(node);
   inspector.innerHTML = `
     <div class="insp-section">
-      <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;margin-bottom:8px">
-        <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+      <div class="insp-mobile-close-bar" style="display:none;align-items:center;justify-content:space-between;padding:4px 0 10px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:10px">
+        <span style="font-size:12px;font-weight:700;color:#c7d2fe;display:flex;align-items:center;gap:6px">⚙️ Group Properties</span>
+        <button class="tb-btn" id="btn-close-insp-panel" style="padding:4px 10px;font-size:11px;font-weight:600;background:rgba(255,255,255,0.1)">✕ Close</button>
       </div>
       <div class="insp-title"><span style="background:#818cf8"></span>Group Properties</div>
 
@@ -3101,7 +3209,7 @@ function renderConnections() {
       state.selectedConnId = conn.id;
       state.selectedNodeId = null;
       renderAll();
-      if (window.innerWidth <= 768) inspector.classList.add('open');
+      if (window.innerWidth <= 1080) openMobileInspector();
     });
     g.appendChild(hit);
 
@@ -3373,6 +3481,9 @@ function startInlineEdit(node, fieldName, fieldEl) {
   // Synchronous focus ensures on-screen keyboard appears on iOS & Android
   input.focus();
   if (isTitle) input.select();
+  try {
+    input.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+  } catch(e) {}
 
   let committed = false;
   function commit() {
@@ -3573,7 +3684,7 @@ function attachNodeEvents(el, nodeData) {
       world.querySelectorAll('.gnode.selected').forEach(g => g.classList.remove('selected'));
       el.classList.add('selected');
       renderInspector();
-      if (window.innerWidth <= 768) inspector.classList.add('open');
+      if (window.innerWidth <= 1080) openMobileInspector();
       const titleEl = el.querySelector('.node-title');
       startInlineEdit(nodeData, 'title', titleEl);
     });
@@ -3625,7 +3736,6 @@ function attachNodeEvents(el, nodeData) {
     world.querySelectorAll('.gnode.selected').forEach(g => g.classList.remove('selected'));
     el.classList.add('selected');
     renderInspector();
-    if (window.innerWidth <= 768) inspector.classList.add('open');
 
     try { el.setPointerCapture(e.pointerId); } catch {}
 
@@ -3680,6 +3790,9 @@ function attachNodeEvents(el, nodeData) {
       if (moved) {
         snapshot();
         renderNodes();
+      } else {
+        // Pure tap on node: open inspector on mobile
+        if (window.innerWidth <= 1080) openMobileInspector();
       }
     }
 
@@ -3759,6 +3872,7 @@ canvasRoot.addEventListener('pointerdown', e => {
   if (activeCanvasPointers.size === 0) {
     state.selectedNodeId = null;
     state.selectedConnId = null;
+    if (window.innerWidth <= 1080) closeMobileInspector();
     renderAll();
   }
 
@@ -3859,6 +3973,27 @@ window.addEventListener('keydown', e => {
 // INSPECTOR
 // ══════════════════════════════════════════════════════════════
 const inspector = document.getElementById('inspector');
+const inspectorBackdrop = document.getElementById('inspector-backdrop');
+
+function openMobileInspector() {
+  if (!inspector) return;
+  inspector.classList.add('open');
+  if (inspectorBackdrop && window.innerWidth <= 1080) {
+    inspectorBackdrop.classList.add('active');
+  }
+}
+
+function closeMobileInspector() {
+  if (!inspector) return;
+  inspector.classList.remove('open');
+  if (inspectorBackdrop) {
+    inspectorBackdrop.classList.remove('active');
+  }
+}
+
+if (inspectorBackdrop) {
+  inspectorBackdrop.addEventListener('click', closeMobileInspector);
+}
 
 function renderInspector() {
   const node = state.nodes.find(n => n.id === state.selectedNodeId);
@@ -3875,14 +4010,15 @@ function renderInspector() {
 
   const closeBtn = document.getElementById('btn-close-insp-panel');
   if (closeBtn) {
-    closeBtn.addEventListener('click', () => inspector.classList.remove('open'));
+    closeBtn.addEventListener('click', closeMobileInspector);
   }
 }
 
 function renderEmptyInspector() {
   inspector.innerHTML = `
-    <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;padding:8px 12px 0">
-      <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+    <div class="insp-mobile-close-bar" style="display:none;align-items:center;justify-content:space-between;padding:12px 14px 10px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:10px">
+      <span style="font-size:12px;font-weight:700;color:#94a3b8;display:flex;align-items:center;gap:6px">⚙️ Properties Panel</span>
+      <button class="tb-btn" id="btn-close-insp-panel" style="padding:4px 10px;font-size:11px;font-weight:600;background:rgba(255,255,255,0.1)">✕ Close</button>
     </div>
     <div class="insp-empty">
       <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="1.5" style="margin:0 auto 8px;display:block">
@@ -3913,8 +4049,9 @@ function renderEmptyInspector() {
 function renderNodeInspector(node) {
   inspector.innerHTML = `
     <div class="insp-section">
-      <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;margin-bottom:8px">
-        <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+      <div class="insp-mobile-close-bar" style="display:none;align-items:center;justify-content:space-between;padding:4px 0 10px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:10px">
+        <span style="font-size:12px;font-weight:700;color:#93c5fd;display:flex;align-items:center;gap:6px">⚙️ Node Properties</span>
+        <button class="tb-btn" id="btn-close-insp-panel" style="padding:4px 10px;font-size:11px;font-weight:600;background:rgba(255,255,255,0.1)">✕ Close</button>
       </div>
       <div class="insp-title"><span></span>Node Properties</div>
 
@@ -4112,8 +4249,9 @@ function renderConnInspector(conn) {
   const tgt = state.nodes.find(n=>n.id===conn.tgt);
   inspector.innerHTML = `
     <div class="insp-section">
-      <div class="insp-mobile-close-bar" style="display:none;justify-content:flex-end;margin-bottom:8px">
-        <button class="tb-btn" id="btn-close-insp-panel" style="padding:3px 7px;font-size:11px">✕ Close</button>
+      <div class="insp-mobile-close-bar" style="display:none;align-items:center;justify-content:space-between;padding:4px 0 10px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:10px">
+        <span style="font-size:12px;font-weight:700;color:#f472b6;display:flex;align-items:center;gap:6px">⚙️ Connection Properties</span>
+        <button class="tb-btn" id="btn-close-insp-panel" style="padding:4px 10px;font-size:11px;font-weight:600;background:rgba(255,255,255,0.1)">✕ Close</button>
       </div>
       <div class="insp-title"><span style="background:#ec4899"></span>Connection</div>
 
@@ -4199,6 +4337,15 @@ prioFilterInput.addEventListener('input', e => {
 // Demo
 document.getElementById('btn-demo').addEventListener('click', () => {
   toggleDemo();
+});
+
+// Toggle Inspector
+document.getElementById('btn-toggle-inspector')?.addEventListener('click', () => {
+  if (inspector.classList.contains('open')) {
+    closeMobileInspector();
+  } else {
+    openMobileInspector();
+  }
 });
 
 // ══════════════════════════════════════════════════════════════

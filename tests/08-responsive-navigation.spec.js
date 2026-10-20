@@ -103,4 +103,47 @@ test.describe('Responsive Navigation & Small Screen / Resized Desktop Adaptabili
     await expect(page.locator('#settings-menu-wrap')).not.toHaveClass(/open/);
     await expect(page.locator('#menu-demos-wrap')).toBeVisible();
   });
+
+  test('should support mobile inspector drawer with backdrop and dismiss on smartphone (390x844)', async ({ page }) => {
+    // Smartphone viewport (iPhone 12/13/14)
+    await page.setViewportSize({ width: 390, height: 844 });
+
+    const homerNode = page.locator('.gnode[data-node-id="homer"]');
+    const inspector = page.locator('#inspector');
+    const backdrop = page.locator('#inspector-backdrop');
+
+    // Tap node on mobile
+    await homerNode.click();
+    await expect(inspector).toHaveClass(/open/);
+    await expect(backdrop).toHaveClass(/active/);
+
+    // Close button should be present in mobile close bar
+    const closeBtn = page.locator('#btn-close-insp-panel');
+    await expect(closeBtn).toBeVisible();
+    await closeBtn.click();
+
+    // Drawer and backdrop should close
+    await expect(inspector).not.toHaveClass(/open/);
+    await expect(backdrop).not.toHaveClass(/active/);
+
+    // Tap node again, then tap backdrop to dismiss
+    await homerNode.click();
+    await expect(inspector).toHaveClass(/open/);
+    await backdrop.click({ position: { x: 20, y: 200 } });
+    await expect(inspector).not.toHaveClass(/open/);
+  });
+
+  test('should render thumb-friendly zoom controls on smartphone (390x844)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+
+    const zoomInBtn = page.locator('#zc-in');
+    await expect(zoomInBtn).toBeVisible();
+    await page.waitForTimeout(200);
+
+    const box = await zoomInBtn.boundingBox();
+    expect(box).not.toBeNull();
+    // Verify enlarged touch target for thumbs (>=30px)
+    expect(box.width).toBeGreaterThanOrEqual(30);
+    expect(box.height).toBeGreaterThanOrEqual(30);
+  });
 });

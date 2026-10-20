@@ -23,9 +23,13 @@ body{
   -webkit-tap-highlight-color:transparent;
 }
 
+:root {
+  --toolbar-height: 56px;
+}
+
 /* ─── TOOLBAR ─────────────────────────────────────────────── */
 #toolbar{
-  position:fixed;top:0;left:0;right:0;height:56px;
+  position:fixed;top:0;left:0;right:0;height:var(--toolbar-height);
   background:rgba(10,15,30,0.92);
   border-bottom:1px solid rgba(255,255,255,0.08);
   backdrop-filter:blur(16px);
@@ -35,7 +39,26 @@ body{
   flex-shrink:0;
   overflow:visible !important;
 }
+#toolbar-main{
+  display:contents;
+}
+#toolbar .logo{
+  order:1;
+  font-weight:700;font-size:14px;color:#fff;
+  background:linear-gradient(135deg,#6366f1,#06b6d4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  white-space:nowrap;margin-right:4px;
+  flex-shrink:0;
+}
+.logo-short{display:none}
+.logo-full{display:inline}
+#file-menu-wrap{order:2;flex-shrink:0}
+#settings-menu-wrap{order:3;flex-shrink:0}
+#btn-ai-help{order:4;flex-shrink:0}
+#diagram-name{order:5;flex-shrink:1}
+.tb-sep-desktop{order:6}
 #tb-tools-scroll{
+  order:7;
   display:flex;align-items:center;gap:8px;
   overflow-x:auto;
   -webkit-overflow-scrolling:touch;
@@ -44,12 +67,13 @@ body{
   flex-shrink:1;
 }
 #tb-tools-scroll::-webkit-scrollbar{display:none}
-#toolbar .logo{
-  font-weight:700;font-size:14px;color:#fff;
-  background:linear-gradient(135deg,#6366f1,#06b6d4);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  white-space:nowrap;margin-right:4px;
+#google-auth-container{
+  order:8;
+  margin-left:auto;
+  flex-shrink:0;
 }
+.gdrive-btn-short{display:none}
+.gdrive-btn-full{display:inline}
 .tb-sep{width:1px;height:28px;background:rgba(255,255,255,0.1);flex-shrink:0}
 .tb-btn{
   display:flex;align-items:center;gap:5px;padding:6px 10px;
@@ -73,7 +97,7 @@ body{
 
 /* ─── CANVAS ──────────────────────────────────────────────── */
 #canvas-root{
-  position:fixed;top:56px;left:0;right:320px;bottom:0;
+  position:fixed;top:var(--toolbar-height);left:0;right:320px;bottom:0;
   background:#0a0f1e;
   background-image:radial-gradient(rgba(255,255,255,0.07) 1.2px, transparent 1.2px);
   background-size:24px 24px;
@@ -296,7 +320,7 @@ body.light-theme .ggroup .group-count{color:#4338ca}
 
 /* ─── INSPECTOR ───────────────────────────────────────────── */
 #inspector{
-  position:fixed;top:56px;right:0;bottom:0;width:320px;
+  position:fixed;top:var(--toolbar-height);right:0;bottom:0;width:320px;
   background:rgba(10,15,30,0.94);
   border-left:1px solid rgba(255,255,255,0.07);
   backdrop-filter:blur(16px);
@@ -670,13 +694,16 @@ body.light-theme .gp-checkbox-label {
 .menu-item:hover { background:rgba(99,102,241,0.2); color:#fff; }
 .menu-sep { height:1px; background:rgba(255,255,255,0.1); margin:4px 0; }
 .menu-item.has-sub { position:relative; }
+.menu-item.has-sub.open > .submenu,
+.menu-item.has-sub:hover > .submenu { display:block; }
+.menu-arrow { font-size:10px; margin-left:auto; transition:transform 0.15s ease; display:inline-block; }
+.menu-item.has-sub.open .menu-arrow { transform:rotate(90deg); }
 .submenu {
   display:none; position:absolute; top:-6px; left:100%; margin-left:4px;
   background:rgba(15,23,42,0.95); border:1px solid rgba(255,255,255,0.1);
   border-radius:8px; min-width:200px; padding:6px 0; max-height:300px; overflow-y:auto;
   box-shadow:0 10px 25px rgba(0,0,0,0.5);
 }
-.menu-item.has-sub:hover .submenu { display:block; }
 .submenu-empty { padding:8px 16px; font-size:11px; color:#64748b; font-style:italic; }
 
 #diagram-name {
@@ -733,14 +760,118 @@ textarea.node-inline-input{
 
 /* Mobile & Touchscreen Adaptations */
 @media (max-width: 768px) {
-  #canvas-root{right:0}
-  #inspector{
-    width:100%;max-width:340px;
-    transform:translateX(100%);transition:transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow:-4px 0 24px rgba(0,0,0,0.6);
+  :root {
+    --toolbar-height: 90px;
   }
-  #inspector.open{transform:translateX(0)}
-  .insp-mobile-close-bar{display:flex!important}
+  #toolbar {
+    flex-direction: column;
+    height: var(--toolbar-height);
+    padding: 0;
+    align-items: stretch;
+    gap: 0;
+  }
+  #toolbar-main {
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    height: 46px;
+    width: 100%;
+    padding: 0 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: visible !important;
+    flex-shrink: 0;
+  }
+  .tb-sep-desktop {
+    display: none !important;
+  }
+  #tb-tools-scroll {
+    height: 44px;
+    width: 100%;
+    padding: 0 8px;
+    gap: 6px;
+    flex-shrink: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex !important;
+  }
+  #canvas-root {
+    top: var(--toolbar-height);
+    right: 0;
+  }
+  #inspector {
+    top: var(--toolbar-height);
+    width: 100%;
+    max-width: 340px;
+    transform: translateX(100%);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.6);
+  }
+  #inspector.open {
+    transform: translateX(0);
+  }
+  .insp-mobile-close-bar {
+    display: flex !important;
+  }
+
+  /* Compact header elements on phone */
+  .logo-full { display: none !important; }
+  .logo-short { display: inline !important; font-size: 13px; }
+  
+  #btn-file-menu, #btn-settings-menu {
+    padding: 5px 6px;
+    font-size: 12px;
+  }
+  #btn-ai-help {
+    padding: 5px 6px;
+    font-size: 12px;
+  }
+  #btn-ai-help .ai-help-label {
+    display: none;
+  }
+  #diagram-name {
+    width: auto;
+    min-width: 45px;
+    max-width: 85px;
+    font-size: 11px;
+    padding: 2px 4px;
+  }
+  #google-auth-container {
+    margin-left: auto;
+  }
+  #btn-gdrive-login {
+    padding: 4px 7px;
+    font-size: 11px;
+    gap: 3px;
+  }
+  .gdrive-btn-full { display: none !important; }
+  .gdrive-btn-short { display: inline !important; }
+  #user-display-name {
+    max-width: 55px;
+    font-size: 11px;
+  }
+  #btn-user-badge {
+    padding: 2px 5px;
+  }
+
+  /* Mobile Submenu Accordion Layout */
+  .menu-item.has-sub {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .menu-item.has-sub > .submenu {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    margin: 4px 4px 4px 10px !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-left: 2px solid #6366f1 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    min-width: 0 !important;
+    max-height: 220px !important;
+    overflow-y: auto !important;
+  }
 }
 
 /* ─── WHITE / LIGHT THEME OVERRIDES ───────────────────────── */
@@ -800,12 +931,22 @@ body.light-theme #input-priority-filter {
   color: #d97706;
   border-color: rgba(217, 119, 6, 0.4);
 }
+body.light-theme #toolbar-main {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
 body.light-theme .dropdown-content,
 body.light-theme .submenu {
   background: #ffffff;
   border-color: rgba(0, 0, 0, 0.12);
   color: #0f172a;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+}
+@media (max-width: 768px) {
+  body.light-theme .menu-item.has-sub > .submenu {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    border-left-color: #6366f1 !important;
+  }
 }
 body.light-theme .menu-item {
   color: #334155;
@@ -968,70 +1109,122 @@ body.light-theme #gdrive-client-modal > div {
 
 <!-- ─── TOOLBAR ─────────────────────────────────────────── -->
 <div id="toolbar">
-  <div class="logo">⬡ UML Graph Studio</div>
+  <!-- Primary Navigation Row (Row 1 on mobile, integrated into single row on desktop) -->
+  <div id="toolbar-main">
+    <div class="logo">
+      <span class="logo-short">⬡ UML</span>
+      <span class="logo-full">⬡ UML Graph Studio</span>
+    </div>
 
-  <div class="dropdown" id="file-menu-wrap">
-    <button class="tb-btn" id="btn-file-menu" style="border:none;background:transparent;font-size:13px">File ▾</button>
-    <div class="dropdown-content" id="file-menu-dropdown">
-      <div class="menu-item" id="menu-new">New Diagram</div>
-      <div class="menu-item" id="menu-open">Open Locally...</div>
-      <div class="menu-item has-sub" id="menu-gdrive-diagrams-wrap" style="display:none;color:#60a5fa">
-        <span style="display:flex;align-items:center;gap:6px">☁️ Google Drive Diagrams</span>
-        <span style="font-size:10px;margin-left:auto;color:#60a5fa">▸</span>
-        <div class="submenu" id="menu-gdrive-list">
-          <div class="submenu-empty" style="color:#60a5fa">Loading Google Drive diagrams...</div>
+    <div class="dropdown" id="file-menu-wrap">
+      <button class="tb-btn" id="btn-file-menu" style="border:none;background:transparent;font-size:13px">File ▾</button>
+      <div class="dropdown-content" id="file-menu-dropdown">
+        <div class="menu-item" id="menu-new">New Diagram</div>
+        <div class="menu-item" id="menu-open">Open Locally...</div>
+        <div class="menu-item has-sub" id="menu-demos-wrap">
+          <span style="display:flex;align-items:center;gap:6px">⚡ Demo Diagrams</span>
+          <span class="menu-arrow">▸</span>
+          <div class="submenu" id="menu-demos-list">
+            <div class="menu-item" id="menu-demo-1">Demo 1: The Simpsons (Springfield)</div>
+            <div class="menu-item" id="menu-demo-2">Demo 2: Molecular Chemistry & Food Graph</div>
+          </div>
+        </div>
+        <div class="menu-item has-sub" id="menu-gdrive-diagrams-wrap" style="display:none;color:#60a5fa">
+          <span style="display:flex;align-items:center;gap:6px">☁️ Google Drive Diagrams</span>
+          <span class="menu-arrow" style="color:#60a5fa">▸</span>
+          <div class="submenu" id="menu-gdrive-list">
+            <div class="submenu-empty" style="color:#60a5fa">Loading Google Drive diagrams...</div>
+          </div>
+        </div>
+        <div class="menu-item has-sub">
+          <span>Recent Diagrams</span>
+          <span class="menu-arrow">▸</span>
+          <div class="submenu" id="menu-recent-list">
+            <div class="submenu-empty">No recent diagrams</div>
+          </div>
+        </div>
+        <div class="menu-sep"></div>
+        <div class="menu-item has-sub">
+          <span>Export Diagram</span>
+          <span class="menu-arrow">▸</span>
+          <div class="submenu">
+            <div class="menu-item" id="menu-export-json">As .umlgraph (Data)</div>
+            <div class="menu-item" id="menu-export-png">As .png (Image)</div>
+            <div class="menu-item" id="menu-export-html">As .html (Webpage)</div>
+            <div class="menu-sep"></div>
+            <div class="menu-item" id="menu-export-gdrive-file" style="color:#60a5fa">☁️ Save to Google Drive (.umlgraph)</div>
+            <div class="menu-item" id="menu-export-gdrive-img" style="color:#60a5fa">☁️ Save PNG to Google Drive (.png)</div>
+          </div>
+        </div>
+        <div class="menu-sep"></div>
+        <div class="menu-item" id="menu-close" style="color:#fca5a5">Close Canvas</div>
+      </div>
+    </div>
+
+    <div class="dropdown" id="settings-menu-wrap">
+      <button class="tb-btn" id="btn-settings-menu" style="border:none;background:transparent;font-size:13px">Settings ▾</button>
+      <div class="dropdown-content" id="settings-menu-dropdown">
+        <div style="padding:6px 14px;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Appearance / Theme</div>
+        <div class="menu-item" id="menu-theme-dark" style="cursor:pointer">
+          <span style="display:flex;align-items:center;gap:6px">🌙 Dark Theme</span>
+          <span class="theme-check" id="check-theme-dark" style="font-weight:700;color:#6366f1">✓</span>
+        </div>
+        <div class="menu-item" id="menu-theme-light" style="cursor:pointer">
+          <span style="display:flex;align-items:center;gap:6px">☀️ White Theme</span>
+          <span class="theme-check" id="check-theme-light" style="display:none;font-weight:700;color:#6366f1">✓</span>
+        </div>
+        <div class="menu-sep"></div>
+        <div class="menu-item" id="menu-settings-global-props" style="cursor:pointer">
+          <span style="display:flex;align-items:center;gap:6px">🌐 Global Properties...</span>
         </div>
       </div>
-      <div class="menu-item has-sub">
-        <span>Recent Diagrams</span>
-        <span style="font-size:10px;margin-left:auto">▸</span>
-        <div class="submenu" id="menu-recent-list">
-          <div class="submenu-empty">No recent diagrams</div>
-        </div>
-      </div>
-      <div class="menu-sep"></div>
-      <div class="menu-item has-sub">
-        Export Diagram ▸
-        <div class="submenu">
-          <div class="menu-item" id="menu-export-json">As .umlgraph (Data)</div>
-          <div class="menu-item" id="menu-export-png">As .png (Image)</div>
-          <div class="menu-item" id="menu-export-html">As .html (Webpage)</div>
+    </div>
+
+    <button class="tb-btn" id="btn-ai-help" title="Instructions for AI agent to generate .umlgraph files" style="border:none;background:transparent;font-size:13px;color:#a78bfa">
+      🤖 <span class="ai-help-label">AI Help</span>
+    </button>
+
+    <input type="text" id="diagram-name" value="Untitled Diagram" autocomplete="off" spellcheck="false" />
+
+    <!-- Google Sign In Widget (Top-Right in Row 1) -->
+    <div id="google-auth-container" style="display:flex;align-items:center;gap:8px;position:relative;flex-shrink:0;overflow:visible">
+      <button class="tb-btn" id="btn-gdrive-login" style="background:rgba(66,133,244,0.15);border-color:rgba(66,133,244,0.4);color:#93c5fd;font-weight:600">
+        <svg width="14" height="14" viewBox="0 0 24 24" style="flex-shrink:0">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span class="gdrive-btn-full">Sign in with Google</span>
+        <span class="gdrive-btn-short">Sign in</span>
+      </button>
+
+      <div class="dropdown" id="user-profile-dropdown" style="display:none;position:relative;overflow:visible">
+        <button class="tb-btn" id="btn-user-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(16,185,129,0.4);padding:3px 8px">
+          <div id="user-avatar" style="width:20px;height:20px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">U</div>
+          <span id="user-display-name" style="font-size:12px;color:#e2e8f0;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">User</span>
+          <span id="user-sync-dot" style="width:7px;height:7px;border-radius:50%;background:#10b981;flex-shrink:0" title="Connected to Google Drive"></span>
+        </button>
+        <div class="dropdown-content" id="user-profile-menu">
+          <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.1)">
+            <div id="user-full-name" style="font-weight:700;color:#fff;font-size:12px">User</div>
+            <div id="user-email" style="font-size:10px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis">user@gmail.com</div>
+            <div id="user-sync-status-badge" style="margin-top:6px;font-size:10px;color:#10b981;display:flex;align-items:center;gap:4px">
+              <span>☁️</span> Connected to Google Drive
+            </div>
+          </div>
+          <div class="menu-item" id="menu-gdrive-sync">Sync Recent Files 🔄</div>
+          <div class="menu-item" id="menu-gdrive-config">Configure Google Client ID... ⚙️</div>
           <div class="menu-sep"></div>
-          <div class="menu-item" id="menu-export-gdrive-file" style="color:#60a5fa">☁️ Save to Google Drive (.umlgraph)</div>
-          <div class="menu-item" id="menu-export-gdrive-img" style="color:#60a5fa">☁️ Save PNG to Google Drive (.png)</div>
+          <div class="menu-item" id="menu-gdrive-logout" style="color:#fca5a5">Sign Out</div>
         </div>
       </div>
-      <div class="menu-sep"></div>
-      <div class="menu-item" id="menu-close" style="color:#fca5a5">Close Canvas</div>
     </div>
   </div>
 
-  <div class="dropdown" id="settings-menu-wrap">
-    <button class="tb-btn" id="btn-settings-menu" style="border:none;background:transparent;font-size:13px">Settings ▾</button>
-    <div class="dropdown-content" id="settings-menu-dropdown">
-      <div style="padding:6px 14px;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Appearance / Theme</div>
-      <div class="menu-item" id="menu-theme-dark" style="cursor:pointer">
-        <span style="display:flex;align-items:center;gap:6px">🌙 Dark Theme</span>
-        <span class="theme-check" id="check-theme-dark" style="font-weight:700;color:#6366f1">✓</span>
-      </div>
-      <div class="menu-item" id="menu-theme-light" style="cursor:pointer">
-        <span style="display:flex;align-items:center;gap:6px">☀️ White Theme</span>
-        <span class="theme-check" id="check-theme-light" style="display:none;font-weight:700;color:#6366f1">✓</span>
-      </div>
-      <div class="menu-sep"></div>
-      <div class="menu-item" id="menu-settings-global-props" style="cursor:pointer">
-        <span style="display:flex;align-items:center;gap:6px">🌐 Global Properties...</span>
-      </div>
-    </div>
-  </div>
+  <div class="tb-sep tb-sep-desktop"></div>
 
-  <button class="tb-btn" id="btn-ai-help" title="Instructions for AI agent to generate .umlgraph files" style="border:none;background:transparent;font-size:13px;color:#a78bfa">🤖 AI Help</button>
-
-  <input type="text" id="diagram-name" value="Untitled Diagram" autocomplete="off" spellcheck="false" />
-
-  <div class="tb-sep"></div>
-
-  <!-- Middle action tools scroll container -->
+  <!-- Action tools scroll container (Row 2 on mobile, single continuous toolbar on desktop) -->
   <div id="tb-tools-scroll">
     <button class="tb-btn primary" id="btn-add-node" title="Add new node to canvas">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1043,13 +1236,18 @@ body.light-theme #gdrive-client-modal > div {
       Add Group
     </button>
 
+    <!-- Prominently placed Demo button for easy tap on phone and desktop -->
+    <button class="tb-btn" id="btn-demo" title="Load sample demo diagram" style="background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.4);color:#c7d2fe;font-weight:600">⚡ Demo</button>
+
     <button class="tb-btn amber" id="btn-format" title="Auto-arrange nodes to eliminate overlaps">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="5" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="8" y="16" width="8" height="5" rx="1"/><line x1="6.5" y1="8" x2="6.5" y2="14"/><line x1="17.5" y1="8" x2="17.5" y2="13"/><line x1="6.5" y1="14" x2="17.5" y2="14"/><line x1="12" y1="14" x2="12" y2="16"/></svg>
       Format
     </button>
 
+    <button class="tb-btn" id="btn-toggle-inspector" title="Toggle Inspector panel">⚙️ Inspector</button>
+
     <button class="tb-btn" id="btn-global-props" title="Change global diagram properties (all node shapes, arrow types, routing, colors)" style="background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.35);color:#c7d2fe">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"/></svg>
       Global Properties
     </button>
 
@@ -1070,47 +1268,6 @@ body.light-theme #gdrive-client-modal > div {
     <input id="prio-filter" type="text" maxlength="3" placeholder="P01…" autocomplete="off"
       style="width:50px;padding:4px 7px;font-size:11px;font-family:'Fira Code',monospace;font-weight:700;color:#fbbf24;text-transform:uppercase;
              background:rgba(0,0,0,0.4);border:1px solid rgba(251,191,36,0.3);border-radius:6px;outline:none;color:#fbbf24;text-align:center"/>
-
-    <div class="tb-sep"></div>
-
-    <button class="tb-btn" id="btn-demo" title="Load sample demo diagram">⚡ Demo</button>
-    <button class="tb-btn" id="btn-toggle-inspector" title="Toggle Inspector panel">⚙️ Inspector</button>
-  </div>
-
-  <div style="flex:1"></div>
-
-  <!-- Google Sign In Widget (Top-Right Corner) -->
-  <div id="google-auth-container" style="display:flex;align-items:center;gap:8px;position:relative;flex-shrink:0;overflow:visible">
-    <button class="tb-btn" id="btn-gdrive-login" style="background:rgba(66,133,244,0.15);border-color:rgba(66,133,244,0.4);color:#93c5fd;font-weight:600">
-      <svg width="14" height="14" viewBox="0 0 24 24" style="flex-shrink:0">
-        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-        <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.62z"/>
-        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-      </svg>
-      Sign in with Google
-    </button>
-
-    <div class="dropdown" id="user-profile-dropdown" style="display:none;position:relative;overflow:visible">
-      <button class="tb-btn" id="btn-user-badge" style="background:rgba(255,255,255,0.06);border-color:rgba(16,185,129,0.4);padding:3px 8px">
-        <div id="user-avatar" style="width:20px;height:20px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">U</div>
-        <span id="user-display-name" style="font-size:12px;color:#e2e8f0;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">User</span>
-        <span id="user-sync-dot" style="width:7px;height:7px;border-radius:50%;background:#10b981;flex-shrink:0" title="Connected to Google Drive"></span>
-      </button>
-      <div class="dropdown-content" id="user-profile-menu">
-        <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.1)">
-          <div id="user-full-name" style="font-weight:700;color:#fff;font-size:12px">User</div>
-          <div id="user-email" style="font-size:10px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis">user@gmail.com</div>
-          <div id="user-sync-status-badge" style="margin-top:6px;font-size:10px;color:#10b981;display:flex;align-items:center;gap:4px">
-            <span>☁️</span> Connected to Google Drive
-          </div>
-        </div>
-        <div class="menu-item" id="menu-gdrive-sync">Sync Recent Files 🔄</div>
-        <div class="menu-item" id="menu-gdrive-config">Configure Google Client ID... ⚙️</div>
-        <div class="menu-sep"></div>
-        <div class="menu-item" id="menu-gdrive-logout" style="color:#fca5a5">Sign Out</div>
-      </div>
-    </div>
   </div>
 
   <input type="file" id="file-import" accept=".json,.umlgraph" style="display:none"/>
@@ -4237,9 +4394,40 @@ document.getElementById('menu-theme-light')?.addEventListener('click', () => {
   toast('White Theme applied ☀️');
 });
 
+// Demo diagram menu item handlers
+document.getElementById('menu-demo-1')?.addEventListener('click', e => {
+  e.stopPropagation();
+  loadDemo1();
+  if (fmWrap) fmWrap.classList.remove('open');
+  document.querySelectorAll('.menu-item.has-sub.open').forEach(el => el.classList.remove('open'));
+});
+
+document.getElementById('menu-demo-2')?.addEventListener('click', e => {
+  e.stopPropagation();
+  loadDemo2();
+  if (fmWrap) fmWrap.classList.remove('open');
+  document.querySelectorAll('.menu-item.has-sub.open').forEach(el => el.classList.remove('open'));
+});
+
+// Enable submenu click/tap toggle for mobile & touchscreens
+document.querySelectorAll('.menu-item.has-sub').forEach(item => {
+  item.addEventListener('click', e => {
+    // If user clicked inside the submenu on an actual action item, let that action run
+    if (e.target.closest('.submenu .menu-item')) return;
+    e.stopPropagation();
+    const wasOpen = item.classList.contains('open');
+    // Close other sibling submenus
+    item.parentElement?.querySelectorAll('.menu-item.has-sub').forEach(sib => {
+      if (sib !== item) sib.classList.remove('open');
+    });
+    item.classList.toggle('open', !wasOpen);
+  });
+});
+
 document.addEventListener('click', () => {
   if (fmWrap) fmWrap.classList.remove('open');
   if (smWrap) smWrap.classList.remove('open');
+  document.querySelectorAll('.menu-item.has-sub.open').forEach(el => el.classList.remove('open'));
   const userMenu = document.getElementById('user-profile-menu');
   if (userMenu) userMenu.style.display = 'none';
 });

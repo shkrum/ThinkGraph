@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent File Format Specification — UML Graph Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --primary: #6366f1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 48px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    .header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+    .link-banner {
+      margin: 24px 0;
+      padding: 16px 20px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .link-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .link-url {
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      color: #93c5fd;
+      flex: 1;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #4f46e5; }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #e2e8f0;
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+      margin: 32px 0 14px;
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #93c5fd;
+      margin: 20px 0 8px;
+    }
+    p, ul, ol {
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    ul, ol { padding-left: 24px; }
+    li { margin-bottom: 6px; }
+    code {
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #fca5a5;
+    }
+    pre {
+      background: #050811;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 14px;
+      margin-top: 32px;
+      font-weight: 500;
+    }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-badge">🤖 ThinkGraph AI Instructions</div>
+      <h1>.umlgraph File Format Specification</h1>
+      <p class="subtitle">Direct guide and schema instructions for generating UML Graph Studio diagram files with any AI chat.</p>
+    </div>
+
+    <div class="link-banner">
+      <div style="font-weight:600;font-size:13px;color:#c7d2fe">🔗 Direct Link for AI Prompts:</div>
+      <div class="link-row">
+        <span class="link-url" id="raw-url">https://raw.githubusercontent.com/shkrum/ThinkGraph/main/AI_INSTRUCTIONS.md</span>
+        <button class="btn" id="btn-copy-url" onclick="navigator.clipboard.writeText(document.getElementById('raw-url').textContent);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Link',2000)">Copy Link</button>
+      </div>
+      <div style="font-size:12px;color:#94a3b8">
+        💡 <strong>Quick AI Prompt:</strong> You do not need to paste the full specification into your AI prompt every time! Just provide this link:
+      </div>
+      <div>
+        <button class="btn btn-secondary" onclick="navigator.clipboard.writeText('Create a .umlgraph diagram file for UML Graph Studio following the instructions and file format at: https://raw.githubusercontent.com/shkrum/ThinkGraph/main/AI_INSTRUCTIONS.md\n\nDiagram topic: [Describe your system here]');this.textContent='Copied Prompt!';setTimeout(()=>this.textContent='⚡ Copy Prompt with Direct Link',2000)">
+          ⚡ Copy Prompt with Direct Link
+        </button>
+      </div>
+    </div>
+
+    <h2>Video Priority Playback Feature</h2>
+    <p>UML Graph Studio supports automatic prioritized video playback for nodes containing videos (<code>mediaType: "video"</code>):</p>
+    <ul>
+      <li><strong>Priority Ordering:</strong> If priorities are numbers (e.g. 1, 2, 10), they sort numerically. If priorities are strings (e.g. "P01", "VIP"), they sort using their natural alphabetical sorting values.</li>
+      <li><strong>Sequential Progression:</strong> When all videos of the active priority finish (detected via duration/ended events), the system automatically advances to the next priority.</li>
+      <li><strong>Continuous Looping:</strong> After the last priority finishes, the sequence cycles back to the first priority.</li>
+    </ul>
+
+    <h2>File Format Overview</h2>
+    <p>A <code>.umlgraph</code> file is a self-contained JSON document containing diagram metadata, canvas view settings, nodes, groups, and connections.</p>
+    <pre><code>{
+  "diagramId": "diag_example",
+  "diagramName": "System Architecture",
+  "canvas": { "zoom": 1, "panX": 0, "panY": 0 },
+  "nodes": [
+    {
+      "id": "node_1",
+      "x": 60, "y": 60, "w": 260, "h": 160,
+      "title": "API Gateway",
+      "desc": "Authentication and rate limiting.",
+      "priority": "1",
+      "shape": "rounded",
+      "color": "#1e293b",
+      "borderColor": "#3b82f6"
+    }
+  ],
+  "connections": [],
+  "updatedAt": 1727300000000
+}</code></pre>
+
+    <a href="index.html" class="back-link">← Return to UML Graph Studio</a>
+  </div>
+</body>
+</html>

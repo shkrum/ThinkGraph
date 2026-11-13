@@ -285,3 +285,4 @@ To prevent description text clipping or awkward overflow:
 2. Save or instruct the user to save with the `.umlgraph` file extension.
 3. Keep `attachments: []` if no binary files are embedded.
 4. Keep `imageUrl: null` and `mediaType: null` when no media is present.
+

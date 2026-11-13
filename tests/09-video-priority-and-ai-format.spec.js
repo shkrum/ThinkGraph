@@ -34,26 +34,45 @@ test.describe('Video Priority Playback and AI File Format Specification', () => 
     expect(sortResults.emptySort[0]).toBe('P01');
   });
 
-  test('should initialize Homer video in Demo 1 with priority playback manager', async ({ page }) => {
-    const videoLocator = page.locator('.node-video-player[data-node-id="homer"]');
-    await expect(videoLocator).toBeAttached();
+  test('should initialize demo video nodes with priority playback sequence', async ({ page }) => {
+    // Assert all demo video nodes are attached
+    const homerVid = page.locator('.node-video-player[data-node-id="homer"]');
+    const bartVid = page.locator('.node-video-player[data-node-id="bart"]');
+    const burnsVid = page.locator('.node-video-player[data-node-id="burns"]');
+    const walterVid = page.locator('.node-video-player[data-node-id="walter"]');
 
-    // Homer video should have muted attribute to allow autoplay across all browsers
-    const isMuted = await videoLocator.evaluate(v => v.muted);
-    expect(isMuted).toBe(true);
+    await expect(homerVid).toBeAttached();
+    await expect(bartVid).toBeAttached();
+    await expect(burnsVid).toBeAttached();
+    await expect(walterVid).toBeAttached();
 
-    // Check manager state
+    // Check manager state: 4 priority tiers in Demo 1: CH3 -> D'H -> EAT -> EXC
     const managerState = await page.evaluate(() => {
       const mgr = window.videoPriorityManager;
       return {
         groupsCount: mgr.groups.length,
-        activeGroupPriority: mgr.groups[mgr.currentGroupIndex]?.priority,
+        sortedPriorities: mgr.groups.map(g => g.priority),
+        activePriority: mgr.groups[mgr.currentGroupIndex]?.priority,
         activeNodeIds: Array.from(mgr.activeVideoNodeIds)
       };
     });
 
-    expect(managerState.groupsCount).toBeGreaterThanOrEqual(1);
-    expect(managerState.activeNodeIds).toContain('homer');
+    expect(managerState.groupsCount).toBe(4);
+    // Alphabetical string sorting order for priorities: CH3 < D'H < EAT < EXC
+    expect(managerState.sortedPriorities).toEqual(['CH3', "D'H", 'EAT', 'EXC']);
+    expect(managerState.activePriority).toBe('CH3');
+    expect(managerState.activeNodeIds).toContain('walter');
+
+    // Simulate completion of Walter's video -> should advance to Homer ("D'H")
+    await page.evaluate(() => {
+      const wVid = document.querySelector('.node-video-player[data-node-id="walter"]');
+      wVid.dispatchEvent(new Event('ended'));
+    });
+
+    await page.waitForFunction(() => {
+      const hVid = document.querySelector('.node-video-player[data-node-id="homer"]');
+      return hVid?.dataset.priorityActive === 'true';
+    });
   });
 
   test('should sequentially play videos based on priorities and advance when ended', async ({ page }) => {
@@ -195,3 +214,4 @@ test.describe('Video Priority Playback and AI File Format Specification', () => 
     expect(htmlTitle).toContain('AI Agent File Format Specification');
   });
 });
+
